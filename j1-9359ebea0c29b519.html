@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jour 1 – L'État des Lieux Bienveillant</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f0eb;
+    --card: #ffffff;
+    --accent1: #2d6a6a;
+    --accent2: #e8a838;
+    --accent3: #e05c5c;
+    --accent4: #5b8cdc;
+    --soft: #f0ebe4;
+    --text: #1e1e1e;
+    --muted: #7a7068;
+    --border: #e0d9d0;
+    --green: #3a9e6f;
+    --radius: 16px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    padding: 0;
+  }
+
+  /* ── HERO ── */
+  .hero {
+    background: linear-gradient(135deg, #1a4a4a 0%, #2d6a6a 50%, #1a4a4a 100%);
+    color: white;
+    padding: 48px 24px 56px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 30%, rgba(232,168,56,0.2) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(91,140,220,0.15) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 50px;
+    padding: 6px 18px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    backdrop-filter: blur(6px);
+  }
+  .hero-day {
+    font-size: clamp(13px, 2.5vw, 15px);
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    opacity: 0.75;
+    margin-bottom: 10px;
+  }
+  .hero-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(28px, 6vw, 52px);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 16px;
+  }
+  .hero-title span { color: var(--accent2); }
+  .hero-subtitle {
+    font-size: clamp(14px, 2.5vw, 17px);
+    opacity: 0.8;
+    max-width: 520px;
+    margin: 0 auto 28px;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+  .hero-emoji {
+    font-size: clamp(40px, 8vw, 72px);
+    display: block;
+    margin-bottom: 18px;
+    filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3));
+  }
+  .progress-bar-wrap {
+    max-width: 320px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50px;
+    height: 6px;
+    overflow: hidden;
+  }
+  .progress-bar-fill {
+    width: 0%;
+    height: 100%;
+    background: var(--accent2);
+    border-radius: 50px;
+    transition: width 1s ease;
+  }
+  .progress-label {
+    font-size: 12px;
+    opacity: 0.6;
+    margin-top: 8px;
+  }
+
+  /* ── JOURNEY MAP ── */
+  .journey-map {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 20px auto 0;
+    max-width: 560px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0;
+    flex-wrap: wrap;
+    gap: 4px;
+  }
+  .journey-step {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    opacity: 0.5;
+    white-space: nowrap;
+  }
+  .journey-step.active {
+    opacity: 1;
+    background: rgba(232,168,56,0.25);
+    border: 1px solid rgba(232,168,56,0.5);
+    border-radius: 20px;
+    padding: 3px 10px;
+    color: var(--accent2);
+  }
+  .journey-arrow { font-size: 10px; opacity: 0.3; margin: 0 2px; }
+
+  /* ── LAYOUT ── */
+  .container {
+    max-width: 820px;
+    margin: 0 auto;
+    padding: 0 16px 60px;
+  }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 28px 28px;
+    box-shadow: var(--shadow);
+    margin-top: 24px;
+    border: 1px solid var(--border);
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 4px;
+    border-radius: var(--radius) var(--radius) 0 0;
+  }
+  .card.green::before { background: linear-gradient(90deg, var(--green), #6dd5a5); }
+  .card.orange::before { background: linear-gradient(90deg, var(--accent2), #f5c76a); }
+  .card.blue::before { background: linear-gradient(90deg, var(--accent4), #8fb6f0); }
+  .card.red::before { background: linear-gradient(90deg, var(--accent3), #f08080); }
+  .card.teal::before { background: linear-gradient(90deg, var(--accent1), #5aadad); }
+  .card.purple::before { background: linear-gradient(90deg, #8b5cf6, #c4b5fd); }
+  .card.gold::before { background: linear-gradient(90deg, #d4a017, var(--accent2)); }
+
+  .card-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 4px 12px;
+    border-radius: 50px;
+    margin-bottom: 16px;
+  }
+  .card-label.teal { background: #e0f2f2; color: var(--accent1); }
+  .card-label.orange { background: #fef3dc; color: #b87a0a; }
+  .card-label.blue { background: #e8effe; color: #3060b0; }
+  .card-label.green { background: #e3f7ee; color: #2a7a52; }
+  .card-label.purple { background: #f3effe; color: #6b3dc0; }
+  .card-label.gold { background: #fdf6e3; color: #9a6e00; }
+
+  .card-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(18px, 3.5vw, 24px);
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .card-body {
+    font-size: 15px;
+    line-height: 1.8;
+    color: #3a3530;
+  }
+
+  /* ── EXPLAINER BOX ── */
+  .explainer {
+    background: linear-gradient(135deg, #fffbf0, #fef9e7);
+    border: 1.5px solid #f0d080;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-size: 14px;
+    line-height: 1.8;
+  }
+  .explainer-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #9a6e00;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .explainer p { color: #4a3a10; margin-bottom: 6px; }
+  .explainer p:last-child { margin-bottom: 0; }
+
+  /* ── ANALOGY BOX ── */
+  .analogy {
+    background: linear-gradient(135deg, #f0f4ff, #e8effe);
+    border: 1.5px solid #b8c8f0;
+    border-radius: 12px;
+    padding: 16px 20px;
+    margin: 12px 0;
+    font-size: 14px;
+    line-height: 1.8;
+    color: #2a3a60;
+  }
+  .analogy-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #3060b0;
+    margin-bottom: 8px;
+  }
+
+  /* ── INTRO CARD ── */
+  .intro-highlight {
+    background: linear-gradient(135deg, #eef7f7, #f8f4ee);
+    border: 1px solid #c8e6e6;
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin: 16px 0;
+    font-size: 15px;
+    line-height: 1.8;
+    color: var(--text);
+  }
+  .golden-rule {
+    background: linear-gradient(135deg, #fef9ee, #fff8e8);
+    border-left: 4px solid var(--accent2);
+    border-radius: 0 12px 12px 0;
+    padding: 16px 20px;
+    margin-top: 16px;
+    font-size: 14px;
+    line-height: 1.7;
+  }
+  .golden-rule strong { color: #9a6e00; }
+
+  /* ── INSTRUCTION ── */
+  .steps {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  .step {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    background: var(--soft);
+    border-radius: 10px;
+    padding: 14px 16px;
+  }
+  .step-icon {
+    font-size: 20px;
+    flex-shrink: 0;
+    margin-top: 1px;
+  }
+  .step-text { font-size: 14px; line-height: 1.6; color: var(--text); }
+  .step-note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+    font-style: italic;
+  }
+
+  /* ── SECTION HEADER ── */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 36px;
+    margin-bottom: 4px;
+  }
+  .section-divider {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+  .section-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ── EXERCISE HEADER ── */
+  .exercise-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 18px;
+  }
+  .exercise-num {
+    width: 36px; height: 36px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px; font-weight: 800;
+    flex-shrink: 0;
+  }
+  .exercise-num.teal { background: #e0f2f2; color: var(--accent1); }
+  .exercise-num.orange { background: #fef3dc; color: #b87a0a; }
+  .exercise-num.blue { background: #e8effe; color: #3060b0; }
+  .exercise-num.green { background: #e3f7ee; color: #2a7a52; }
+  .exercise-num.purple { background: #f3effe; color: #6b3dc0; }
+  .exercise-title { font-size: 17px; font-weight: 700; }
+
+  /* ── FINANCE TABLE ── */
+  .finance-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+    margin-top: 14px;
+  }
+  .finance-box {
+    border-radius: 12px;
+    padding: 20px 18px;
+    text-align: center;
+  }
+  .finance-box.income { background: linear-gradient(135deg, #e3f7ee, #d0f0e4); }
+  .finance-box.expense { background: linear-gradient(135deg, #fdecea, #fbd5d5); }
+  .finance-box-icon { font-size: 28px; margin-bottom: 8px; }
+  .finance-box-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 4px;
+  }
+  .finance-box.income .finance-box-label { color: #2a7a52; }
+  .finance-box.expense .finance-box-label { color: #b03030; }
+  .finance-box-hint { font-size: 11px; color: var(--muted); margin-bottom: 12px; line-height: 1.5; }
+  .finance-input {
+    width: 100%;
+    border: 2px solid transparent;
+    border-radius: 8px;
+    padding: 10px 12px;
+    font-size: 20px;
+    font-weight: 700;
+    text-align: center;
+    font-family: 'Inter', sans-serif;
+    outline: none;
+    transition: all 0.2s;
+    background: rgba(255,255,255,0.7);
+  }
+  .finance-box.income .finance-input { color: var(--green); }
+  .finance-box.income .finance-input:focus { border-color: var(--green); background: white; }
+  .finance-box.expense .finance-input { color: var(--accent3); }
+  .finance-box.expense .finance-input:focus { border-color: var(--accent3); background: white; }
+
+  /* ── VERDICT ── */
+  .verdict-box {
+    border-radius: 12px;
+    padding: 20px 22px;
+    margin-top: 16px;
+    text-align: center;
+    transition: all 0.4s;
+  }
+  .verdict-neutral { background: var(--soft); border: 2px dashed var(--border); }
+  .verdict-positive { background: linear-gradient(135deg, #e3f7ee, #d0f0e4); border: 2px solid #90d8b8; }
+  .verdict-negative { background: linear-gradient(135deg, #fdecea, #fbd5d5); border: 2px solid #f5a0a0; }
+  .verdict-amount { font-size: 36px; font-weight: 800; margin: 6px 0; }
+  .verdict-positive .verdict-amount { color: var(--green); }
+  .verdict-negative .verdict-amount { color: var(--accent3); }
+  .verdict-neutral .verdict-amount { color: var(--muted); }
+  .verdict-label { font-size: 13px; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+  .verdict-message { font-size: 13px; margin-top: 10px; line-height: 1.6; color: #4a4540; }
+
+  .check-options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 16px;
+  }
+  .check-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    border: 2px solid var(--border);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    user-select: none;
+  }
+  .check-item:hover { border-color: var(--accent1); background: #f8fafa; }
+  .check-item.selected.pos { border-color: var(--green); background: #e3f7ee; }
+  .check-item.selected.neg { border-color: var(--accent3); background: #fdecea; }
+  .custom-check {
+    width: 20px; height: 20px;
+    border: 2px solid var(--border);
+    border-radius: 50%;
+    flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.2s;
+  }
+  .check-item.selected.pos .custom-check { background: var(--green); border-color: var(--green); }
+  .check-item.selected.neg .custom-check { background: var(--accent3); border-color: var(--accent3); }
+  .check-item.selected .custom-check::after { content: '✓'; color: white; font-size: 12px; font-weight: 700; }
+  .check-text { font-size: 14px; line-height: 1.5; }
+  .check-text strong { display: block; font-weight: 700; }
+
+  /* ── LEAKS ── */
+  .leak-items { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+  .leak-item {
+    background: var(--soft);
+    border-radius: 10px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    transition: border-color 0.2s;
+  }
+  .leak-item:focus-within { border-color: var(--accent3); background: #fef9f9; }
+  .leak-row { display: flex; align-items: center; gap: 10px; }
+  .leak-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 5px; }
+  .leak-input-wrap { flex: 1; }
+  .leak-amount-wrap { flex-shrink: 0; width: 100px; }
+  .text-input {
+    width: 100%;
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 14px;
+    font-family: 'Inter', sans-serif;
+    background: white;
+    color: var(--text);
+    outline: none;
+    transition: all 0.2s;
+  }
+  .text-input:focus { border-color: var(--accent3); box-shadow: 0 0 0 3px rgba(224,92,92,0.1); }
+  .amount-input {
+    width: 100%;
+    border: 1.5px solid transparent;
+    border-radius: 8px;
+    padding: 9px 12px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Inter', sans-serif;
+    background: white;
+    color: var(--accent3);
+    outline: none;
+    transition: all 0.2s;
+    text-align: right;
+  }
+  .amount-input:focus { border-color: var(--accent3); box-shadow: 0 0 0 3px rgba(224,92,92,0.1); }
+
+  /* ── METEO ── */
+  .emotion-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+    gap: 10px;
+    margin-top: 14px;
+  }
+  .emotion-item {
+    border: 2px solid var(--border);
+    border-radius: 12px;
+    padding: 14px 10px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: white;
+    user-select: none;
+  }
+  .emotion-item:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+  .emotion-item.selected { transform: translateY(-3px); box-shadow: 0 6px 16px rgba(0,0,0,0.12); }
+  .emotion-emoji { font-size: 26px; display: block; margin-bottom: 6px; }
+  .emotion-label { font-size: 11px; font-weight: 700; letter-spacing: 0.5px; }
+
+  .emotion-item[data-emotion="ANXIÉTÉ"].selected { background: #fff8e0; border-color: #f5c76a; color: #9a6e00; }
+  .emotion-item[data-emotion="FIERTÉ"].selected { background: #e3f7ee; border-color: #5cbf8c; color: #2a7a52; }
+  .emotion-item[data-emotion="HONTE"].selected { background: #fdecea; border-color: #f08080; color: #b03030; }
+  .emotion-item[data-emotion="SURPRISE"].selected { background: #e8effe; border-color: #8fb6f0; color: #3060b0; }
+  .emotion-item[data-emotion="DÉNI"].selected { background: #f3effe; border-color: #b08ce8; color: #6b3dc0; }
+  .emotion-item[data-emotion="COLÈRE"].selected { background: #fff0e8; border-color: #f0a06a; color: #a04010; }
+  .emotion-item[data-emotion="SOULAGEMENT"].selected { background: #e0f7f7; border-color: #5aadad; color: var(--accent1); }
+  .emotion-item[data-emotion="MOTIVATION"].selected { background: #fef3dc; border-color: var(--accent2); color: #9a6e00; }
+
+  /* ── MANTRA ── */
+  .mantra-card {
+    background: linear-gradient(135deg, #1a4a4a 0%, #2d6a6a 100%);
+    border-radius: var(--radius);
+    padding: 36px 28px;
+    color: white;
+    text-align: center;
+    margin-top: 24px;
+    position: relative;
+    overflow: hidden;
+  }
+  .mantra-card::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 80% 20%, rgba(232,168,56,0.25), transparent 60%);
+    pointer-events: none;
+  }
+  .mantra-icon { font-size: 40px; margin-bottom: 16px; }
+  .mantra-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 2.5px;
+    text-transform: uppercase;
+    opacity: 0.65;
+    margin-bottom: 16px;
+  }
+  .mantra-text {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(16px, 3vw, 22px);
+    font-style: italic;
+    line-height: 1.7;
+    max-width: 520px;
+    margin: 0 auto 20px;
+    opacity: 0.95;
+  }
+  .mantra-text span { color: var(--accent2); }
+  .mantra-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(255,255,255,0.15);
+    border: 1.5px solid rgba(255,255,255,0.3);
+    border-radius: 50px;
+    padding: 10px 22px;
+    font-size: 13px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-family: 'Inter', sans-serif;
+    backdrop-filter: blur(4px);
+  }
+  .mantra-btn:hover { background: rgba(255,255,255,0.25); }
+  .mantra-btn.reading { background: var(--accent2); border-color: var(--accent2); color: #1a1a0a; }
+
+  /* ── WHAT'S NEXT ── */
+  .next-day {
+    background: linear-gradient(135deg, #f8f4fe, #f0ebff);
+    border: 1.5px solid #d4b8f8;
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-top: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .next-day-icon { font-size: 36px; flex-shrink: 0; }
+  .next-day-label {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #6b3dc0;
+    margin-bottom: 6px;
+  }
+  .next-day-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: #3a1a60;
+    margin-bottom: 8px;
+  }
+  .next-day-text { font-size: 14px; line-height: 1.7; color: #5a4070; }
+
+  /* ── CLOSING ── */
+  .closing {
+    text-align: center;
+    padding: 40px 20px 20px;
+  }
+  .closing-icon { font-size: 48px; margin-bottom: 12px; }
+  .closing-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(18px, 4vw, 26px);
+    font-weight: 700;
+    color: var(--accent1);
+    margin-bottom: 8px;
+  }
+  .closing-text { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 400px; margin: 0 auto; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 500px) {
+    .card { padding: 20px 16px; }
+    .hero { padding: 36px 16px 44px; }
+    .finance-grid { grid-template-columns: 1fr; }
+    .emotion-grid { grid-template-columns: repeat(2, 1fr); }
+    .next-day { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">💰 Programme Finance Personnelle</div>
+  <div class="hero-day">Jour 1 sur 7</div>
+  <span class="hero-emoji">💡</span>
+  <h1 class="hero-title">L'État des Lieux<br><span>Bienveillant</span></h1>
+  <p class="hero-subtitle">Avant de construire quoi que ce soit, il faut savoir où on en est. Aujourd'hui, on allume la lumière.</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-label">Progression : Jour 1 / 7</div>
+  <!-- JOURNEY MAP -->
+  <div class="journey-map">
+    <div class="journey-step active">1️⃣ État des lieux</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">2️⃣ Croyances</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">3️⃣ Budget</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">4️⃣ Épargne</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">5️⃣ Dettes</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">6️⃣ Revenus</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">7️⃣ Plan 90j</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- INTRO CARD -->
+  <div class="card teal">
+    <div class="card-label teal">🎙️ Introduction</div>
+    <div class="card-title">"Arrêtez de fermer les yeux"</div>
+    <div class="intro-highlight">
+      Bienvenue dans ce premier jour ! Imagine que ta maison est dans le noir depuis longtemps. Tu sais qu'il y a des meubles, mais tu ne sais pas exactement où ils sont. Résultat : tu te cognes partout !<br><br>
+      <strong>L'argent, c'est pareil.</strong> Quand tu évites de regarder tes comptes, tu avances dans le noir. Aujourd'hui, on allume la lumière — sans juger, sans paniquer, juste pour voir.
+    </div>
+    <div class="golden-rule">
+      ✨ <strong>La règle d'or du jour :</strong> Tu es un <em>détective</em>, pas un juge. Ton rôle ? Observer et comprendre, pas condamner. <strong>Ces chiffres ne disent pas qui tu es</strong> — ils montrent juste où tu en es aujourd'hui.
+    </div>
+  </div>
+
+  <!-- WHY BOX -->
+  <div class="explainer">
+    <div class="explainer-title">🔍 Pourquoi on commence par ici ?</div>
+    <p>Tout le monde veut "mieux gérer son argent", mais la plupart des gens ne savent même pas combien ils gagnent <em>exactement</em>, ni combien ils dépensent chaque mois.</p>
+    <p>C'est comme vouloir maigrir sans jamais se peser — c'est possible, mais beaucoup plus lent. Le Jour 1, c'est notre <strong>point de départ</strong>. Sans lui, les 6 jours suivants n'auraient aucun sens.</p>
+    <p>📌 <strong>Important :</strong> Tu vas utiliser les chiffres d'aujourd'hui <em>tous les jours suivants</em>. Garde cette page sous la main !</p>
+  </div>
+
+  <!-- INSTRUCTION -->
+  <div class="card orange">
+    <div class="card-label orange">📝 Instruction du Coach</div>
+    <div class="card-title">Ta Mission du Jour — En 3 étapes simples</div>
+    <div class="steps">
+      <div class="step">
+        <div class="step-icon">📱</div>
+        <div class="step-text">
+          <strong>Ouvre ton application bancaire</strong> (sur ton téléphone ou ordinateur).
+          <div class="step-note">👉 Si tu as plusieurs comptes, prends le compte principal — celui où arrive ton salaire et où tu paies tes dépenses du quotidien.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon">📅</div>
+        <div class="step-text">
+          <strong>Remonte sur les 30 derniers jours</strong> de transactions.
+          <div class="step-note">👉 Exemple : si on est le 15 mars, regarde du 15 février au 15 mars. Ce n'est pas grave si ce n'est pas exact à l'euro près !</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-icon">🔍</div>
+        <div class="step-text">
+          <strong>Cherche les grandes masses, pas les détails.</strong>
+          <div class="step-note">👉 Pas besoin de noter chaque café à 1,80 €. On veut juste deux chiffres : combien est <em>entré</em> ? Combien est <em>sorti</em> ?</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION A -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">📊 Partie A — Les Faits (Finance)</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- EXERCICE 1 -->
+  <div class="card green">
+    <div class="exercise-header">
+      <div class="exercise-num green">01</div>
+      <div class="exercise-title">📸 La Photo du Mois</div>
+    </div>
+    <div class="card-body" style="margin-bottom:10px;">Remplis avec les <strong>totaux approximatifs</strong> de tes 30 derniers jours.</div>
+
+    <div class="explainer" style="margin-bottom:14px;">
+      <div class="explainer-title">💡 Comment trouver ces chiffres ?</div>
+      <p><strong>Total Entrées</strong> = Tout ce qui est arrivé sur ton compte : salaire, allocations, remboursements de proches, ventes, etc.</p>
+      <p><strong>Total Sorties</strong> = Tout ce qui est parti de ton compte : loyer, courses, abonnements, restaurants, essence, etc.</p>
+      <p>🎯 <em>Pas de panique si ce n'est pas précis — une estimation à ±50 € près, c'est parfait pour commencer !</em></p>
+    </div>
+
+    <div class="finance-grid">
+      <div class="finance-box income">
+        <div class="finance-box-icon">💚</div>
+        <div class="finance-box-label">TOTAL ENTRÉES (+)</div>
+        <div class="finance-box-hint">Salaires, primes, ventes, aides…</div>
+        <input type="number" class="finance-input" id="income" placeholder="0" min="0" aria-label="Total entrées" oninput="calcVerdict()">
+      </div>
+      <div class="finance-box expense">
+        <div class="finance-box-icon">❤️</div>
+        <div class="finance-box-label">TOTAL SORTIES (−)</div>
+        <div class="finance-box-hint">Loyer, courses, factures, loisirs…</div>
+        <input type="number" class="finance-input" id="expense" placeholder="0" min="0" aria-label="Total sorties" oninput="calcVerdict()">
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCICE 2 -->
+  <div class="card blue">
+    <div class="exercise-header">
+      <div class="exercise-num blue">02</div>
+      <div class="exercise-title">⚖️ Le Verdict</div>
+    </div>
+    <div class="card-body">Calculez la différence <strong>(Entrées − Sorties)</strong> :</div>
+
+    <div class="analogy" style="margin-top:12px;">
+      <div class="analogy-title">🪣 Imagine un seau d'eau</div>
+      L'eau qui entre dans le seau, c'est ton <strong>salaire</strong>. L'eau qui sort par les trous du seau, ce sont tes <strong>dépenses</strong>. Est-ce que ton seau se remplit, se vide, ou reste à niveau ? C'est exactement ce qu'on mesure ici.
+    </div>
+
+    <div class="verdict-box verdict-neutral" id="verdictBox">
+      <div class="verdict-label">Résultat du mois</div>
+      <div class="verdict-amount" id="verdictAmount">— €</div>
+      <div class="verdict-message" id="verdictMessage">Remplissez les champs ci-dessus pour voir votre résultat.</div>
+    </div>
+    <div class="check-options" id="verdictOptions" style="display:none;">
+      <div class="check-item pos" id="checkPos" onclick="selectVerdict('pos')">
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>✅ Positif — Tu as de la marge</strong>
+          Bravo ! Ça veut dire qu'il te reste de l'argent à la fin du mois. C'est la base pour commencer à épargner (on verra ça au Jour 4 !).
+        </div>
+      </div>
+      <div class="check-item neg" id="checkNeg" onclick="selectVerdict('neg')">
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>⚠️ Négatif — Tu vis au-dessus de tes moyens</strong>
+          C'est une <em>information</em>, pas une honte. Beaucoup de gens sont dans cette situation sans le savoir. Savoir, c'est déjà changer. On va s'en occuper ensemble.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXERCICE 3 -->
+  <div class="card red">
+    <div class="exercise-header">
+      <div class="exercise-num" style="background:#fdecea;color:var(--accent3);">03</div>
+      <div class="exercise-title">🔎 La Chasse aux Fuites</div>
+    </div>
+    <div class="card-body" style="margin-bottom:10px;">Identifie <strong>3 dépenses</strong> dont tu ne te souvenais même plus ou qui ne t'ont apporté <em>aucune joie réelle</em>.</div>
+
+    <div class="explainer" style="margin-bottom:14px;">
+      <div class="explainer-title">🕵️ Comment trouver les "fuites" ?</div>
+      <p>Ce sont les dépenses "fantômes" — celles qui partent tout seules sans que tu t'en rendes compte :</p>
+      <p>• Un abonnement que tu avais oublié (Netflix, app, salle de sport non fréquentée...)</p>
+      <p>• Un achat impulsif dont tu ne te souviens plus</p>
+      <p>• Des petits trucs qui s'accumulent : livraisons à répétition, cafés quotidiens...</p>
+      <p>🎯 <em>On ne dit pas que c'était "mal" de dépenser ça — juste que si on avait su, on aurait peut-être fait autrement.</em></p>
+    </div>
+
+    <div class="leak-items">
+      <div class="leak-item">
+        <div class="leak-row">
+          <div style="width:26px;height:26px;background:#fdecea;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent3);flex-shrink:0;">1</div>
+          <div class="leak-input-wrap">
+            <div class="leak-label">Dépense</div>
+            <input type="text" class="text-input" placeholder="Ex: Abonnement oublié, achat impulsif…" aria-label="Dépense 1">
+          </div>
+          <div class="leak-amount-wrap">
+            <div class="leak-label">Montant</div>
+            <input type="number" class="amount-input" placeholder="0 €" min="0" aria-label="Montant dépense 1">
+          </div>
+        </div>
+      </div>
+      <div class="leak-item">
+        <div class="leak-row">
+          <div style="width:26px;height:26px;background:#fdecea;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent3);flex-shrink:0;">2</div>
+          <div class="leak-input-wrap">
+            <div class="leak-label">Dépense</div>
+            <input type="text" class="text-input" placeholder="Ex: Livraison repas, magazine non lu…" aria-label="Dépense 2">
+          </div>
+          <div class="leak-amount-wrap">
+            <div class="leak-label">Montant</div>
+            <input type="number" class="amount-input" placeholder="0 €" min="0" aria-label="Montant dépense 2">
+          </div>
+        </div>
+      </div>
+      <div class="leak-item">
+        <div class="leak-row">
+          <div style="width:26px;height:26px;background:#fdecea;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--accent3);flex-shrink:0;">3</div>
+          <div class="leak-input-wrap">
+            <div class="leak-label">Dépense</div>
+            <input type="text" class="text-input" placeholder="Ex: Achat en promo inutile…" aria-label="Dépense 3">
+          </div>
+          <div class="leak-amount-wrap">
+            <div class="leak-label">Montant</div>
+            <input type="number" class="amount-input" placeholder="0 €" min="0" aria-label="Montant dépense 3">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION B -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">🧠 Partie B — Le Ressenti (Développement Personnel)</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="explainer">
+    <div class="explainer-title">🧠 Pourquoi parler de ses émotions quand on parle d'argent ?</div>
+    <p>La finance, ce n'est pas que des chiffres. <strong>L'argent provoque des émotions très fortes</strong> : peur, honte, stress, excitation... Ces émotions influencent nos décisions souvent plus que la logique !</p>
+    <p>Si on ne les reconnaît pas, elles nous controlent sans qu'on s'en aperçoive. Par exemple, quelqu'un qui a honte de son argent va éviter de regarder ses comptes — et la situation empire.</p>
+    <p>🎯 <em>Nommer son émotion, c'est déjà prendre le dessus sur elle.</em></p>
+  </div>
+
+  <!-- EXERCICE 4 -->
+  <div class="card purple">
+    <div class="exercise-header">
+      <div class="exercise-num purple">04</div>
+      <div class="exercise-title">🌤️ Météo Intérieure</div>
+    </div>
+    <div class="card-body" style="margin-bottom:4px;">En regardant ces chiffres, quelle émotion ressens-tu ? <em>(Sélectionne une ou plusieurs réponses)</em></div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:14px;font-style:italic;">Il n'y a pas de bonne ou mauvaise réponse — sois honnête avec toi-même.</div>
+    <div class="emotion-grid">
+      <div class="emotion-item" data-emotion="ANXIÉTÉ" onclick="toggleEmotion(this)">
+        <span class="emotion-emoji">😰</span>
+        <div class="emotion-label">ANXIÉTÉ</div>
+      </div>
+      <div class="emotion-item" data-emotion="FIERTÉ" onclick="toggleEmotion(this)">
+        <span class="emotion-emoji">🌟</span>
+        <div class="emotion-label">FIERTÉ</div>
+      </div>
+      <div class="emotion-item" data-emotion="HONTE" onclick="toggleEmotion(this)">
+        <span class="emotion-emoji">😔</span>
+        <div class="emotion-label">HONTE</div>
+      </div>
+      <div class="emotion-item" data-emotion="SURPRISE" onclick="toggleEmotion(this)">
+        <span class="emotion-emoji">😲</span>
+        <div class="emotion-label">SURPRISE</div>
+      </div>
+      <div class="emotion-item" data-emotion="DÉNI" onclick="toggleEmotion(this)">
+        <span class="emotion-emoji">🙈</span>
+        <div class="emotion-label">DÉNI</div>
+      </div>
+      <div class="emotion-item" data-emotion="COLÈRE" onclick="toggleEmotion(this)">
+        <span class="emotion-emoji">😤</span>
+        <div class="emotion-label">COLÈRE</div>
+      </div>
+      <div class="emotion-item" data-emotion="SOULAGEMENT" onclick="toggleEmotion(this)">
+        <span class="emotion-emoji">😮‍💨</span>
+        <div class="emotion-label">SOULAGEMENT</div>
+      </div>
+      <div class="emotion-item" data-emotion="MOTIVATION" onclick="toggleEmotion(this)">
+        <span class="emotion-emoji">🚀</span>
+        <div class="emotion-label">MOTIVATION</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MANTRA -->
+  <div class="mantra-card">
+    <div class="mantra-icon">🗣️</div>
+    <div class="mantra-label">✨ Exercice 5 — Le Mantra du Jour</div>
+    <div class="mantra-text">
+      "Ma <span>valeur financière</span> n'est pas ma <span>valeur humaine</span>.<br>
+      Je regarde mes chiffres en face pour pouvoir construire mon futur."
+    </div>
+    <div style="font-size:13px;opacity:0.75;margin-bottom:16px;line-height:1.6;">Un mantra, c'est une phrase qu'on se répète pour changer sa façon de penser. Le cerveau croit ce qu'on lui dit souvent. Dis-la à voix haute !</div>
+    <button class="mantra-btn" id="mantraBtn" onclick="readMantra()">
+      🔊 Lire à voix haute
+    </button>
+  </div>
+
+  <!-- WHAT'S NEXT -->
+  <div class="next-day">
+    <div class="next-day-icon">🔮</div>
+    <div>
+      <div class="next-day-label">👉 Ce qui t'attend demain — Jour 2</div>
+      <div class="next-day-title">L'Héritage Invisible</div>
+      <div class="next-day-text">
+        Maintenant que tu connais tes chiffres, une grande question se pose : <strong>pourquoi tu dépenses comme tu dépenses ?</strong><br><br>
+        Demain, on va découvrir les <em>croyances sur l'argent</em> que tu as héritées de ton enfance — souvent sans t'en rendre compte. Ces croyances pilotent tes décisions financières à ton insu. Il est temps de les identifier pour reprendre le volant.
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSING -->
+  <div class="closing">
+    <div class="closing-icon">🌅</div>
+    <div class="closing-title">Fin du Jour 1</div>
+    <div class="closing-text">Tu as fait le plus dur : tu as <strong>allumé la lumière</strong>. Les chiffres que tu viens de noter sont la fondation de tout ce qu'on va construire ensemble. À demain !</div>
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('progressFill').style.width = '14.3%';
+    }, 400);
+  });
+
+  function calcVerdict() {
+    const incomeVal = document.getElementById('income').value;
+    const expenseVal = document.getElementById('expense').value;
+    const income = parseFloat(incomeVal) || 0;
+    const expense = parseFloat(expenseVal) || 0;
+    const result = income - expense;
+    const box = document.getElementById('verdictBox');
+    const amount = document.getElementById('verdictAmount');
+    const message = document.getElementById('verdictMessage');
+    const options = document.getElementById('verdictOptions');
+
+    if (incomeVal === '' && expenseVal === '') {
+      box.className = 'verdict-box verdict-neutral';
+      amount.textContent = '— €';
+      message.textContent = 'Remplissez les champs ci-dessus pour voir votre résultat.';
+      options.style.display = 'none';
+      return;
+    }
+
+    const formatted = result.toLocaleString('fr-FR', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    amount.textContent = (result >= 0 ? '+' : '') + formatted + ' €';
+
+    if (result > 0) {
+      box.className = 'verdict-box verdict-positive';
+      message.textContent = '🎉 Ton seau se remplit ! Il te reste de l\'argent à la fin du mois — c\'est une base solide pour épargner et investir (Jour 4 !).';
+      document.getElementById('checkPos').classList.add('selected');
+      document.getElementById('checkNeg').classList.remove('selected');
+    } else if (result < 0) {
+      box.className = 'verdict-box verdict-negative';
+      message.textContent = '💪 Ton seau se vide un peu. C\'est une information précieuse, pas un jugement. Tu es ici précisément pour changer ça — et tu peux !';
+      document.getElementById('checkNeg').classList.add('selected');
+      document.getElementById('checkPos').classList.remove('selected');
+    } else {
+      box.className = 'verdict-box verdict-neutral';
+      message.textContent = '⚖️ Tu es à l\'équilibre exact — ton seau ni ne se remplit, ni ne se vide. Une base à optimiser !';
+      document.getElementById('checkPos').classList.remove('selected');
+      document.getElementById('checkNeg').classList.remove('selected');
+    }
+    options.style.display = 'flex';
+  }
+
+  function selectVerdict(type) {
+    document.getElementById('checkPos').classList.toggle('selected', type === 'pos');
+    document.getElementById('checkNeg').classList.toggle('selected', type === 'neg');
+  }
+
+  function toggleEmotion(el) {
+    el.classList.toggle('selected');
+  }
+
+  function readMantra() {
+    const btn = document.getElementById('mantraBtn');
+    btn.classList.add('reading');
+    btn.innerHTML = '✅ Je l\'ai lu à voix haute !';
+    setTimeout(() => {
+      btn.classList.remove('reading');
+      btn.innerHTML = '🔊 Relire à voix haute';
+    }, 3000);
+  }
+</script>
+<style>.pdf-btn{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#2d6a6a,#1a4a4a);color:#fff;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:9999;transition:transform .2s,box-shadow .2s;}.pdf-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,0.4);}@media print{.pdf-btn{display:none!important;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}.card,[class*="card"]{break-inside:avoid;}}</style><button class="pdf-btn" onclick="window.print()">📄 Exporter en PDF</button></body>
+</html>

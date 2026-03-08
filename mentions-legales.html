@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mentions légales — Unlokk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #04080f;
+    --bg2: #080d17;
+    --ink: #eef2ff;
+    --ink2: #8892b0;
+    --accent: #5b8af0;
+    --accent2: #7c3aed;
+    --glow: rgba(91,138,240,0.15);
+    --border: rgba(91,138,240,0.12);
+    --card-bg: rgba(255,255,255,0.028);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    overflow-x: hidden;
+    cursor: none;
+  }
+
+  /* ── CUSTOM CURSOR ── */
+  .cursor {
+    position: fixed;
+    width: 10px; height: 10px;
+    background: var(--accent);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9999;
+    transition: transform 0.1s;
+    mix-blend-mode: screen;
+  }
+  .cursor-ring {
+    position: fixed;
+    width: 36px; height: 36px;
+    border: 1.5px solid rgba(91,138,240,0.5);
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 9998;
+    transition: transform 0.18s ease, width 0.2s, height 0.2s;
+  }
+
+  /* ── NOISE ── */
+  body::after {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 1000; opacity: 0.5;
+  }
+
+  /* ── GRID BG ── */
+  .grid-bg {
+    position: fixed; inset: 0;
+    background-image:
+      linear-gradient(rgba(91,138,240,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(91,138,240,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0;
+    padding: 20px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    z-index: 100;
+    border-bottom: 1px solid var(--border);
+    background: rgba(4,8,15,0.7);
+    backdrop-filter: blur(20px);
+  }
+  .nav-logo {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800; font-size: 22px;
+    letter-spacing: -0.5px;
+    display: flex; align-items: center; gap: 8px;
+    text-decoration: none; color: var(--ink);
+  }
+  .logo-dot {
+    width: 8px; height: 8px;
+    background: var(--accent);
+    border-radius: 50%;
+    display: inline-block;
+    box-shadow: 0 0 12px var(--accent);
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.6; transform: scale(0.8); }
+  }
+  .nav-back {
+    color: var(--ink2); text-decoration: none;
+    font-size: 14px; font-weight: 500;
+    transition: color 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .nav-back:hover { color: var(--ink); }
+
+  /* ── HERO ── */
+  .hero {
+    padding: 160px 48px 80px;
+    max-width: 900px;
+    margin: 0 auto;
+    position: relative;
+  }
+  .hero-eyebrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 12px; font-weight: 600;
+    letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 24px;
+  }
+  .eyebrow-dot {
+    width: 6px; height: 6px;
+    background: var(--accent);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--accent);
+  }
+  .hero-title {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(40px, 6vw, 72px);
+    font-weight: 800;
+    letter-spacing: -3px;
+    line-height: 1;
+    margin-bottom: 20px;
+  }
+  .hero-title em {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent);
+  }
+  .hero-sub {
+    color: var(--ink2);
+    font-size: 16px;
+    font-weight: 300;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    height: 1px;
+    background: var(--border);
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  /* ── CONTENT ── */
+  .content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 48px 120px;
+  }
+
+  .section-block {
+    padding: 52px 0;
+    border-bottom: 1px solid var(--border);
+    opacity: 0; transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+  .section-block.visible {
+    opacity: 1; transform: translateY(0);
+  }
+  .section-block:last-child { border-bottom: none; }
+
+  .block-label {
+    font-size: 11px; font-weight: 600;
+    letter-spacing: 2.5px; text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .block-label::before {
+    content: '';
+    width: 16px; height: 1px;
+    background: var(--accent);
+    display: inline-block;
+  }
+
+  .block-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px; font-weight: 700;
+    letter-spacing: -0.5px;
+    margin-bottom: 20px;
+    color: var(--ink);
+  }
+
+  .block-body {
+    color: var(--ink2);
+    font-size: 15px;
+    line-height: 1.8;
+    font-weight: 300;
+  }
+  .block-body strong {
+    color: var(--ink);
+    font-weight: 500;
+  }
+  .block-body a {
+    color: var(--accent);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(91,138,240,0.3);
+    transition: border-color 0.2s;
+  }
+  .block-body a:hover { border-color: var(--accent); }
+
+  .block-body p + p { margin-top: 12px; }
+
+  /* ── INFO CARD ── */
+  .info-card {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 28px 32px;
+    margin-top: 20px;
+  }
+  .info-row {
+    display: flex; gap: 16px;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(91,138,240,0.06);
+    font-size: 14px;
+  }
+  .info-row:last-child { border-bottom: none; padding-bottom: 0; }
+  .info-key {
+    color: var(--ink2);
+    font-weight: 400;
+    min-width: 160px;
+    flex-shrink: 0;
+  }
+  .info-val {
+    color: var(--ink);
+    font-weight: 400;
+  }
+  .info-val.placeholder {
+    color: var(--accent);
+    font-style: italic;
+    opacity: 0.7;
+  }
+
+  /* ── HIGHLIGHT BOX ── */
+  .highlight-box {
+    background: rgba(91,138,240,0.06);
+    border: 1px solid rgba(91,138,240,0.18);
+    border-left: 3px solid var(--accent);
+    border-radius: 8px;
+    padding: 20px 24px;
+    margin-top: 20px;
+    font-size: 14px;
+    color: var(--ink2);
+    line-height: 1.7;
+  }
+  .highlight-box strong { color: var(--ink); }
+
+  /* ── FOOTER ── */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 40px 48px;
+    display: flex; justify-content: space-between; align-items: center;
+    max-width: 900px; margin: 0 auto;
+    font-size: 13px; color: var(--ink2);
+  }
+  footer a {
+    color: var(--ink2); text-decoration: none;
+    transition: color 0.2s;
+  }
+  footer a:hover { color: var(--ink); }
+
+  @media (max-width: 700px) {
+    nav { padding: 16px 24px; }
+    .hero { padding: 130px 24px 60px; }
+    .content { padding: 0 24px 80px; }
+    footer { flex-direction: column; gap: 16px; text-align: center; padding: 32px 24px; }
+    .info-key { min-width: 120px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+<div class="grid-bg"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="index.html" class="nav-logo">
+    <span class="logo-dot"></span>
+    Unlokk
+  </a>
+  <a href="index.html" class="nav-back">← Retour à l'accueil</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-eyebrow">
+    <span class="eyebrow-dot"></span>
+    Informations légales
+  </div>
+  <h1 class="hero-title">Mentions<br><em>légales.</em></h1>
+  <p class="hero-sub">Dernière mise à jour : 2025 · unlokk.life</p>
+</section>
+
+<div class="divider"></div>
+
+<!-- CONTENT -->
+<div class="content">
+
+  <!-- ÉDITEUR -->
+  <div class="section-block">
+    <div class="block-label">01</div>
+    <h2 class="block-title">Éditeur du site</h2>
+    <div class="block-body">
+      <p>Le site <strong>unlokk.life</strong> est édité par :</p>
+      <div class="info-card">
+        <div class="info-row">
+          <span class="info-key">Raison sociale</span>
+          <span class="info-val placeholder">[Valentin RICHARD]</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">Forme juridique</span>
+          <span class="info-val placeholder">[Auto-entrepreneur]</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">SIRET</span>
+          <span class="info-val placeholder">[98527266500011]</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">Siège social</span>
+          <span class="info-val placeholder">[15 RTE D AVIGNON 30131 PUJAUT]</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">Email</span>
+          <span class="info-val"><a href="mailto:contact@unlokk.life">contact@unlokk.life</a></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HÉBERGEMENT -->
+  <div class="section-block">
+    <div class="block-label">02</div>
+    <h2 class="block-title">Hébergement</h2>
+    <div class="block-body">
+      <p>Ce site est hébergé par :</p>
+      <div class="info-card">
+        <div class="info-row">
+          <span class="info-key">Hébergeur</span>
+          <span class="info-val placeholder">[Netlify]</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">Adresse</span>
+          <span class="info-val placeholder">[Netlify, Inc. 101 2nd Street San Francisco, CA 94105]</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">Site</span>
+          <span class="info-val placeholder"><a href="https://www.netlify.com">[https://www.netlify.com]</a></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ACTIVITÉ -->
+  <div class="section-block">
+    <div class="block-label">03</div>
+    <h2 class="block-title">Activité et nature des services</h2>
+    <div class="block-body">
+      <p>Unlokk propose des <strong>formations en ligne sous forme de micro-learning</strong> à destination des particuliers. Les contenus sont délivrés sous forme numérique, par email et via des pages web interactives.</p>
+      <p>Le programme actuellement disponible est <strong>Reset Financier — 7 Jours</strong> : une formation interactive de 7 jours conçue pour transformer le rapport à l'argent, à raison de 10 à 20 minutes par jour.</p>
+      <div class="highlight-box">
+        ⚠️ <strong>Important :</strong> Les contenus proposés par Unlokk ont une vocation exclusivement <strong>éducative et informative</strong>. Ils ne constituent pas un conseil financier au sens réglementaire du terme (article L. 541-1 du Code monétaire et financier).
+      </div>
+    </div>
+  </div>
+
+  <!-- PRIX -->
+  <div class="section-block">
+    <div class="block-label">04</div>
+    <h2 class="block-title">Prix et conditions de vente</h2>
+    <div class="block-body">
+      <p>Les prix sont indiqués en <strong>euros toutes taxes comprises (TTC)</strong>. L'accès au programme <em>Reset Financier — 7 Jours</em> est proposé au prix de <strong>3,50 €</strong> pour un accès complet.</p>
+      <p>Le paiement est <strong>unique et non reconductible</strong> : aucun abonnement, aucun prélèvement automatique ultérieur.</p>
+      <p>L'accès au programme est délivré immédiatement après confirmation du paiement, par envoi d'un email à l'adresse renseignée lors de l'inscription.</p>
+    </div>
+  </div>
+
+  <!-- RÉTRACTATION -->
+  <div class="section-block">
+    <div class="block-label">05</div>
+    <h2 class="block-title">Droit de rétractation</h2>
+    <div class="block-body">
+      <p>Conformément à l'<strong>article L.221-28 du Code de la consommation</strong>, le droit de rétractation de 14 jours ne peut être exercé pour les contenus numériques dont la fourniture a commencé avec l'accord préalable exprès du consommateur, et après renonciation expresse à son droit de rétractation.</p>
+      <p>En accédant au programme immédiatement après le paiement, l'utilisateur <strong>reconnaît expressément renoncer à son droit de rétractation</strong> et accepte que la prestation soit exécutée sans délai.</p>
+    </div>
+  </div>
+
+  <!-- PROPRIÉTÉ INTELLECTUELLE -->
+  <div class="section-block">
+    <div class="block-label">06</div>
+    <h2 class="block-title">Propriété intellectuelle</h2>
+    <div class="block-body">
+      <p>L'ensemble des contenus présents sur le site unlokk.life — textes, exercices, structure des programmes, visuels, marque, logo — sont la <strong>propriété exclusive d'Unlokk</strong> et sont protégés par le droit d'auteur (Code de la propriété intellectuelle).</p>
+      <p>Toute reproduction, même partielle, diffusion, modification ou exploitation commerciale de ces contenus est <strong>strictement interdite</strong> sans autorisation écrite préalable.</p>
+    </div>
+  </div>
+
+  <!-- DONNÉES PERSONNELLES -->
+  <div class="section-block">
+    <div class="block-label">07</div>
+    <h2 class="block-title">Données personnelles (RGPD)</h2>
+    <div class="block-body">
+      <p>Unlokk collecte les données suivantes lors de l'inscription : <strong>prénom et adresse email</strong>. Ces données sont utilisées exclusivement pour :</p>
+      <div class="info-card" style="margin-top: 16px; margin-bottom: 20px;">
+        <div class="info-row"><span class="info-key">Finalité</span><span class="info-val">Délivrance du programme commandé et communications liées</span></div>
+        <div class="info-row"><span class="info-key">Responsable</span><span class="info-val placeholder">[Valentin RICHARD]</span></div>
+        <div class="info-row"><span class="info-key">Conservation</span><span class="info-val">3 ans à compter du dernier contact</span></div>
+        <div class="info-row"><span class="info-key">Tiers</span><span class="info-val">Données non cédées à des tiers à des fins commerciales</span></div>
+        <div class="info-row"><span class="info-key">Contact RGPD</span><span class="info-val"><a href="mailto:contact@unlokk.life">contact@unlokk.life</a></span></div>
+      </div>
+      <p>Conformément au <strong>Règlement (UE) 2016/679 (RGPD)</strong> et à la loi Informatique et Libertés, vous disposez d'un droit d'accès, de rectification, de suppression, de portabilité et d'opposition concernant vos données personnelles.</p>
+      <p>Pour exercer ces droits, contactez-nous à <a href="mailto:contact@unlokk.life">contact@unlokk.life</a>. En cas de réclamation non résolue, vous pouvez saisir la <strong>CNIL</strong> (<a href="https://www.cnil.fr" target="_blank">cnil.fr</a>).</p>
+    </div>
+  </div>
+
+  <!-- COOKIES -->
+  <div class="section-block">
+    <div class="block-label">08</div>
+    <h2 class="block-title">Cookies</h2>
+    <div class="block-body">
+      <p>Ce site utilise uniquement des <strong>cookies techniques strictement nécessaires</strong> à son bon fonctionnement (navigation, gestion de session).</p>
+      <p>Aucun cookie publicitaire, de traçage ou de profilage tiers n'est déposé sans votre consentement préalable. Vous pouvez configurer votre navigateur pour refuser les cookies ; certaines fonctionnalités du site pourraient en être affectées.</p>
+    </div>
+  </div>
+
+  <!-- RESPONSABILITÉ -->
+  <div class="section-block">
+    <div class="block-label">09</div>
+    <h2 class="block-title">Limitation de responsabilité</h2>
+    <div class="block-body">
+      <p>Les contenus du programme sont fournis à titre <strong>informatif et éducatif</strong>. Unlokk ne saurait être tenu responsable des décisions financières prises par les utilisateurs sur la base des exercices ou contenus proposés.</p>
+      <p>Le programme ne constitue pas un conseil en investissement, un conseil fiscal, ni un service de gestion de patrimoine au sens des réglementations applicables.</p>
+      <p>Unlokk s'efforce d'assurer la disponibilité et l'exactitude des informations publiées, mais ne saurait garantir l'absence d'erreurs, d'interruptions ou d'inexactitudes.</p>
+    </div>
+  </div>
+
+  <!-- MÉDIATION -->
+  <div class="section-block">
+    <div class="block-label">10</div>
+    <h2 class="block-title">Médiation de la consommation</h2>
+    <div class="block-body">
+      <p>En cas de litige non résolu avec Unlokk, tout consommateur peut recourir gratuitement à un <strong>service de médiation de la consommation</strong>, conformément à l'article L.612-1 du Code de la consommation.</p>
+      <div class="info-card">
+        <div class="info-row">
+          <span class="info-key">Médiateur</span>
+          <span class="info-val placeholder">[AME Conso]</span>
+        </div>
+        <div class="info-row">
+          <span class="info-key">Site</span>
+          <span class="info-val placeholder"><a href="https://www.mediationconso-ame.com/">[https://www.mediationconso-ame.com/]</a></span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- DROIT APPLICABLE -->
+  <div class="section-block">
+    <div class="block-label">11</div>
+    <h2 class="block-title">Droit applicable et juridiction</h2>
+    <div class="block-body">
+      <p>Les présentes mentions légales sont soumises au <strong>droit français</strong>. En cas de litige, les parties s'efforceront de trouver une solution amiable avant tout recours judiciaire.</p>
+      <p>À défaut, tout litige sera porté devant les <strong>tribunaux compétents du ressort du siège social d'Unlokk</strong>, sauf disposition légale contraire applicable aux consommateurs.</p>
+    </div>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>© 2025 Unlokk.life</div>
+  <a href="index.html">← Retour à l'accueil</a>
+</footer>
+
+<script>
+  // ── CUSTOM CURSOR ──
+  const cursor = document.getElementById('cursor');
+  const ring = document.getElementById('cursorRing');
+  let mx = 0, my = 0, rx = 0, ry = 0;
+
+  document.addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    cursor.style.left = mx - 5 + 'px';
+    cursor.style.top = my - 5 + 'px';
+  });
+
+  function animRing() {
+    rx += (mx - rx - 18) * 0.12;
+    ry += (my - ry - 18) * 0.12;
+    ring.style.left = rx + 'px';
+    ring.style.top = ry + 'px';
+    requestAnimationFrame(animRing);
+  }
+  animRing();
+
+  document.querySelectorAll('a').forEach(el => {
+    el.addEventListener('mouseenter', () => {
+      cursor.style.transform = 'scale(2)';
+      ring.style.width = '52px'; ring.style.height = '52px';
+    });
+    el.addEventListener('mouseleave', () => {
+      cursor.style.transform = 'scale(1)';
+      ring.style.width = '36px'; ring.style.height = '36px';
+    });
+  });
+
+  // ── SCROLL REVEAL ──
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.section-block').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>

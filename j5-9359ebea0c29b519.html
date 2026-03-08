@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jour 5 – La Vision</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f0eb;
+    --card: #ffffff;
+    --accent1: #2d6a6a;
+    --accent2: #e8a838;
+    --accent3: #e05c5c;
+    --accent4: #5b8cdc;
+    --soft: #f0ebe4;
+    --text: #1e1e1e;
+    --muted: #7a7068;
+    --border: #e0d9d0;
+    --green: #3a9e6f;
+    --rose: #c2185b;
+    --radius: 16px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 0; }
+
+  .hero {
+    background: linear-gradient(135deg, #1a0a2e 0%, #3d1c6b 45%, #1a0a2e 100%);
+    color: white;
+    padding: 48px 24px 56px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 75% 25%, rgba(232,168,56,0.25) 0%, transparent 55%),
+                radial-gradient(ellipse at 20% 75%, rgba(194,24,91,0.2) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 50px; padding: 6px 18px; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; backdrop-filter: blur(6px); }
+  .hero-day { font-size: clamp(13px,2.5vw,15px); font-weight: 500; letter-spacing: 4px; text-transform: uppercase; opacity: 0.75; margin-bottom: 10px; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(28px,6vw,52px); font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
+  .hero-title span { color: var(--accent2); }
+  .hero-subtitle { font-size: clamp(14px,2.5vw,17px); opacity: 0.8; max-width: 520px; margin: 0 auto 28px; font-weight: 300; line-height: 1.7; }
+  .hero-emoji { font-size: clamp(40px,8vw,72px); display: block; margin-bottom: 18px; filter: drop-shadow(0 4px 16px rgba(232,168,56,0.5)); }
+  .progress-bar-wrap { max-width: 320px; margin: 0 auto; background: rgba(255,255,255,0.15); border-radius: 50px; height: 6px; overflow: hidden; }
+  .progress-bar-fill { width: 0%; height: 100%; background: var(--accent2); border-radius: 50px; transition: width 1s ease; }
+  .progress-label { font-size: 12px; opacity: 0.6; margin-top: 8px; }
+
+  /* JOURNEY MAP */
+  .journey-map {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px;
+    padding: 16px 20px; margin: 20px auto 0; max-width: 600px;
+    display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px;
+  }
+  .journey-step { font-size: 11px; font-weight: 600; opacity: 0.5; white-space: nowrap; }
+  .journey-step.done { opacity: 0.7; text-decoration: line-through; }
+  .journey-step.active { opacity: 1; background: rgba(232,168,56,0.25); border: 1px solid rgba(232,168,56,0.5); border-radius: 20px; padding: 3px 10px; color: var(--accent2); }
+  .journey-arrow { font-size: 10px; opacity: 0.3; margin: 0 2px; }
+
+  .container { max-width: 820px; margin: 0 auto; padding: 0 16px 60px; }
+
+  .card { background: var(--card); border-radius: var(--radius); padding: 28px 28px; box-shadow: var(--shadow); margin-top: 24px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: var(--radius) var(--radius) 0 0; }
+  .card.violet::before { background: linear-gradient(90deg, #7c3aed, #c084fc); }
+  .card.rose::before   { background: linear-gradient(90deg, #c2185b, #f48fb1); }
+  .card.indigo::before { background: linear-gradient(90deg, #5c6bc0, #9fa8da); }
+  .card.gold::before   { background: linear-gradient(90deg, #d4a017, var(--accent2)); }
+
+  .card-label { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; margin-bottom: 16px; }
+  .card-label.violet { background: #f3effe; color: #6b3dc0; }
+  .card-label.rose   { background: #fce4ec; color: #880e4f; }
+  .card-label.indigo { background: #e8eaf6; color: #3949ab; }
+  .card-label.gold   { background: #fdf6e3; color: #9a6e00; }
+
+  .card-title { font-family: 'Playfair Display', serif; font-size: clamp(18px,3.5vw,24px); font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+  .card-body { font-size: 15px; line-height: 1.8; color: #3a3530; }
+
+  .intro-highlight { background: linear-gradient(135deg, #f3effe, #fce4ec); border: 1px solid #ce93d8; border-radius: 12px; padding: 20px 22px; margin: 16px 0; font-size: 15px; line-height: 1.8; color: var(--text); }
+  .golden-rule { background: linear-gradient(135deg, #fef9ee, #fff8e8); border-left: 4px solid var(--accent2); border-radius: 0 12px 12px 0; padding: 16px 20px; margin-top: 16px; font-size: 14px; line-height: 1.7; }
+  .golden-rule strong { color: #9a6e00; }
+
+  .ferrari-box { background: linear-gradient(135deg, #1a0a2e, #3d1c6b); border-radius: 14px; padding: 22px 22px; margin-top: 16px; color: white; position: relative; overflow: hidden; }
+  .ferrari-box::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 20%, rgba(232,168,56,0.18), transparent 60%); pointer-events: none; }
+  .ferrari-box-title { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; opacity: 0.6; margin-bottom: 10px; }
+  .ferrari-box-text { font-size: 14px; line-height: 1.8; opacity: 0.92; }
+  .ferrari-box-text strong { color: var(--accent2); }
+
+  /* EXPLAINER — comme le Jour 3 */
+  .explainer { background: linear-gradient(135deg, #fffbf0, #fef9e7); border: 1.5px solid #f0d080; border-radius: 12px; padding: 16px 20px; margin: 16px 0; font-size: 14px; line-height: 1.8; }
+  .explainer-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #9a6e00; margin-bottom: 8px; }
+  .explainer p { color: #4a3a10; margin-bottom: 6px; }
+  .explainer p:last-child { margin-bottom: 0; }
+
+  /* ANALOGY — comme le Jour 3 */
+  .analogy { background: linear-gradient(135deg, #f0f4ff, #e8effe); border: 1.5px solid #b8c8f0; border-radius: 12px; padding: 16px 20px; margin: 12px 0; font-size: 14px; line-height: 1.8; color: #2a3a60; }
+  .analogy-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #3060b0; margin-bottom: 8px; }
+
+  /* RECAP BOX — comme le Jour 3 */
+  .recap-box { background: linear-gradient(135deg, #e0f2f2, #eef7f7); border: 1.5px solid #90d8c8; border-radius: 12px; padding: 16px 20px; margin: 16px 0; font-size: 14px; line-height: 1.8; }
+  .recap-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--accent1); margin-bottom: 8px; }
+
+  .section-header { display: flex; align-items: center; gap: 12px; margin-top: 36px; margin-bottom: 4px; }
+  .section-divider { flex: 1; height: 1px; background: var(--border); }
+  .section-title { font-size: 11px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+
+  .exercise-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .exercise-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .exercise-num.violet { background: #f3effe; color: #6b3dc0; }
+  .exercise-num.rose   { background: #fce4ec; color: #880e4f; }
+  .exercise-num.indigo { background: #e8eaf6; color: #3949ab; }
+  .exercise-num.gold   { background: #fdf6e3; color: #9a6e00; }
+  .exercise-title { font-size: 17px; font-weight: 700; }
+
+  .text-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 11px 14px; font-size: 14px; font-family: 'Inter', sans-serif; background: var(--soft); color: var(--text); outline: none; transition: all 0.2s; margin-top: 6px; }
+  .text-input:focus { border-color: #7c3aed; background: white; box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+  .text-input::placeholder { color: #b0a89e; }
+
+  /* 5 WHYS */
+  .why-chain { display: flex; flex-direction: column; gap: 0; margin-top: 18px; }
+  .why-node { position: relative; padding-left: 54px; padding-bottom: 22px; }
+  .why-node:last-child { padding-bottom: 0; }
+  .why-node:not(:last-child)::before { content: ''; position: absolute; left: 19px; top: 38px; bottom: 0; width: 2px; background: linear-gradient(to bottom, #c4b5fd, #f9a8d4); }
+  .why-dot { position: absolute; left: 0; top: 0; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; border: 2px solid transparent; z-index: 1; }
+  .why-node.goal .why-dot  { background: linear-gradient(135deg, #f3effe, #e9d8ff); color: #6b3dc0; border-color: #c4b5fd; }
+  .why-node.why1 .why-dot,
+  .why-node.why2 .why-dot,
+  .why-node.why3 .why-dot,
+  .why-node.why4 .why-dot  { background: linear-gradient(135deg, #fce4ec, #f8bbd0); color: #880e4f; border-color: #f48fb1; }
+  .why-node.heart .why-dot { background: linear-gradient(135deg, #fdf6e3, #fdebd0); color: #9a6e00; border-color: var(--accent2); font-size: 18px; }
+  .why-label { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 3px; }
+  .why-node.goal .why-label { color: #6b3dc0; }
+  .why-node.why1 .why-label, .why-node.why2 .why-label, .why-node.why3 .why-label, .why-node.why4 .why-label { color: #880e4f; }
+  .why-node.heart .why-label { color: #9a6e00; }
+  .why-hint { font-size: 11px; color: var(--muted); margin-bottom: 5px; font-style: italic; }
+  .why-node.heart .text-input { border-color: var(--accent2); background: #fef9ee; font-weight: 600; font-size: 15px; }
+  .why-node.heart .text-input:focus { border-color: #d4a017; box-shadow: 0 0 0 3px rgba(232,168,56,0.15); background: white; }
+
+  .heart-reveal { background: linear-gradient(135deg, #1a0a2e, #3d1c6b); border-radius: 14px; padding: 22px 22px; margin-top: 16px; color: white; text-align: center; position: relative; overflow: hidden; display: none; }
+  .heart-reveal.visible { display: block; }
+  .heart-reveal::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 60% 30%, rgba(232,168,56,0.2), transparent 60%); pointer-events: none; }
+  .heart-reveal-icon { font-size: 36px; margin-bottom: 10px; }
+  .heart-reveal-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6; margin-bottom: 10px; }
+  .heart-reveal-text { font-family: 'Playfair Display', serif; font-size: 16px; font-style: italic; line-height: 1.7; opacity: 0.95; }
+  .heart-reveal-text span { color: var(--accent2); }
+
+  /* POSTCARD */
+  .postcard { background: white; border-radius: 14px; border: 2px solid var(--border); overflow: hidden; margin-top: 16px; box-shadow: 0 8px 32px rgba(0,0,0,0.1); }
+  .postcard-top { background: linear-gradient(135deg, #1a0a2e 0%, #3d1c6b 60%, #c2185b 100%); padding: 24px 24px 20px; color: white; position: relative; overflow: hidden; }
+  .postcard-top::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 30%, rgba(232,168,56,0.2), transparent 60%); pointer-events: none; }
+  .postcard-stamp { position: absolute; top: 16px; right: 16px; width: 50px; height: 60px; background: rgba(255,255,255,0.12); border: 1.5px solid rgba(255,255,255,0.25); border-radius: 4px; display: flex; align-items: center; justify-content: center; font-size: 22px; }
+  .postcard-from { font-size: 11px; opacity: 0.6; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 700; margin-bottom: 6px; }
+  .postcard-title { font-family: 'Playfair Display', serif; font-size: clamp(16px,3.5vw,22px); font-weight: 700; line-height: 1.3; margin-bottom: 4px; }
+  .postcard-sub { font-size: 13px; opacity: 0.75; }
+  .postcard-body { padding: 22px 24px; }
+  .postcard-field { margin-bottom: 18px; }
+  .postcard-field:last-child { margin-bottom: 0; }
+  .postcard-field-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 4px; display: block; }
+  .postcard-line { width: 100%; border: none; border-bottom: 2px solid var(--border); padding: 8px 4px; font-size: 14px; font-family: 'Playfair Display', serif; font-style: italic; background: transparent; color: var(--text); outline: none; transition: border-color 0.2s; line-height: 1.6; display: block; }
+  .postcard-line:focus { border-bottom-color: #7c3aed; }
+  .postcard-line::placeholder { color: #c8bfb8; }
+  textarea.postcard-line { resize: vertical; }
+
+  /* RENAME */
+  .rename-rows { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+  .rename-row { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 10px; background: var(--soft); border-radius: 12px; padding: 14px 16px; border: 1px solid var(--border); transition: border-color 0.2s; }
+  .rename-row:focus-within { border-color: #7c3aed; background: #faf8ff; }
+  .rename-input { width: 100%; border: 1.5px solid transparent; border-radius: 8px; padding: 10px 12px; font-size: 13px; font-family: 'Inter', sans-serif; background: white; color: var(--text); outline: none; transition: all 0.2s; }
+  .rename-input.old { color: var(--muted); }
+  .rename-input.new { font-weight: 600; color: #6b3dc0; }
+  .rename-input.new:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.1); }
+  .rename-input::placeholder { color: #b0a89e; }
+  .rename-arrow { font-size: 18px; color: #7c3aed; flex-shrink: 0; text-align: center; }
+  .rename-tip { font-size: 11px; color: var(--muted); font-style: italic; margin-top: 4px; display: block; }
+
+  /* MANTRA */
+  .mantra-card { background: linear-gradient(135deg, #1a0a2e 0%, #3d1c6b 50%, #1a0a2e 100%); border-radius: var(--radius); padding: 36px 28px; color: white; text-align: center; margin-top: 24px; position: relative; overflow: hidden; }
+  .mantra-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 20%, rgba(232,168,56,0.25), transparent 60%), radial-gradient(ellipse at 20% 80%, rgba(194,24,91,0.15), transparent 50%); pointer-events: none; }
+  .mantra-icon { font-size: 40px; margin-bottom: 16px; }
+  .mantra-label { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.65; margin-bottom: 16px; }
+  .mantra-text { font-family: 'Playfair Display', serif; font-size: clamp(16px,3vw,22px); font-style: italic; line-height: 1.7; max-width: 520px; margin: 0 auto 20px; opacity: 0.95; }
+  .mantra-text span { color: var(--accent2); }
+  .mantra-btn { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 50px; padding: 10px 22px; font-size: 13px; font-weight: 600; color: white; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; backdrop-filter: blur(4px); }
+  .mantra-btn:hover { background: rgba(255,255,255,0.25); }
+  .mantra-btn.reading { background: var(--accent2); border-color: var(--accent2); color: #1a1a0a; }
+
+  .next-day {
+    background: linear-gradient(135deg, #e8f0fe, #eef3fb);
+    border: 1.5px solid #a8c4f0;
+    border-radius: var(--radius);
+    padding: 24px 28px;
+    margin-top: 24px;
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+  }
+  .next-day-icon { font-size: 36px; flex-shrink: 0; }
+  .next-day-label { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #1e3a5f; margin-bottom: 6px; }
+  .next-day-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #0d2137; margin-bottom: 8px; }
+  .next-day-text { font-size: 14px; line-height: 1.7; color: #2d4a6a; }
+
+  .closing { text-align: center; padding: 40px 20px 20px; }
+  .closing-icon { font-size: 48px; margin-bottom: 12px; }
+  .closing-title { font-family: 'Playfair Display', serif; font-size: clamp(18px,4vw,26px); font-weight: 700; color: #7c3aed; margin-bottom: 8px; }
+  .closing-text { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 400px; margin: 0 auto; }
+
+  @media (max-width: 500px) {
+    .card { padding: 20px 16px; }
+    .hero { padding: 36px 16px 44px; }
+    .rename-row { grid-template-columns: 1fr; }
+    .rename-arrow { transform: rotate(90deg); }
+    .next-day { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">💰 Programme Finance Personnelle</div>
+  <div class="hero-day">Jour 5 sur 7</div>
+  <span class="hero-emoji">🌟</span>
+  <h1 class="hero-title">La<br><span>Vision</span></h1>
+  <p class="hero-subtitle">Donner un sens à l'argent — connecter la logique à l'émotion pour tenir sur la durée.</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-label">Progression : Jour 5 / 7</div>
+  <div class="journey-map">
+    <div class="journey-step done">✅ État des lieux</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step done">✅ Croyances</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step done">✅ Budget</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step done">✅ Épargne</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step active">5️⃣ Vision</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">6️⃣ Tempêtes</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">7️⃣ Plan 90j</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- RECAP lien avec les jours précédents -->
+  <div class="recap-box">
+    <div class="recap-title">🔗 La suite des Jours 1 à 4</div>
+    Tu as fait l'état des lieux (Jour 1), exploré tes croyances (Jour 2), construit ton budget 50/30/20 (Jour 3) et mis en place l'épargne automatique (Jour 4). Ton système financier tourne maintenant en pilote automatique. <strong>Aujourd'hui, on lui donne du carburant émotionnel pour tenir sur la durée.</strong>
+  </div>
+
+  <!-- INTRO -->
+  <div class="card violet">
+    <div class="card-label violet">🎙️ Introduction</div>
+    <div class="card-title">"L'argent n'est pas le but — c'est juste le moyen de transport"</div>
+    <div class="intro-highlight">
+      Félicitations, ton système tourne en pilote automatique ! Mais une Ferrari avec un moteur parfait n'ira nulle part si tu ne mets pas d'essence dedans.<br><br>
+      <strong>Ton essence, c'est ton "Pourquoi".</strong>
+    </div>
+    <div class="ferrari-box">
+      <div class="ferrari-box-title">🔥 Le vrai problème</div>
+      <div class="ferrari-box-text">
+        L'argent n'a aucune valeur en soi. Si tu ne lui donnes pas une mission précise, il partira combler des vides émotionnels — le fameux <strong>shopping compulsif pour décompresser</strong> d'une mauvaise journée.<br><br>
+        On n'économise pas 5 000 € pour voir un chiffre sur un écran. On économise 5 000 € pour la <strong>paix mentale</strong> en cas de coup dur, pour oser quitter un job toxique, ou pour amener ses enfants à la mer.<br><br>
+        Plus l'image de ton objectif est forte, <strong>moins l'envie d'acheter sur un coup de tête aura d'emprise</strong> sur toi. Tu ne te prives pas d'un achat — tu finances ta liberté future.
+      </div>
+    </div>
+    <div class="golden-rule">
+      ✨ <strong>Aujourd'hui :</strong> On va transformer tes comptes bancaires froids en <em>tableaux de visualisation</em> chargés d'émotion.
+    </div>
+  </div>
+
+  <!-- EXPLAINER INTRO -->
+  <div class="explainer">
+    <div class="explainer-title">🤔 Pourquoi les émotions sont importantes avec l'argent ?</div>
+    <p>La plupart des gens pensent que gérer son argent, c'est une question de <em>maths</em>. C'est faux ! Des chercheurs en psychologie ont montré que nos décisions financières sont pilotées à 80% par nos émotions et seulement 20% par la raison.</p>
+    <p>Exemple simple : tu sais que tu <em>devrais</em> épargner 200 € ce mois-ci. Mais si tu reçois une mauvaise nouvelle au travail, tu vas peut-être commander une pizza, acheter des chaussures en ligne, et te retrouver à avoir dépensé ces 200 € sans t'en rendre compte.</p>
+    <p>🎯 <em>La solution ? Connecter ton argent à une image si forte, si précise, si désirable… qu'elle devient plus puissante que l'envie du moment.</em></p>
+  </div>
+
+  <!-- SECTION A -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">🔍 Partie A — L'Exercice des "5 Pourquoi"</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- EXPLAINER avant exercice 1 -->
+  <div class="explainer">
+    <div class="explainer-title">🔢 C'est quoi la méthode des "5 Pourquoi" ?</div>
+    <p>Cette technique vient des ingénieurs de Toyota dans les années 1970 — ils l'utilisaient pour trouver la <em>vraie</em> cause d'un problème en usine. Aujourd'hui, les psys et les coachs l'utilisent pour trouver nos vraies motivations.</p>
+    <p>L'idée est simple : quand tu réponds "pourquoi ?", ta première réponse est rarement la vraie raison. C'est une réponse de façade. Mais si tu te poses la question 5 fois de suite, tu creuses de plus en plus profond, jusqu'à toucher quelque chose de <strong>réel et d'émotionnel</strong>.</p>
+    <p>🧅 <em>C'est comme éplucher un oignon couche par couche — jusqu'au cœur.</em></p>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-title">🧒 Imagine un enfant de 6 ans</div>
+    Tu as sûrement remarqué qu'un enfant répond "pourquoi ?" à tout. C'est agaçant, mais c'est génial : à force de "pourquoi ?", il arrive toujours à une réponse fondamentale — une vérité profonde. C'est exactement ce qu'on fait ici avec ton argent. Sois ton propre enfant de 6 ans curieux !
+  </div>
+
+  <div class="card rose">
+    <div class="exercise-header">
+      <div class="exercise-num rose">01</div>
+      <div class="exercise-title">🪐 Creuser jusqu'à l'Émotion</div>
+    </div>
+    <div class="card-body" style="margin-bottom:6px;">Trouve ta motivation profonde. Écris un objectif financier, puis demande-toi <strong>"Pourquoi ?"</strong> 5 fois de suite pour atteindre la vraie racine émotionnelle.</div>
+    <div style="font-size:12px;color:var(--muted);margin-top:4px;line-height:1.6;">💡 Chaque "Pourquoi" doit aller plus profond que le précédent. Continue jusqu'à ressentir quelque chose dans ta poitrine.</div>
+
+    <div class="why-chain">
+      <div class="why-node goal">
+        <div class="why-dot">🎯</div>
+        <div class="why-label">Mon Objectif (le chiffre)</div>
+        <div class="why-hint">Ex : Je veux avoir 10 000 € de côté.</div>
+        <input type="text" class="text-input" id="goal" placeholder="Je veux…" oninput="updateHeartReveal()">
+      </div>
+      <div class="why-node why1">
+        <div class="why-dot">1</div>
+        <div class="why-label">Pourquoi est-ce important ?</div>
+        <div class="why-hint">Ex : Pour avoir un apport immobilier.</div>
+        <input type="text" class="text-input" placeholder="Parce que…" oninput="updateHeartReveal()">
+      </div>
+      <div class="why-node why2">
+        <div class="why-dot">2</div>
+        <div class="why-label">Pourquoi ?</div>
+        <div class="why-hint">Ex : Pour ne plus être locataire et faire ce que je veux.</div>
+        <input type="text" class="text-input" placeholder="Parce que…" oninput="updateHeartReveal()">
+      </div>
+      <div class="why-node why3">
+        <div class="why-dot">3</div>
+        <div class="why-label">Pourquoi ?</div>
+        <div class="why-hint">Ex : Pour me sentir vraiment chez moi.</div>
+        <input type="text" class="text-input" placeholder="Parce que…" oninput="updateHeartReveal()">
+      </div>
+      <div class="why-node why4">
+        <div class="why-dot">4</div>
+        <div class="why-label">Pourquoi ?</div>
+        <div class="why-hint">Ex : Pour créer un vrai cocon familial.</div>
+        <input type="text" class="text-input" placeholder="Parce que…" oninput="updateHeartReveal()">
+      </div>
+      <div class="why-node heart">
+        <div class="why-dot">❤️</div>
+        <div class="why-label">⭐ Le Vrai Pourquoi — Le Cœur</div>
+        <div class="why-hint">Ex : Je veux offrir à mes enfants la stabilité que je n'ai pas eue en grandissant.</div>
+        <input type="text" class="text-input" id="heartWhy" placeholder="Au fond de moi, ce que je veux vraiment c'est…" oninput="updateHeartReveal()">
+      </div>
+    </div>
+
+    <div class="heart-reveal" id="heartReveal">
+      <div class="heart-reveal-icon">💫</div>
+      <div class="heart-reveal-label">✨ Ta boussole émotionnelle</div>
+      <div class="heart-reveal-text">Chaque euro épargné te rapproche de :<br><span id="heartRevealText">"…"</span></div>
+    </div>
+  </div>
+
+  <!-- RECAP après section A -->
+  <div class="recap-box">
+    <div class="recap-title">✅ Ce que tu viens de découvrir — Partie A</div>
+    Tu as trouvé ton <strong>"Vrai Pourquoi"</strong> — la raison émotionnelle profonde derrière tes objectifs financiers. Ce n'est pas un chiffre sur un compte, c'est une image, un sentiment, un désir profond. <strong>Garde cette phrase précieusement — c'est ton carburant pour les moments difficiles.</strong>
+  </div>
+
+  <!-- SECTION B -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">📬 Partie B — La Carte Postale du Futur</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- EXPLAINER avant exercice 2 -->
+  <div class="explainer">
+    <div class="explainer-title">🧠 Pourquoi visualiser son futur aide vraiment ?</div>
+    <p>Des études en neurosciences ont montré que le cerveau ne fait pas bien la différence entre une chose <em>imaginée très précisément</em> et une chose <em>vécue réellement</em>. Les sportifs de haut niveau utilisent cette technique : ils s'imaginent gagner avant même de courir la course.</p>
+    <p>En finances, c'est pareil. Si tu peux <strong>voir</strong>, <strong>ressentir</strong> et <strong>décrire</strong> avec précision ta vie dans 5 ans, ton cerveau va automatiquement orienter tes décisions vers ce futur-là.</p>
+    <p>📮 <em>C'est pourquoi on va écrire une vraie carte postale depuis ce futur — comme si tu y étais déjà.</em></p>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-title">🗺️ Imagine que tu planifies des vacances</div>
+    Quand tu penses à un voyage que tu adores, tu imagines les plages, les saveurs, la chaleur du soleil — et ça te donne envie d'économiser pour y aller. Ton futur financier fonctionne exactement pareil : plus l'image est précise et désirable, plus tu as envie de faire les efforts pour y arriver.
+  </div>
+
+  <div class="card indigo">
+    <div class="exercise-header">
+      <div class="exercise-num indigo">02</div>
+      <div class="exercise-title">🔭 La Visualisation</div>
+    </div>
+    <div class="card-body" style="margin-bottom:4px;">Ferme les yeux. Imagine-toi dans <strong>5 ans</strong>. Ton système a fonctionné. Écris-toi une carte postale depuis ce futur.</div>
+
+    <div class="postcard">
+      <div class="postcard-top">
+        <div class="postcard-stamp">🌅</div>
+        <div class="postcard-from">Carte postale de ton futur toi</div>
+        <div class="postcard-title">Dans 5 ans, voilà où j'en suis…</div>
+        <div class="postcard-sub">Écris comme si tu y étais déjà.</div>
+      </div>
+      <div class="postcard-body">
+        <div class="postcard-field">
+          <label class="postcard-field-label">📍 Où suis-je physiquement ?</label>
+          <input type="text" class="postcard-line" placeholder="Ex : Dans ma propre maison, en voyage, dans un appartement que j'adore…">
+        </div>
+        <div class="postcard-field">
+          <label class="postcard-field-label">☀️ Que fais-je de mes journées ?</label>
+          <input type="text" class="postcard-line" placeholder="Ex : Je travaille sur mon propre projet, j'ai du temps pour ma famille…">
+        </div>
+        <div class="postcard-field">
+          <label class="postcard-field-label">💫 Comment je me sens dans mon corps ?</label>
+          <textarea class="postcard-line" rows="2" placeholder="Ex : Léger, fier, serein — je ne me réveille plus la nuit à cause de l'argent…"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECAP après section B -->
+  <div class="recap-box">
+    <div class="recap-title">✅ Ce que tu viens de créer — Partie B</div>
+    Tu as rédigé ta <strong>vision précise du futur</strong>. Ce n'est plus un vague "j'aimerais bien avoir plus d'argent un jour" — c'est une image concrète, émotionnelle, avec des détails. <strong>Lis cette carte postale chaque fois que tu doutes ou que tu as envie de dépenser impulsivement.</strong>
+  </div>
+
+  <!-- SECTION C -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">🏷️ Partie C — Le Baptême des Comptes</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- EXPLAINER avant exercice 3 -->
+  <div class="explainer">
+    <div class="explainer-title">💡 Pourquoi renommer ses comptes change tout ?</div>
+    <p>Des chercheurs en psychologie comportementale ont mené une expérience simple : des gens qui renommaient leur compte épargne avec un nom précis ("Vacances Japon", "Maison de mes rêves") épargnaient en moyenne <strong>31% de plus</strong> que ceux qui laissaient "Livret A".</p>
+    <p>Pourquoi ? Parce que quand tu vois "Livret A", tu vois un truc administratif et froid. Mais quand tu vois "Mon Bouclier de Sécurité" ou "Liberté dans 3 ans", tu vois <em>ta vie</em>. Et piocher dans "ta vie" pour acheter quelque chose d'inutile devient beaucoup plus difficile émotionnellement.</p>
+    <p>🏷️ <em>Un simple nom peut transformer un chiffre abstrait en quelque chose de précieux à protéger.</em></p>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-title">🐖 La tirelire vs le bocal étiqueté</div>
+    Imagine deux enfants. Le premier a une tirelire anonyme. Le second a un bocal avec écrit "Vacances au parc d'attractions cet été 🎢". Lequel va faire plus attention à ne pas y piocher ? Et lequel va être plus motivé à y ajouter des sous chaque semaine ? La réponse est évidente — et ça marche exactement pareil pour les adultes.
+  </div>
+
+  <div class="card gold">
+    <div class="exercise-header">
+      <div class="exercise-num gold">03</div>
+      <div class="exercise-title">✏️ Donner un Nom à Son Argent</div>
+    </div>
+    <div class="card-body" style="margin-bottom:8px;">Ouvre l'application de ta banque. Arrête d'épargner sur un <em>"Livret A"</em> — épargne pour ton <strong>Vrai Pourquoi</strong>.</div>
+    <div style="font-size:13px;color:var(--muted);line-height:1.6;margin-bottom:18px;">Un nom chargé d'émotion change tout psychologiquement. Note tes changements ci-dessous.</div>
+
+    <div class="rename-rows">
+      <div class="rename-row">
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:4px;">Ancien nom</div>
+          <input type="text" class="rename-input old" value="Livret A">
+        </div>
+        <div class="rename-arrow">→</div>
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#6b3dc0;margin-bottom:4px;">Nouveau nom ✨</div>
+          <input type="text" class="rename-input new" placeholder="Ex : Mon Bouclier de Sécurité">
+          <span class="rename-tip">🛡️ Sécurité, urgences</span>
+        </div>
+      </div>
+      <div class="rename-row">
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:4px;">Ancien nom</div>
+          <input type="text" class="rename-input old" value="LDD">
+        </div>
+        <div class="rename-arrow">→</div>
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#6b3dc0;margin-bottom:4px;">Nouveau nom ✨</div>
+          <input type="text" class="rename-input new" placeholder="Ex : Apport Maison / Vacances Japon">
+          <span class="rename-tip">🏡 Objectifs à moyen terme</span>
+        </div>
+      </div>
+      <div class="rename-row">
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:4px;">Ancien nom</div>
+          <input type="text" class="rename-input old" value="Compte Courant">
+        </div>
+        <div class="rename-arrow">→</div>
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#6b3dc0;margin-bottom:4px;">Nouveau nom ✨</div>
+          <input type="text" class="rename-input new" placeholder="Ex : Ma Vie Quotidienne">
+          <span class="rename-tip">🎉 Plaisirs sans culpabilité</span>
+        </div>
+      </div>
+      <div class="rename-row" style="border: 1.5px dashed var(--border); background: transparent;">
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:var(--muted);margin-bottom:4px;">Autre compte</div>
+          <input type="text" class="rename-input old" placeholder="Nom actuel…">
+        </div>
+        <div class="rename-arrow">→</div>
+        <div>
+          <div style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:0.8px;color:#6b3dc0;margin-bottom:4px;">Nouveau nom ✨</div>
+          <input type="text" class="rename-input new" placeholder="Ton nom inspirant…">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECAP final -->
+  <div class="recap-box">
+    <div class="recap-title">🎯 Récap de tout le Jour 5</div>
+    Tu as fait 3 choses puissantes aujourd'hui : tu as trouvé ton <strong>Vrai Pourquoi</strong> émotionnel (Partie A), tu as visualisé ta vie dans 5 ans avec précision (Partie B), et tu as renommé tes comptes pour qu'ils parlent à ton cœur (Partie C). <strong>Ton système financier a maintenant un moteur ET de l'essence.</strong>
+  </div>
+
+  <!-- MANTRA -->
+  <div class="mantra-card">
+    <div class="mantra-icon">🌟</div>
+    <div class="mantra-label">✨ Mantra du Jour</div>
+    <div class="mantra-text">
+      "Je ne me prive pas d'un achat.<br>
+      Je <span>finance ma liberté</span> future.<br>
+      Chaque euro épargné est un pas vers <span>la vie que je mérite</span>."
+    </div>
+    <button class="mantra-btn" id="mantraBtn" onclick="readMantra()">
+      🔊 Lire à voix haute
+    </button>
+  </div>
+
+  <!-- WHAT'S NEXT -->
+  <div class="next-day">
+    <div class="next-day-icon">⛈️</div>
+    <div>
+      <div class="next-day-label">👉 Ce qui t'attend demain — Jour 6</div>
+      <div class="next-day-title">La Gestion des Tempêtes</div>
+      <div class="next-day-text">
+        Ton système tourne, ta vision est claire. Mais la vie réserve toujours des surprises : une voiture en panne, une facture imprévue, un problème dentaire.<br><br>
+        Demain, on forge ton <strong>Bouclier Anti-Culpabilité</strong> — comment anticiper l'imprévisible pour ne plus jamais dire "mon budget est foutu" et <strong>préserver ta sérénité financière</strong> face aux tempêtes.
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSING -->
+  <div class="closing">
+    <div class="closing-icon">🌙</div>
+    <div class="closing-title">Fin du Jour 5</div>
+    <div class="closing-text">Tu as trouvé ton <strong>"Pourquoi"</strong>. C'est le carburant qui te permettra de tenir quand la motivation faiblit. À demain pour aller encore plus loin.</div>
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => {
+      document.getElementById('progressFill').style.width = '71.4%';
+    }, 400);
+  });
+
+  function updateHeartReveal() {
+    const heartVal = document.getElementById('heartWhy').value.trim();
+    const goalVal  = document.getElementById('goal').value.trim();
+    const reveal   = document.getElementById('heartReveal');
+    const text     = document.getElementById('heartRevealText');
+    const val = heartVal.length > 5 ? heartVal : goalVal;
+    if (val.length > 5) {
+      reveal.classList.add('visible');
+      text.textContent = '"' + val + '"';
+    } else {
+      reveal.classList.remove('visible');
+    }
+  }
+
+  function readMantra() {
+    const btn = document.getElementById('mantraBtn');
+    btn.classList.add('reading');
+    btn.innerHTML = '✅ Je l\'ai lu à voix haute !';
+    setTimeout(() => {
+      btn.classList.remove('reading');
+      btn.innerHTML = '🔊 Relire à voix haute';
+    }, 3000);
+  }
+</script>
+<style>.pdf-btn{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#2d6a6a,#1a4a4a);color:#fff;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:9999;transition:transform .2s,box-shadow .2s;}.pdf-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,0.4);}@media print{.pdf-btn{display:none!important;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}.card,[class*="card"]{break-inside:avoid;}}</style><button class="pdf-btn" onclick="window.print()">📄 Exporter en PDF</button></body>
+</html>

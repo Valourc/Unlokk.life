@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jour 2 – L'Héritage Invisible</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f0eb;
+    --card: #ffffff;
+    --accent1: #2d6a6a;
+    --accent2: #e8a838;
+    --accent3: #e05c5c;
+    --accent4: #5b8cdc;
+    --soft: #f0ebe4;
+    --text: #1e1e1e;
+    --muted: #7a7068;
+    --border: #e0d9d0;
+    --green: #3a9e6f;
+    --purple: #7c3aed;
+    --radius: 16px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 0; }
+
+  .hero {
+    background: linear-gradient(135deg, #2a1a4a 0%, #4a2d7a 50%, #2a1a4a 100%);
+    color: white; padding: 48px 24px 56px; text-align: center; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 30%, rgba(232,168,56,0.2) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(124,58,237,0.2) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 50px; padding: 6px 18px; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; backdrop-filter: blur(6px); }
+  .hero-day { font-size: clamp(13px, 2.5vw, 15px); font-weight: 500; letter-spacing: 4px; text-transform: uppercase; opacity: 0.75; margin-bottom: 10px; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 6vw, 52px); font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
+  .hero-title span { color: var(--accent2); }
+  .hero-subtitle { font-size: clamp(14px, 2.5vw, 17px); opacity: 0.8; max-width: 520px; margin: 0 auto 28px; font-weight: 300; line-height: 1.7; }
+  .hero-emoji { font-size: clamp(40px, 8vw, 72px); display: block; margin-bottom: 18px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
+  .progress-bar-wrap { max-width: 320px; margin: 0 auto; background: rgba(255,255,255,0.15); border-radius: 50px; height: 6px; overflow: hidden; }
+  .progress-bar-fill { width: 0%; height: 100%; background: var(--accent2); border-radius: 50px; transition: width 1s ease; }
+  .progress-label { font-size: 12px; opacity: 0.6; margin-top: 8px; }
+
+  .journey-map {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px;
+    padding: 16px 20px; margin: 20px auto 0; max-width: 560px;
+    display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px;
+  }
+  .journey-step { display: flex; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; opacity: 0.5; white-space: nowrap; }
+  .journey-step.done { opacity: 0.7; text-decoration: line-through; }
+  .journey-step.active { opacity: 1; background: rgba(232,168,56,0.25); border: 1px solid rgba(232,168,56,0.5); border-radius: 20px; padding: 3px 10px; color: var(--accent2); }
+  .journey-arrow { font-size: 10px; opacity: 0.3; margin: 0 2px; }
+
+  .container { max-width: 820px; margin: 0 auto; padding: 0 16px 60px; }
+
+  .card { background: var(--card); border-radius: var(--radius); padding: 28px 28px; box-shadow: var(--shadow); margin-top: 24px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: var(--radius) var(--radius) 0 0; }
+  .card.green::before  { background: linear-gradient(90deg, var(--green), #6dd5a5); }
+  .card.orange::before { background: linear-gradient(90deg, var(--accent2), #f5c76a); }
+  .card.blue::before   { background: linear-gradient(90deg, var(--accent4), #8fb6f0); }
+  .card.red::before    { background: linear-gradient(90deg, var(--accent3), #f08080); }
+  .card.teal::before   { background: linear-gradient(90deg, var(--accent1), #5aadad); }
+  .card.purple::before { background: linear-gradient(90deg, #7c3aed, #c4b5fd); }
+  .card.gold::before   { background: linear-gradient(90deg, #d4a017, var(--accent2)); }
+  .card.indigo::before { background: linear-gradient(90deg, #4338ca, #818cf8); }
+
+  .card-label { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; margin-bottom: 16px; }
+  .card-label.teal   { background: #e0f2f2; color: var(--accent1); }
+  .card-label.orange { background: #fef3dc; color: #b87a0a; }
+  .card-label.blue   { background: #e8effe; color: #3060b0; }
+  .card-label.green  { background: #e3f7ee; color: #2a7a52; }
+  .card-label.purple { background: #f3effe; color: #6b3dc0; }
+  .card-label.gold   { background: #fdf6e3; color: #9a6e00; }
+  .card-label.indigo { background: #eef2ff; color: #4338ca; }
+
+  .card-title { font-family: 'Playfair Display', serif; font-size: clamp(18px, 3.5vw, 24px); font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+  .card-body { font-size: 15px; line-height: 1.8; color: #3a3530; }
+
+  .intro-highlight { background: linear-gradient(135deg, #f3effe, #fdf6e3); border: 1px solid #d4b8f8; border-radius: 12px; padding: 20px 22px; margin: 16px 0; font-size: 15px; line-height: 1.8; color: var(--text); }
+  .golden-rule { background: linear-gradient(135deg, #fef9ee, #fff8e8); border-left: 4px solid var(--accent2); border-radius: 0 12px 12px 0; padding: 16px 20px; margin-top: 16px; font-size: 14px; line-height: 1.7; }
+  .golden-rule strong { color: #9a6e00; }
+
+  .explainer { background: linear-gradient(135deg, #fffbf0, #fef9e7); border: 1.5px solid #f0d080; border-radius: 12px; padding: 16px 20px; margin: 16px 0; font-size: 14px; line-height: 1.8; }
+  .explainer-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #9a6e00; margin-bottom: 8px; display: flex; align-items: center; gap: 6px; }
+  .explainer p { color: #4a3a10; margin-bottom: 6px; }
+  .explainer p:last-child { margin-bottom: 0; }
+
+  .analogy { background: linear-gradient(135deg, #f0f4ff, #e8effe); border: 1.5px solid #b8c8f0; border-radius: 12px; padding: 16px 20px; margin: 12px 0; font-size: 14px; line-height: 1.8; color: #2a3a60; }
+  .analogy-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #3060b0; margin-bottom: 8px; }
+
+  .recap-box { background: linear-gradient(135deg, #e0f2f2, #eef7f7); border: 1.5px solid #90d8c8; border-radius: 12px; padding: 16px 20px; margin: 16px 0; font-size: 14px; line-height: 1.8; }
+  .recap-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--accent1); margin-bottom: 8px; }
+
+  .steps { display: flex; flex-direction: column; gap: 12px; margin-top: 16px; }
+  .step { display: flex; align-items: flex-start; gap: 14px; background: var(--soft); border-radius: 10px; padding: 14px 16px; }
+  .step-icon { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+  .step-text { font-size: 14px; line-height: 1.6; color: var(--text); }
+  .step-note { font-size: 12px; color: var(--muted); margin-top: 4px; font-style: italic; }
+
+  .section-header { display: flex; align-items: center; gap: 12px; margin-top: 36px; margin-bottom: 4px; }
+  .section-divider { flex: 1; height: 1px; background: var(--border); }
+  .section-title { font-size: 11px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+
+  .exercise-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .exercise-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .exercise-num.teal   { background: #e0f2f2; color: var(--accent1); }
+  .exercise-num.orange { background: #fef3dc; color: #b87a0a; }
+  .exercise-num.blue   { background: #e8effe; color: #3060b0; }
+  .exercise-num.purple { background: #f3effe; color: #6b3dc0; }
+  .exercise-num.gold   { background: #fdf6e3; color: #9a6e00; }
+  .exercise-title { font-size: 17px; font-weight: 700; }
+
+  .belief-cards { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+  .belief-card { padding: 14px 18px; border-radius: 12px; border: 2px solid var(--border); cursor: pointer; transition: all 0.2s; background: white; user-select: none; display: flex; align-items: flex-start; gap: 12px; }
+  .belief-card:hover { border-color: var(--purple); background: #faf8ff; transform: translateX(4px); }
+  .belief-card.selected { border-color: var(--purple); background: #f5f0ff; }
+  .belief-radio { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 50%; flex-shrink: 0; margin-top: 2px; transition: all 0.2s; }
+  .belief-card.selected .belief-radio { background: var(--purple); border-color: var(--purple); }
+  .belief-card.selected .belief-radio::after { content: ''; display: block; width: 6px; height: 6px; background: white; border-radius: 50%; margin: 4px auto; }
+  .belief-text { font-size: 14px; line-height: 1.6; }
+  .belief-emotion { font-size: 11px; color: var(--muted); margin-top: 4px; }
+
+  .phrase-input-wrap { margin-top: 14px; }
+  .phrase-label { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .text-input { width: 100%; border: 1.5px solid var(--border); border-radius: 10px; padding: 12px 16px; font-size: 14px; font-family: 'Inter', sans-serif; background: var(--soft); color: var(--text); outline: none; transition: all 0.2s; line-height: 1.6; }
+  .text-input:focus { border-color: var(--purple); box-shadow: 0 0 0 3px rgba(124,58,237,0.1); background: white; }
+
+  .check-options { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+  .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: 10px; border: 2px solid var(--border); cursor: pointer; transition: all 0.2s; background: white; user-select: none; }
+  .check-item:hover { border-color: var(--accent1); background: #f8fafa; }
+  .check-item.selected { border-color: var(--purple); background: #f5f0ff; }
+  .check-emoji { font-size: 22px; flex-shrink: 0; }
+  .custom-check { width: 20px; height: 20px; border: 2px solid var(--border); border-radius: 4px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-top: 1px; }
+  .check-item.selected .custom-check { background: var(--purple); border-color: var(--purple); }
+  .check-item.selected .custom-check::after { content: '✓'; color: white; font-size: 12px; font-weight: 700; }
+  .check-text { font-size: 14px; line-height: 1.5; }
+
+  .belief-strike-wrap { background: #fdecea; border: 2px solid #f5a0a0; border-radius: 12px; padding: 16px 20px; margin: 16px 0; position: relative; overflow: hidden; transition: all 0.4s; }
+  .belief-strike-label { font-size: 11px; font-weight: 700; color: #b03030; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 8px; }
+  .belief-strike-text { font-size: 15px; line-height: 1.6; color: #4a2020; font-style: italic; transition: all 0.4s; text-decoration: line-through; text-decoration-color: #e05c5c; }
+  .belief-strike-wrap.struck { background: #f5f5f5; border-color: #ccc; }
+  .belief-strike-wrap.struck .belief-strike-text { opacity: 0.4; }
+  .strike-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 60px; color: rgba(224,92,92,0.1); font-weight: 900; pointer-events: none; }
+
+  .mantra-options { display: flex; flex-direction: column; gap: 8px; }
+  .mantra-option { display: flex; align-items: flex-start; gap: 12px; padding: 12px 16px; border-radius: 10px; border: 2px solid var(--border); cursor: pointer; transition: all 0.2s; background: white; user-select: none; }
+  .mantra-option:hover { border-color: #d4a017; background: #fffbf0; }
+  .mantra-option.selected { border-color: #d4a017; background: #fef9ee; }
+  .mantra-radio { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 50%; flex-shrink: 0; margin-top: 2px; transition: all 0.2s; }
+  .mantra-option.selected .mantra-radio { background: #d4a017; border-color: #d4a017; }
+  .mantra-option-text { font-size: 14px; line-height: 1.6; font-style: italic; color: #4a3a10; }
+
+  .challenge-card { background: linear-gradient(135deg, #1e1040 0%, #3a1870 100%); border-radius: var(--radius); padding: 32px 28px; color: white; text-align: center; margin-top: 24px; }
+  .challenge-icon { font-size: 44px; margin-bottom: 12px; }
+  .challenge-label { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.65; margin-bottom: 10px; }
+  .challenge-title { font-family: 'Playfair Display', serif; font-size: clamp(18px, 4vw, 26px); font-weight: 700; margin-bottom: 12px; line-height: 1.3; }
+  .challenge-text { font-size: 14px; opacity: 0.85; line-height: 1.7; max-width: 440px; margin: 0 auto 20px; }
+  .mirror-counter { display: flex; justify-content: center; gap: 16px; margin: 16px 0; }
+  .mirror-dot { font-size: 32px; cursor: pointer; transition: all 0.2s; opacity: 0.4; }
+  .mirror-dot.done { opacity: 1; transform: scale(1.2); }
+  .mirror-label { font-size: 13px; opacity: 0.75; }
+
+  .mantra-display { background: linear-gradient(135deg, #2a1a4a 0%, #4a2d7a 100%); border-radius: var(--radius); padding: 36px 28px; color: white; text-align: center; margin-top: 24px; position: relative; overflow: hidden; }
+  .mantra-display::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 20%, rgba(232,168,56,0.2), transparent 60%); pointer-events: none; }
+  .mantra-display-icon { font-size: 40px; margin-bottom: 16px; }
+  .mantra-display-label { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.65; margin-bottom: 16px; }
+  .mantra-display-text { font-family: 'Playfair Display', serif; font-size: clamp(16px, 3vw, 22px); font-style: italic; line-height: 1.7; max-width: 520px; margin: 0 auto 20px; }
+  .mantra-display-text span { color: var(--accent2); }
+  .mantra-btn { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 50px; padding: 10px 22px; font-size: 13px; font-weight: 600; color: white; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; backdrop-filter: blur(4px); }
+  .mantra-btn:hover { background: rgba(255,255,255,0.25); }
+  .mantra-btn.reading { background: var(--accent2); border-color: var(--accent2); color: #1a1a0a; }
+
+  .next-day { background: linear-gradient(135deg, #e8f5e8, #f0f8e8); border: 1.5px solid #90d890; border-radius: var(--radius); padding: 24px 28px; margin-top: 24px; display: flex; gap: 16px; align-items: flex-start; }
+  .next-day-icon { font-size: 36px; flex-shrink: 0; }
+  .next-day-label { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #2a6a2a; margin-bottom: 6px; }
+  .next-day-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #1a4a1a; margin-bottom: 8px; }
+  .next-day-text { font-size: 14px; line-height: 1.7; color: #2a5a2a; }
+
+  .closing { text-align: center; padding: 40px 20px 20px; }
+  .closing-icon { font-size: 48px; margin-bottom: 12px; }
+  .closing-title { font-family: 'Playfair Display', serif; font-size: clamp(18px, 4vw, 26px); font-weight: 700; color: var(--purple); margin-bottom: 8px; }
+  .closing-text { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 400px; margin: 0 auto; }
+
+  @media (max-width: 500px) {
+    .card { padding: 20px 16px; }
+    .hero { padding: 36px 16px 44px; }
+    .next-day { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">💰 Programme Finance Personnelle</div>
+  <div class="hero-day">Jour 2 sur 7</div>
+  <span class="hero-emoji">🧬</span>
+  <h1 class="hero-title">L'Héritage<br><span>Invisible</span></h1>
+  <p class="hero-subtitle">Pourquoi gères-tu l'argent comme tu le gères ? La réponse vient de plus loin que tu ne le crois.</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-label">Progression : Jour 2 / 7</div>
+  <div class="journey-map">
+    <div class="journey-step done">✅ État des lieux</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step active">2️⃣ Croyances</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">3️⃣ Budget</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">4️⃣ Épargne</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">5️⃣ Dettes</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">6️⃣ Revenus</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">7️⃣ Plan 90j</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- RAPPEL JOUR 1 -->
+  <div class="recap-box">
+    <div class="recap-title">🔗 La suite du Jour 1</div>
+    Hier, tu as regardé tes chiffres en face : tes entrées, tes sorties, et tes "fuites". Tu sais maintenant <em>ce que</em> tu dépenses. Aujourd'hui, on s'attaque à une question plus profonde : <strong>pourquoi tu dépenses comme tu dépenses ?</strong>
+  </div>
+
+  <!-- INTRO CARD -->
+  <div class="card purple">
+    <div class="card-label purple">🎙️ Introduction</div>
+    <div class="card-title">"Ton rapport à l'argent a été programmé"</div>
+    <div class="intro-highlight">
+      Imagine que ton cerveau est un ordinateur. Quand tu étais enfant, on y a installé des programmes — des croyances sur l'argent — sans te demander ton avis. Et ces programmes tournent encore aujourd'hui !
+      <br><br>
+      Si tu as grandi en entendant <em>"l'argent, ça ne pousse pas dans les arbres"</em>, <em>"les riches sont des voleurs"</em>, ou <em>"on n'est pas là pour s'amuser"</em>... ces phrases ont façonné ta façon de voir l'argent, souvent <strong>sans que tu t'en rendes compte</strong>.
+    </div>
+    <div class="golden-rule">
+      ✨ <strong>Bonne nouvelle :</strong> Un programme, ça peut se mettre à jour. C'est exactement l'objectif de ce Jour 2.
+    </div>
+  </div>
+
+  <div class="explainer">
+    <div class="explainer-title">🧠 C'est quoi exactement une "croyance limitante" ?</div>
+    <p>Une croyance limitante, c'est une idée qu'on tient pour vraie (même si elle ne l'est pas) et qui nous empêche d'avancer. Par exemple :</p>
+    <p>• <em>"Je suis nul avec l'argent"</em> → donc tu n'essaies même pas de gérer ton budget</p>
+    <p>• <em>"L'argent, ça corrompt"</em> → donc tu te sens coupable quand tu en as</p>
+    <p>• <em>"Je ne mérite pas d'être riche"</em> → donc tu dépenses tout dès que tu en as</p>
+    <p>Ces croyances ne sont pas des vérités — ce sont des histoires qu'on s'est racontées. Et comme toute histoire, on peut en écrire une nouvelle !</p>
+  </div>
+
+  <!-- SECTION A -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">🌱 Partie A — L'Héritage (D'où ça vient ?)</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- EXERCICE 1 -->
+  <div class="card teal">
+    <div class="exercise-header">
+      <div class="exercise-num teal">01</div>
+      <div class="exercise-title">🏠 L'Ambiance de Mon Enfance</div>
+    </div>
+    <div class="card-body" style="margin-bottom:10px;">Quand tu étais enfant, comment était le rapport à l'argent dans ta famille ? <em>(Sélectionne ce qui correspond le mieux)</em></div>
+
+    <div class="explainer" style="margin-bottom:14px;">
+      <div class="explainer-title">💡 Pourquoi cette question ?</div>
+      <p>Nos premières "leçons" sur l'argent viennent de notre famille. On observe, on écoute, on ressent — et on intériorise des règles sans même y réfléchir. Comprendre d'où viennent nos habitudes, c'est la première étape pour les changer.</p>
+    </div>
+
+    <div class="check-options" id="ambianceOptions">
+      <div class="check-item" onclick="selectAmbiance(this)">
+        <div class="check-emoji">😰</div>
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>L'argent était une source de stress</strong>
+          <span style="color:var(--muted);font-size:12px;">On en manquait, on en parlait peu, ou ça provoquait des disputes.</span>
+        </div>
+      </div>
+      <div class="check-item" onclick="selectAmbiance(this)">
+        <div class="check-emoji">🤫</div>
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>L'argent était tabou</strong>
+          <span style="color:var(--muted);font-size:12px;">On n'en parlait jamais — c'était impoli, vulgaire, ou simplement absent des conversations.</span>
+        </div>
+      </div>
+      <div class="check-item" onclick="selectAmbiance(this)">
+        <div class="check-emoji">💸</div>
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>L'argent partait aussi vite qu'il arrivait</strong>
+          <span style="color:var(--muted);font-size:12px;">On dépensait beaucoup, on profitait, mais rien n'était mis de côté.</span>
+        </div>
+      </div>
+      <div class="check-item" onclick="selectAmbiance(this)">
+        <div class="check-emoji">📚</div>
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>L'argent était géré avec soin et méthode</strong>
+          <span style="color:var(--muted);font-size:12px;">On en parlait positivement, on apprenait à économiser, à planifier.</span>
+        </div>
+      </div>
+      <div class="check-item" onclick="selectAmbiance(this)">
+        <div class="check-emoji">🤷</div>
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>Je n'ai pas vraiment de souvenir / ça variait beaucoup</strong>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION B -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">🔦 Partie B — Le Diagnostic (La Croyance Centrale)</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-title">🌳 L'analogie de l'arbre</div>
+    Si tu vois les feuilles d'un arbre jaunir, couper les feuilles ne changera rien. Il faut aller aux racines. Tes comportements financiers actuels (les feuilles) sont la conséquence de croyances profondes (les racines). On va trouver tes racines.
+  </div>
+
+  <!-- EXERCICE 2 -->
+  <div class="card indigo">
+    <div class="exercise-header">
+      <div class="exercise-num blue">02</div>
+      <div class="exercise-title">🪞 La Croyance Centrale</div>
+    </div>
+    <div class="card-body" style="margin-bottom:10px;">Quelle phrase te semble la plus vraie quand tu penses à l'argent ? <em>(Choisis celle qui résonne le plus, même si c'est inconfortable)</em></div>
+
+    <div class="belief-cards" id="beliefCards">
+      <div class="belief-card" onclick="selectBelief(this, 'L\'argent, c\'est compliqué — je ne suis pas fait(e) pour ça.')">
+        <div class="belief-radio"></div>
+        <div class="belief-text">
+          "L'argent, c'est compliqué — je ne suis pas fait(e) pour ça."
+          <div class="belief-emotion">💭 Souvent lié à un manque de confiance ou à des expériences scolaires difficiles.</div>
+        </div>
+      </div>
+      <div class="belief-card" onclick="selectBelief(this, 'L\'argent, c\'est le mal — les gens riches sont des gens mauvais.')">
+        <div class="belief-radio"></div>
+        <div class="belief-text">
+          "L'argent, c'est le mal — les gens riches sont des gens mauvais."
+          <div class="belief-emotion">💭 Souvent entendu dans l'enfance ou issu d'un contexte culturel ou religieux.</div>
+        </div>
+      </div>
+      <div class="belief-card" onclick="selectBelief(this, 'Je n\'en aurai jamais assez — il faut tout garder, on sait jamais.')">
+        <div class="belief-radio"></div>
+        <div class="belief-text">
+          "Je n'en aurai jamais assez — il faut tout garder, on sait jamais."
+          <div class="belief-emotion">💭 Souvent lié à des périodes de manque ou à une famille qui a connu des difficultés.</div>
+        </div>
+      </div>
+      <div class="belief-card" onclick="selectBelief(this, 'L\'argent, ça ne dure pas — autant en profiter maintenant.')">
+        <div class="belief-radio"></div>
+        <div class="belief-text">
+          "L'argent, ça ne dure pas — autant en profiter maintenant."
+          <div class="belief-emotion">💭 Souvent issu d'un environnement où l'argent arrivait et partait vite.</div>
+        </div>
+      </div>
+      <div class="belief-card" onclick="selectBelief(this, 'Je ne mérite pas d\'avoir de l\'argent.')">
+        <div class="belief-radio"></div>
+        <div class="belief-text">
+          "Je ne mérite pas d'avoir de l'argent."
+          <div class="belief-emotion">💭 Souvent lié à une faible estime de soi ou à des messages reçus sur sa valeur.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phrase-input-wrap" style="margin-top:16px;">
+      <div class="phrase-label">✍️ Ou écris ta propre croyance :</div>
+      <input type="text" class="text-input" id="phraseInput" placeholder="La phrase que tu te répètes souvent sur l'argent…" oninput="updateStrike()">
+      <div style="font-size:12px;color:var(--muted);margin-top:6px;font-style:italic;">Exemple : "L'argent, ça va, ça vient", "Je suis trop dépensier(ère)", "Je n'ai pas le sens des affaires"...</div>
+    </div>
+  </div>
+
+  <!-- EXERCICE 3 -->
+  <div class="card purple">
+    <div class="exercise-header">
+      <div class="exercise-num purple">03</div>
+      <div class="exercise-title">🔗 L'Impact Aujourd'hui</div>
+    </div>
+    <div class="card-body" style="margin-bottom:14px;">
+      Voici le lien clé : ta croyance d'hier crée tes comportements d'aujourd'hui.
+    </div>
+
+    <div style="background:var(--soft);border-radius:10px;padding:14px 16px;font-size:14px;line-height:1.7;margin-bottom:16px;">
+      <span style="color:var(--muted);font-size:12px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;">Si je crois profondément que…</span><br>
+      <em id="phraseEcho" style="color:#4a4540;font-style:italic;">(ta phrase apparaîtra ici une fois que tu l'auras écrite)</em>
+    </div>
+
+    <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:10px;">Alors aujourd'hui, j'ai tendance à… <em style="font-weight:400;color:var(--muted)">(sélectionne)</em></div>
+    <div class="check-options" id="impactOptions">
+      <div class="check-item" onclick="selectImpact(this)">
+        <div class="check-emoji">💸</div>
+        <div class="custom-check"></div>
+        <div class="check-text">Avoir peur de manquer <span style="color:var(--muted);font-size:12px;">(donc je ne dépense rien, même pour le nécessaire)</span></div>
+      </div>
+      <div class="check-item" onclick="selectImpact(this)">
+        <div class="check-emoji">🔥</div>
+        <div class="custom-check"></div>
+        <div class="check-text">Dépenser tout, tout de suite <span style="color:var(--muted);font-size:12px;">(pour profiter avant qu'il n'y en ait plus)</span></div>
+      </div>
+      <div class="check-item" onclick="selectImpact(this)">
+        <div class="check-emoji">🙊</div>
+        <div class="custom-check"></div>
+        <div class="check-text">Ne pas oser demander une augmentation <span style="color:var(--muted);font-size:12px;">(je ne me sens pas légitime)</span></div>
+      </div>
+      <div class="check-item" onclick="selectImpact(this)">
+        <div class="check-emoji">✏️</div>
+        <div class="custom-check"></div>
+        <div class="check-text" style="flex:1;">
+          Autre…
+          <input type="text" class="text-input" placeholder="Décrivez votre comportement…" style="margin-top:6px;" onclick="event.stopPropagation()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION C -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">🔄 Partie C — La Mise à Jour (Le Futur)</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="explainer">
+    <div class="explainer-title">⚙️ Comment "mettre à jour" une croyance ?</div>
+    <p>Le cerveau fonctionne par répétition. Si tu répètes une nouvelle idée assez souvent, elle commence à remplacer l'ancienne. C'est ce qu'on appelle la <strong>neuroplasticité</strong> — ton cerveau peut littéralement se recâbler !</p>
+    <p>C'est exactement ce qu'on va faire maintenant : <strong>barrer l'ancienne croyance</strong> et la remplacer par un nouveau message, plus utile et plus vrai.</p>
+  </div>
+
+  <!-- EXERCICE 4 -->
+  <div class="card gold">
+    <div class="exercise-header">
+      <div class="exercise-num gold">04</div>
+      <div class="exercise-title">✍️ Le Remplacement</div>
+    </div>
+    <div class="card-body" style="margin-bottom:14px;">
+      On va <strong>réécrire cette croyance</strong>. Barre l'ancienne et choisis ta nouvelle vérité.
+    </div>
+
+    <div class="belief-strike-wrap" id="strikeWrap">
+      <div class="belief-strike-label">❌ Ancienne Croyance — À effacer</div>
+      <div class="belief-strike-text" id="strikeText">Votre phrase apparaîtra ici…</div>
+      <div class="strike-overlay">✗</div>
+    </div>
+    <div style="text-align:center;margin:10px 0;">
+      <button onclick="strikeThrough()" style="background:#fdecea;border:1.5px solid #f5a0a0;border-radius:50px;padding:8px 20px;font-size:13px;font-weight:600;color:#b03030;cursor:pointer;font-family:'Inter',sans-serif;transition:all 0.2s;" onmouseover="this.style.background='#fbd5d5'" onmouseout="this.style.background='#fdecea'">
+        ✗ Je barre cette croyance
+      </button>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div style="font-size:13px;font-weight:700;color:#9a6e00;margin-bottom:12px;text-transform:uppercase;letter-spacing:1px;">✨ Nouvelle Croyance — Choisis ton mantra</div>
+      <div style="font-size:12px;color:var(--muted);margin-bottom:10px;font-style:italic;">Choisis une phrase qui te semble à la fois vraie ET motivante. Elle n'a pas besoin d'être parfaite — juste un peu mieux que l'ancienne !</div>
+      <div class="mantra-options" id="mantraOptions">
+        <div class="mantra-option" onclick="selectMantra(this, 'L\'argent est un outil neutre que je peux apprendre à gérer.')">
+          <div class="mantra-radio"></div>
+          <div class="mantra-option-text">"L'argent est un outil neutre que je peux apprendre à gérer."</div>
+        </div>
+        <div class="mantra-option" onclick="selectMantra(this, 'Je mérite d\'être à l\'aise financièrement.')">
+          <div class="mantra-radio"></div>
+          <div class="mantra-option-text">"Je mérite d'être à l'aise financièrement."</div>
+        </div>
+        <div class="mantra-option" onclick="selectMantra(this, 'Gérer mon argent est un acte de soin pour moi-même.')">
+          <div class="mantra-radio"></div>
+          <div class="mantra-option-text">"Gérer mon argent est un acte de soin pour moi-même."</div>
+        </div>
+        <div class="mantra-option" onclick="selectMantra(this, null)" id="customMantraOption">
+          <div class="mantra-radio"></div>
+          <div class="mantra-option-text" style="flex:1;">
+            Mon propre mantra…
+            <input type="text" class="text-input" id="customMantraInput" placeholder="Écrivez votre propre nouvelle croyance…" style="margin-top:6px;font-style:normal;" onclick="event.stopPropagation()" oninput="updateCustomMantra()">
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CHALLENGE CARD -->
+  <div class="challenge-card">
+    <div class="challenge-icon">🪞</div>
+    <div class="challenge-label">⚡ Défi du Jour</div>
+    <div class="challenge-title">Répète ton nouveau mantra<br>3 fois devant un miroir</div>
+    <div class="challenge-text">Regarde-toi dans les yeux. Dis ton mantra à voix haute, avec conviction. C'est gênant au début — c'est <em>exactement</em> normal. C'est ce gêne qui indique que quelque chose change dans ta façon de penser !</div>
+    <div class="mirror-counter">
+      <div class="mirror-dot" id="dot1" onclick="tapMirror(1)">🪞</div>
+      <div class="mirror-dot" id="dot2" onclick="tapMirror(2)">🪞</div>
+      <div class="mirror-dot" id="dot3" onclick="tapMirror(3)">🪞</div>
+    </div>
+    <div class="mirror-label" id="mirrorLabel">Clique sur chaque miroir après chaque répétition</div>
+  </div>
+
+  <!-- MANTRA FINAL -->
+  <div class="mantra-display">
+    <div class="mantra-display-icon">🗣️</div>
+    <div class="mantra-display-label">✨ Ton Mantra du Jour</div>
+    <div class="mantra-display-text" id="finalMantraDisplay">
+      "Ma <span>valeur</span> ne dépend pas de mon <span>solde bancaire</span>.<br>
+      Je reprogramme mon rapport à l'argent, <span>un jour à la fois</span>."
+    </div>
+    <button class="mantra-btn" id="mantraBtn" onclick="readMantra()">
+      🔊 Lire à voix haute
+    </button>
+  </div>
+
+  <!-- WHAT'S NEXT -->
+  <div class="next-day">
+    <div class="next-day-icon">🎯</div>
+    <div>
+      <div class="next-day-label">👉 Ce qui t'attend demain — Jour 3</div>
+      <div class="next-day-title">Le Plan de Match</div>
+      <div class="next-day-text">
+        Tu connais maintenant tes chiffres (Jour 1) ET les croyances qui influencent ton comportement (Jour 2). Demain, on passe aux choses concrètes : <strong>comment organiser son argent en 3 grandes catégories</strong>, sans tableaux Excel compliqués et sans te priver de tout.<br><br>
+        C'est la fameuse règle <strong>50/30/20</strong> — la plus simple et la plus efficace pour avoir un budget qui tient.
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSING -->
+  <div class="closing">
+    <div class="closing-icon">🌙</div>
+    <div class="closing-title">Fin du Jour 2</div>
+    <div class="closing-text">Tu as identifié ton code source. <strong>Ce n'était pas de ta faute</strong> — mais à partir d'aujourd'hui, tu as les clés pour le réécrire.</div>
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => { document.getElementById('progressFill').style.width = '28.6%'; }, 400);
+  });
+
+  function selectAmbiance(el) {
+    document.querySelectorAll('#ambianceOptions .check-item').forEach(i => i.classList.remove('selected'));
+    el.classList.add('selected');
+  }
+
+  function selectImpact(el) { el.classList.toggle('selected'); }
+
+  function selectBelief(el, text) {
+    document.querySelectorAll('#beliefCards .belief-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    if (text) {
+      document.getElementById('phraseInput').value = text;
+      updateStrike();
+    }
+  }
+
+  document.getElementById('phraseInput').addEventListener('input', updateStrike);
+  function updateStrike() {
+    const val = document.getElementById('phraseInput').value.trim();
+    const echo = document.getElementById('phraseEcho');
+    const strike = document.getElementById('strikeText');
+    echo.textContent = val || '(ta phrase apparaîtra ici une fois que tu l\'auras écrite)';
+    strike.textContent = val || 'Votre phrase apparaîtra ici…';
+    document.getElementById('strikeWrap').classList.remove('struck');
+    strike.style.textDecoration = 'line-through';
+    strike.style.textDecorationColor = '#e05c5c';
+  }
+
+  function strikeThrough() {
+    const wrap = document.getElementById('strikeWrap');
+    wrap.classList.add('struck');
+    document.getElementById('strikeText').style.opacity = '0.4';
+  }
+
+  let selectedMantra = null;
+  function selectMantra(el, mantra) {
+    document.querySelectorAll('#mantraOptions .mantra-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    if (mantra) { selectedMantra = mantra; updateFinalMantra(mantra); }
+  }
+
+  function updateCustomMantra() {
+    const val = document.getElementById('customMantraInput').value.trim();
+    document.getElementById('customMantraOption').classList.add('selected');
+    document.querySelectorAll('#mantraOptions .mantra-option').forEach(o => {
+      if (o !== document.getElementById('customMantraOption')) o.classList.remove('selected');
+    });
+    if (val) { selectedMantra = val; updateFinalMantra(val); }
+  }
+
+  function updateFinalMantra(text) {
+    document.getElementById('finalMantraDisplay').innerHTML = `"<span>${text}</span>"`;
+  }
+
+  let mirrorsDone = 0;
+  function tapMirror(n) {
+    if (n <= mirrorsDone + 1) {
+      mirrorsDone = n;
+      for (let i = 1; i <= 3; i++) document.getElementById('dot' + i).classList.toggle('done', i <= mirrorsDone);
+      const label = document.getElementById('mirrorLabel');
+      if (mirrorsDone === 1) label.textContent = '1/3 — Continuez, encore 2 fois !';
+      if (mirrorsDone === 2) label.textContent = '2/3 — Plus qu\'une ! Vous y êtes presque.';
+      if (mirrorsDone === 3) label.textContent = '✅ Bravo ! Vous venez de reprogrammer votre cerveau.';
+    }
+  }
+
+  function readMantra() {
+    const btn = document.getElementById('mantraBtn');
+    btn.classList.add('reading');
+    btn.innerHTML = '✅ Je l\'ai lu à voix haute !';
+    setTimeout(() => { btn.classList.remove('reading'); btn.innerHTML = '🔊 Relire à voix haute'; }, 3000);
+  }
+</script>
+<style>.pdf-btn{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#2d6a6a,#1a4a4a);color:#fff;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:9999;transition:transform .2s,box-shadow .2s;}.pdf-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,0.4);}@media print{.pdf-btn{display:none!important;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}.card,[class*="card"]{break-inside:avoid;}}</style><button class="pdf-btn" onclick="window.print()">📄 Exporter en PDF</button></body>
+</html>

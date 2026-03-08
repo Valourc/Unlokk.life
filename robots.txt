@@ -1,0 +1,13 @@
+User-agent: *
+Allow: /
+
+# Pages journalières — contenu privé post-achat, ne pas indexer
+Disallow: /jour1-preview.html
+Disallow: /jour2-preview.html
+Disallow: /jour3-preview.html
+Disallow: /jour4-preview.html
+Disallow: /jour5-preview.html
+Disallow: /jour6-preview.html
+Disallow: /jour7-preview.html
+
+Sitemap: https://www.unlokk.life/sitemap.xml

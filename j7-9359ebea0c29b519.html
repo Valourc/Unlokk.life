@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jour 7 – Le Bilan & Le Money Date</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f5f0eb; --card: #ffffff; --accent1: #2d6a6a; --accent2: #e8a838; --accent3: #e05c5c;
+    --accent4: #5b8cdc; --soft: #f0ebe4; --text: #1e1e1e; --muted: #7a7068; --border: #e0d9d0;
+    --green: #3a9e6f; --gold: #c8910a; --radius: 16px; --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 0; }
+  .hero { background: linear-gradient(135deg, #1a1000 0%, #3d2a00 40%, #6b4800 70%, #3d2a00 100%); color: white; padding: 48px 24px 56px; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 65% 25%, rgba(232,168,56,0.4) 0%, transparent 55%), radial-gradient(ellipse at 20% 80%, rgba(255,200,80,0.15) 0%, transparent 50%); pointer-events: none; }
+  .hero-badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 50px; padding: 6px 18px; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; backdrop-filter: blur(6px); }
+  .hero-day { font-size: clamp(13px,2.5vw,15px); font-weight: 500; letter-spacing: 4px; text-transform: uppercase; opacity: 0.75; margin-bottom: 10px; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(28px,6vw,52px); font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
+  .hero-title span { color: var(--accent2); }
+  .hero-subtitle { font-size: clamp(14px,2.5vw,17px); opacity: 0.8; max-width: 520px; margin: 0 auto 28px; font-weight: 300; line-height: 1.7; }
+  .hero-emoji { font-size: clamp(40px,8vw,72px); display: block; margin-bottom: 18px; filter: drop-shadow(0 4px 16px rgba(232,168,56,0.6)); }
+  .progress-bar-wrap { max-width: 320px; margin: 0 auto; background: rgba(255,255,255,0.15); border-radius: 50px; height: 6px; overflow: hidden; }
+  .progress-bar-fill { width: 0%; height: 100%; background: var(--accent2); border-radius: 50px; transition: width 1.2s ease; }
+  .progress-label { font-size: 12px; opacity: 0.6; margin-top: 8px; }
+  .journey-map { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 16px 20px; margin: 20px auto 0; max-width: 600px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px; }
+  .journey-step { font-size: 11px; font-weight: 600; opacity: 0.5; white-space: nowrap; }
+  .journey-step.done { opacity: 0.7; text-decoration: line-through; }
+  .journey-step.active { opacity: 1; background: rgba(232,168,56,0.25); border: 1px solid rgba(232,168,56,0.5); border-radius: 20px; padding: 3px 10px; color: var(--accent2); }
+  .journey-arrow { font-size: 10px; opacity: 0.3; margin: 0 2px; }
+  .achievement-strip { background: linear-gradient(90deg, #3d2a00, #6b4800, #3d2a00); padding: 20px 24px; overflow-x: auto; scrollbar-width: none; }
+  .achievement-strip::-webkit-scrollbar { display: none; }
+  .achievement-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .achievement-pill { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.12); border: 1px solid rgba(232,168,56,0.35); border-radius: 50px; padding: 8px 16px; color: white; font-size: 12px; font-weight: 600; white-space: nowrap; }
+  .achievement-pill span { color: var(--accent2); font-size: 16px; }
+  .container { max-width: 820px; margin: 0 auto; padding: 0 16px 60px; }
+  .card { background: var(--card); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); margin-top: 24px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: var(--radius) var(--radius) 0 0; }
+  .card.gold::before   { background: linear-gradient(90deg, #c8910a, var(--accent2)); }
+  .card.orange::before { background: linear-gradient(90deg, var(--accent2), #f5c76a); }
+  .card.teal::before   { background: linear-gradient(90deg, var(--accent1), #5aadad); }
+  .card.rose::before   { background: linear-gradient(90deg, #c2185b, #f48fb1); }
+  .card-label { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; margin-bottom: 16px; }
+  .card-label.gold   { background: #fdf6e3; color: #9a6e00; }
+  .card-label.orange { background: #fef3dc; color: #b87a0a; }
+  .card-label.teal   { background: #e0f2f2; color: var(--accent1); }
+  .card-label.rose   { background: #fce4ec; color: #880e4f; }
+  .card-title { font-family: 'Playfair Display', serif; font-size: clamp(18px,3.5vw,24px); font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+  .card-body { font-size: 15px; line-height: 1.8; color: #3a3530; }
+  .intro-highlight { background: linear-gradient(135deg, #fdf6e3, #fef9ee); border: 1px solid #d4b87a; border-radius: 12px; padding: 20px 22px; margin: 16px 0; font-size: 15px; line-height: 1.8; }
+  .golden-rule { background: linear-gradient(135deg, #fef9ee, #fff8e8); border-left: 4px solid var(--accent2); border-radius: 0 12px 12px 0; padding: 16px 20px; margin-top: 16px; font-size: 14px; line-height: 1.7; }
+  .golden-rule strong { color: #9a6e00; }
+  .golden-rule em { color: var(--accent2); font-style: normal; font-weight: 600; }
+  .explainer { background: linear-gradient(135deg, #fffbf0, #fef9e7); border: 1.5px solid #f0d080; border-radius: 12px; padding: 16px 20px; margin: 16px 0; font-size: 14px; line-height: 1.8; }
+  .explainer-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #9a6e00; margin-bottom: 8px; }
+  .explainer p { color: #4a3a10; margin-bottom: 6px; }
+  .explainer p:last-child { margin-bottom: 0; }
+  .analogy { background: linear-gradient(135deg, #f0f4ff, #e8effe); border: 1.5px solid #b8c8f0; border-radius: 12px; padding: 16px 20px; margin: 12px 0; font-size: 14px; line-height: 1.8; color: #2a3a60; }
+  .analogy-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #3060b0; margin-bottom: 8px; }
+  .recap-box { background: linear-gradient(135deg, #e0f2f2, #eef7f7); border: 1.5px solid #90d8c8; border-radius: 12px; padding: 16px 20px; margin: 16px 0; font-size: 14px; line-height: 1.8; }
+  .recap-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--accent1); margin-bottom: 8px; }
+  .section-header { display: flex; align-items: center; gap: 12px; margin-top: 36px; margin-bottom: 4px; }
+  .section-divider { flex: 1; height: 1px; background: var(--border); }
+  .section-title { font-size: 11px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .exercise-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .exercise-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .exercise-num.orange { background: #fef3dc; color: #b87a0a; }
+  .exercise-num.teal   { background: #e0f2f2; color: var(--accent1); }
+  .exercise-num.rose   { background: #fce4ec; color: #880e4f; }
+  .exercise-title { font-size: 17px; font-weight: 700; }
+  .text-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 11px 14px; font-size: 14px; font-family: 'Inter', sans-serif; background: var(--soft); color: var(--text); outline: none; transition: all 0.2s; margin-top: 6px; }
+  .text-input:focus { border-color: var(--accent2); background: white; box-shadow: 0 0 0 3px rgba(232,168,56,0.12); }
+  .text-input::placeholder { color: #b0a89e; }
+  .card-textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 11px 14px; font-size: 14px; font-family: 'Inter', sans-serif; background: var(--soft); color: var(--text); outline: none; transition: all 0.2s; resize: vertical; margin-top: 8px; }
+  .card-textarea:focus { border-color: var(--accent2); background: white; }
+  .card-textarea::placeholder { color: #b0a89e; }
+  .date-setup { display: flex; flex-direction: column; gap: 14px; margin-top: 16px; }
+  .date-field { background: var(--soft); border-radius: 12px; padding: 16px 18px; border: 1.5px solid var(--border); transition: border-color 0.2s; }
+  .date-field:focus-within { border-color: var(--accent2); background: #fefbf4; }
+  .date-field-icon { font-size: 20px; margin-bottom: 4px; }
+  .date-field-label { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+  .date-field-hint  { font-size: 11px; color: var(--muted); margin-bottom: 6px; font-style: italic; }
+  .day-picker { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .day-btn { padding: 6px 14px; border-radius: 50px; font-size: 12px; font-weight: 700; border: 2px solid var(--border); background: white; cursor: pointer; transition: all 0.18s; font-family: 'Inter', sans-serif; color: var(--muted); }
+  .day-btn:hover { border-color: var(--accent2); color: #9a6e00; }
+  .day-btn.selected { background: var(--accent2); border-color: var(--accent2); color: #1a1000; }
+  .checklist { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+  .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: 10px; border: 2px solid var(--border); cursor: pointer; transition: all 0.2s; background: white; user-select: none; }
+  .check-item:hover { border-color: var(--accent2); background: #fefbf4; }
+  .check-item.checked { border-color: var(--green); background: #eef9f4; }
+  .custom-check { width: 22px; height: 22px; flex-shrink: 0; border: 2px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-top: 1px; }
+  .check-item.checked .custom-check { background: var(--green); border-color: var(--green); }
+  .check-item.checked .custom-check::after { content: '✓'; color: white; font-size: 13px; font-weight: 800; }
+  .check-text { font-size: 14px; line-height: 1.6; flex: 1; }
+  .check-text strong { display: block; font-weight: 700; margin-bottom: 2px; }
+  .checklist-progress { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding: 12px 16px; background: var(--soft); border-radius: 10px; }
+  .checklist-bar-wrap { flex: 1; height: 8px; background: var(--border); border-radius: 50px; overflow: hidden; }
+  .checklist-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), #6dd5a5); border-radius: 50px; transition: width 0.4s ease; width: 0%; }
+  .checklist-pct { font-size: 13px; font-weight: 700; color: var(--green); min-width: 36px; text-align: right; }
+  .bilan-rows { display: flex; flex-direction: column; gap: 16px; margin-top: 16px; }
+  .bilan-row { border-radius: 14px; padding: 20px; border: 1.5px solid var(--border); background: white; }
+  .bilan-row-icon { font-size: 28px; margin-bottom: 8px; }
+  .bilan-row-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; color: var(--muted); margin-bottom: 8px; }
+  .bilan-row:nth-child(1) { border-color: #d4b87a; background: linear-gradient(135deg, #fdf9f2, #fefcf5); }
+  .bilan-row:nth-child(1) .bilan-row-label { color: #9a6e00; }
+  .bilan-row:nth-child(2) { border-color: #9ad8b8; background: linear-gradient(135deg, #eef9f4, #f5fdf9); }
+  .bilan-row:nth-child(2) .bilan-row-label { color: #2a7a52; }
+  .bilan-row:nth-child(3) { border-color: #f08080; background: linear-gradient(135deg, #fef5f5, #fff5f5); }
+  .bilan-row:nth-child(3) .bilan-row-label { color: #b03030; }
+  .diploma { background: linear-gradient(135deg, #1a1000 0%, #3d2a00 45%, #1a1000 100%); border-radius: var(--radius); padding: 40px 28px; color: white; text-align: center; margin-top: 24px; position: relative; overflow: hidden; border: 2px solid rgba(232,168,56,0.4); }
+  .diploma::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 50% 30%, rgba(232,168,56,0.25) 0%, transparent 65%); pointer-events: none; }
+  .diploma-corner { position: absolute; font-size: 28px; opacity: 0.4; }
+  .diploma-corner.tl { top: 14px; left: 16px; }
+  .diploma-corner.tr { top: 14px; right: 16px; }
+  .diploma-corner.bl { bottom: 14px; left: 16px; }
+  .diploma-corner.br { bottom: 14px; right: 16px; }
+  .diploma-seal { font-size: 52px; margin-bottom: 12px; filter: drop-shadow(0 4px 16px rgba(232,168,56,0.5)); }
+  .diploma-badge { display: inline-block; background: rgba(232,168,56,0.2); border: 1px solid rgba(232,168,56,0.4); border-radius: 50px; padding: 4px 16px; font-size: 10px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.8; margin-bottom: 18px; }
+  .diploma-title { font-family: 'Playfair Display', serif; font-size: clamp(22px,5vw,36px); font-weight: 800; line-height: 1.2; margin-bottom: 10px; }
+  .diploma-title span { color: var(--accent2); }
+  .diploma-name-label { font-size: 12px; opacity: 0.55; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px; }
+  .diploma-name-input { background: transparent; border: none; border-bottom: 1.5px solid rgba(232,168,56,0.5); color: var(--accent2); font-family: 'Playfair Display', serif; font-size: clamp(20px,4vw,28px); font-style: italic; text-align: center; outline: none; width: 100%; max-width: 380px; padding: 6px 10px; }
+  .diploma-name-input::placeholder { color: rgba(232,168,56,0.35); }
+  .diploma-desc { font-size: 14px; opacity: 0.75; line-height: 1.7; max-width: 460px; margin: 18px auto 24px; }
+  .diploma-desc strong { color: var(--accent2); }
+  .diploma-days { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-bottom: 24px; }
+  .diploma-day { width: 42px; height: 42px; border-radius: 50%; background: rgba(232,168,56,0.15); border: 1.5px solid rgba(232,168,56,0.35); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 800; color: rgba(255,255,255,0.8); transition: all 0.2s; cursor: pointer; }
+  .diploma-day.lit { background: var(--accent2); border-color: var(--accent2); color: #1a1000; }
+  .diploma-cta-row { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .diploma-btn { display: inline-flex; align-items: center; gap: 8px; border-radius: 50px; padding: 12px 24px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+  .diploma-btn.primary { background: var(--accent2); border: none; color: #1a1000; }
+  .diploma-btn.primary:hover { background: #f5c038; transform: translateY(-2px); }
+  .diploma-btn.secondary { background: transparent; border: 1.5px solid rgba(255,255,255,0.3); color: white; }
+  .diploma-btn.celebrate { display: none; background: var(--green); border: none; color: white; }
+  .diploma-btn.celebrate.visible { display: inline-flex; }
+  .mantra-card { background: linear-gradient(135deg, #1a1000 0%, #3d2a00 50%, #1a1000 100%); border-radius: var(--radius); padding: 36px 28px; color: white; text-align: center; margin-top: 24px; position: relative; overflow: hidden; }
+  .mantra-card::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 75% 25%, rgba(232,168,56,0.3), transparent 60%); pointer-events: none; }
+  .mantra-icon { font-size: 44px; margin-bottom: 16px; }
+  .mantra-label { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.65; margin-bottom: 16px; }
+  .mantra-text { font-family: 'Playfair Display', serif; font-size: clamp(16px,3vw,22px); font-style: italic; line-height: 1.8; max-width: 540px; margin: 0 auto 24px; opacity: 0.95; }
+  .mantra-text span { color: var(--accent2); }
+  .mantra-btn { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 50px; padding: 10px 22px; font-size: 13px; font-weight: 600; color: white; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; backdrop-filter: blur(4px); }
+  .mantra-btn.reading { background: var(--accent2); border-color: var(--accent2); color: #1a1a0a; }
+  .closing { text-align: center; padding: 48px 20px 28px; }
+  .closing-icon { font-size: 56px; margin-bottom: 14px; }
+  .closing-title { font-family: 'Playfair Display', serif; font-size: clamp(22px,5vw,34px); font-weight: 800; background: linear-gradient(135deg, #c8910a, #e8a838, #f5c86a); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 10px; }
+  .closing-text { font-size: 15px; color: var(--muted); line-height: 1.8; max-width: 440px; margin: 0 auto; }
+  @media (max-width: 500px) {
+    .card { padding: 20px 16px; } .hero { padding: 36px 16px 44px; }
+    .diploma { padding: 30px 18px; } .diploma-cta-row { flex-direction: column; align-items: center; }
+  }
+  @keyframes fall {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">💰 Programme Finance Personnelle</div>
+  <div class="hero-day">Jour 7 sur 7 — Le Grand Final</div>
+  <span class="hero-emoji">🏆</span>
+  <h1 class="hero-title">Le Bilan &amp;<br>le <span>Money Date</span></h1>
+  <p class="hero-subtitle">Le secret de ceux qui n'abandonnent jamais — ancrer les habitudes et célébrer ta transformation.</p>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
+  <div class="progress-label">✅ Programme terminé à 100% !</div>
+  <div class="journey-map">
+    <div class="journey-step done">✅ État des lieux</div><div class="journey-arrow">→</div>
+    <div class="journey-step done">✅ Croyances</div><div class="journey-arrow">→</div>
+    <div class="journey-step done">✅ Budget</div><div class="journey-arrow">→</div>
+    <div class="journey-step done">✅ Épargne</div><div class="journey-arrow">→</div>
+    <div class="journey-step done">✅ Vision</div><div class="journey-arrow">→</div>
+    <div class="journey-step done">✅ Tempêtes</div><div class="journey-arrow">→</div>
+    <div class="journey-step active">🏆 Grand Final</div>
+  </div>
+</div>
+
+<div class="achievement-strip">
+  <div class="achievement-row">
+    <div class="achievement-pill"><span>💡</span> J1 État des Lieux</div>
+    <div class="achievement-pill"><span>🧠</span> J2 Héritage Invisible</div>
+    <div class="achievement-pill"><span>🎯</span> J3 Plan de Match</div>
+    <div class="achievement-pill"><span>⚙️</span> J4 Automatisation</div>
+    <div class="achievement-pill"><span>🌟</span> J5 La Vision</div>
+    <div class="achievement-pill"><span>🛡️</span> J6 Gestion Tempêtes</div>
+    <div class="achievement-pill"><span>🏆</span> J7 Bilan Final</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="recap-box">
+    <div class="recap-title">🔗 Tout ce que tu as accompli en 6 jours</div>
+    Tu as fait l'état des lieux de tes finances (J1), exploré tes croyances héritées (J2), construit ton budget 50/30/20 (J3), automatisé ton épargne (J4), trouvé ton Vrai Pourquoi et renommé tes comptes (J5), et forgé ton Fonds d'Urgence (J6). <strong>Aujourd'hui, on ancre la dernière habitude qui fait tenir tout ça dans le temps : le Money Date.</strong>
+  </div>
+
+  <div class="card gold">
+    <div class="card-label gold">🎙️ Message Final du Coach</div>
+    <div class="card-title">"Tu fais partie de la minorité qui agit"</div>
+    <div class="intro-highlight">
+      Prends un instant pour réaliser tout ce que tu as accompli en une semaine : tu as <strong>affronté tes chiffres</strong>, brisé tes plafonds de verre psychologiques, créé un budget réaliste, et forgé un bouclier contre les urgences.<br><br>
+      Tu fais désormais partie de cette <strong>petite minorité de personnes qui gèrent activement leur vie financière</strong> au lieu de la subir.
+    </div>
+    <div class="golden-rule">
+      ☕ <strong>La dernière habitude à prendre :</strong> Le <em>Money Date</em> — une fois par mois, 15 minutes, avec un bon café. Tu regardes, tu ajustes, tu célèbres. C'est tout. C'est suffisant.
+    </div>
+  </div>
+
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">📅 Partie A — La Programmation du Rituel</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="explainer">
+    <div class="explainer-title">🤔 C'est quoi exactement un "Money Date" ?</div>
+    <p>Un Money Date, c'est un rendez-vous mensuel d'exactement <strong>15 minutes</strong> que tu prends avec toi-même pour faire le point sur tes finances. Pas plus, pas moins. C'est le seul moment où tu ouvres tes comptes, tu vérifies que tout tourne, et tu ajustes si besoin.</p>
+    <p>Pourquoi l'appeler un "date" ? Parce qu'un rendez-vous avec quelqu'un qu'on apprécie, on l'honore. On ne l'annule pas. On le prépare. En donnant ce nom à ce moment, tu changes ta relation avec l'argent — ce n'est plus une corvée angoissante, c'est un <strong>moment de soin envers toi-même</strong>.</p>
+    <p>📅 <em>Les personnes qui font un Money Date mensuel ont en moyenne 3x plus de chances d'atteindre leurs objectifs financiers que celles qui "y pensent de temps en temps".</em></p>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-title">🏥 Comme une visite de contrôle chez le médecin</div>
+    Tu ne vas pas chez le médecin seulement quand tu es malade — tu fais aussi des bilans de santé réguliers pour prévenir les problèmes. Ton Money Date, c'est le bilan de santé mensuel de tes finances. 15 minutes pour t'assurer que tout va bien, et régler les petits bobos avant qu'ils deviennent des maladies.
+  </div>
+
+  <div class="card orange">
+    <div class="exercise-header">
+      <div class="exercise-num orange">01</div>
+      <div class="exercise-title">📆 Prendre Rendez-vous avec Toi-Même</div>
+    </div>
+    <div class="card-body" style="margin-bottom:16px;">
+      Un objectif sans date n'est qu'un souhait. Bloque ce créneau <strong>maintenant</strong>, dans ton agenda.
+    </div>
+    <div class="date-setup">
+      <div class="date-field">
+        <div class="date-field-icon">📅</div>
+        <div class="date-field-label">Le Jour de Mon Money Date</div>
+        <div class="date-field-hint">Idéalement le week-end qui suit ton jour de paie</div>
+        <div class="day-picker" id="dayPicker">
+          <button class="day-btn" onclick="pickDay(this)">1er</button>
+          <button class="day-btn" onclick="pickDay(this)">5</button>
+          <button class="day-btn" onclick="pickDay(this)">10</button>
+          <button class="day-btn" onclick="pickDay(this)">15</button>
+          <button class="day-btn" onclick="pickDay(this)">20</button>
+          <button class="day-btn" onclick="pickDay(this)">25</button>
+          <button class="day-btn" onclick="pickDay(this)">Dernier</button>
+        </div>
+        <input type="text" class="text-input" style="margin-top:10px;" placeholder="Ou précise ton jour : ex. le 2e samedi du mois…">
+      </div>
+      <div class="date-field">
+        <div class="date-field-icon">📍</div>
+        <div class="date-field-label">Le Lieu — Mon Cadre Agréable</div>
+        <div class="date-field-hint">Un espace où tu te sens bien et concentré(e)</div>
+        <input type="text" class="text-input" placeholder="Ex : Mon café préféré, sur mon balcon, dans le canapé…">
+      </div>
+      <div class="date-field">
+        <div class="date-field-icon">🎁</div>
+        <div class="date-field-label">Ma Récompense — Le Rituel Plaisir</div>
+        <div class="date-field-hint">Ce petit plaisir qui rend le rendez-vous agréable</div>
+        <input type="text" class="text-input" placeholder="Ex : Un chocolat chaud, ma playlist préférée, un thé spécial…">
+      </div>
+    </div>
+  </div>
+
+  <div class="recap-box">
+    <div class="recap-title">✅ Ce que tu viens de faire — Partie A</div>
+    Tu as planifié ton <strong>Money Date mensuel</strong> avec un lieu précis et une récompense. Ce n'est plus une vague intention — c'est un rendez-vous avec toi-même, aussi important que n'importe quel autre rendez-vous dans ton agenda.
+  </div>
+
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">✅ Partie B — L'Ordre du Jour des 15 Minutes</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="explainer">
+    <div class="explainer-title">📋 Pourquoi une check-list plutôt que faire "au feeling" ?</div>
+    <p>Quand on laisse le Money Date "au feeling", on finit par ne regarder que les choses qui nous inquiètent — et on oublie les points positifs. Résultat : l'exercice devient stressant et on finit par l'éviter.</p>
+    <p>Avec une check-list précise, chaque Money Date suit le même rituel rassurant. Tu sais exactement ce que tu vas faire, dans quel ordre. C'est <strong>prévisible, efficace, et même agréable</strong> quand on y prend le coup.</p>
+    <p>🎯 <em>15 minutes chrono = vérification automatisme + bilan envies + gratitude + anticipation prochaine dépense. C'est tout.</em></p>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-title">✈️ Le checklist du pilote</div>
+    Avant chaque décollage, même les pilotes qui ont 20 ans d'expérience font la même liste de vérification. Pas parce qu'ils ne savent pas quoi faire — mais parce qu'une routine systématique évite les oublis et les erreurs. Ton Money Date, c'est ta check-list de pilote pour tes finances.
+  </div>
+
+  <div class="card teal">
+    <div class="exercise-header">
+      <div class="exercise-num teal">02</div>
+      <div class="exercise-title">📋 La Check-list du Money Date</div>
+    </div>
+    <div class="card-body" style="margin-bottom:16px;">
+      Voici exactement ce que tu feras lors de ces 15 minutes mensuelles. <strong>Garde cette liste précieusement.</strong>
+    </div>
+    <div class="checklist" id="checklist">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>⚙️ Vérifier l'automatisme</strong>
+          Mon virement automatique vers mon "Vrai Pourquoi" est-il bien passé ce mois-ci ?
+        </div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>🎉 Jauger les Envies</strong>
+          Ai-je profité de mes 30% d'Envies sans dépasser ? Sinon, qu'est-ce qui s'est passé ?
+        </div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>🌟 La Gratitude Financière</strong>
+          Quelle est la dépense de ce mois-ci qui m'a apporté le plus de <em>joie réelle</em> ?
+          <input type="text" class="text-input" placeholder="Note ta réponse ici…" onclick="event.stopPropagation()" style="margin-top:8px;">
+        </div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>🔭 L'Ajustement Prochain</strong>
+          Dois-je prévoir une grosse dépense le mois prochain ? (cadeau, assurance, voyage…)
+        </div>
+      </div>
+    </div>
+    <div class="checklist-progress">
+      <span style="font-size:12px;color:var(--muted);font-weight:600;">Progression</span>
+      <div class="checklist-bar-wrap"><div class="checklist-bar-fill" id="checklistBar"></div></div>
+      <div class="checklist-pct" id="checklistPct">0/4</div>
+    </div>
+  </div>
+
+  <div class="recap-box">
+    <div class="recap-title">✅ Ce que tu viens d'apprendre — Partie B</div>
+    Tu connais maintenant les <strong>4 étapes exactes de ton Money Date mensuel</strong>. Ce rituel de 15 minutes est le pilier qui maintient tout ton système en vie mois après mois, sans effort.
+  </div>
+
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">🌟 Partie C — Le Bilan et la Célébration</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="explainer">
+    <div class="explainer-title">🎉 Pourquoi célébrer est essentiel (pas juste sympa) ?</div>
+    <p>Notre cerveau apprend par la récompense. Quand on accomplit quelque chose d'important sans se féliciter, le cerveau enregistre l'effort mais pas le plaisir — ce qui rend la prochaine fois plus difficile à démarrer.</p>
+    <p>En revanche, quand on prend le temps de reconnaître sa progression et de se récompenser, le cerveau associe l'effort à quelque chose de positif. C'est comme ça qu'on <strong>crée de vraies habitudes durables</strong> — pas par force, mais par désir de recommencer.</p>
+    <p>🏆 <em>Tu as fait quelque chose que la majorité des gens ne feront jamais : tu as pris en main ta vie financière. C'est énorme. Célèbre ça sérieusement.</em></p>
+  </div>
+
+  <div class="card rose">
+    <div class="exercise-header">
+      <div class="exercise-num rose">03</div>
+      <div class="exercise-title">🏁 Clôturer le Chapitre</div>
+    </div>
+    <div class="card-body" style="margin-bottom:16px;">
+      Regarde le chemin parcouru depuis le Jour 1. Prends ton temps — ces réponses sont pour toi.
+    </div>
+    <div class="bilan-rows">
+      <div class="bilan-row">
+        <div class="bilan-row-icon">💡</div>
+        <div class="bilan-row-label">✨ La Révélation de la Semaine</div>
+        <div class="card-body" style="font-size:13px;margin-bottom:8px;">Quelle est la chose la plus importante que tu as apprise <em>sur toi-même</em> cette semaine ?</div>
+        <textarea class="card-textarea" rows="3" placeholder="Cette semaine, j'ai réalisé que…"></textarea>
+      </div>
+      <div class="bilan-row">
+        <div class="bilan-row-icon">🏆</div>
+        <div class="bilan-row-label">💪 Ma Plus Grande Fierté</div>
+        <div class="card-body" style="font-size:13px;margin-bottom:8px;">De quelle action concrète es-tu le/la plus fier(e) depuis le début de ce programme ?</div>
+        <textarea class="card-textarea" rows="3" placeholder="Je suis fier(e) d'avoir…"></textarea>
+      </div>
+      <div class="bilan-row">
+        <div class="bilan-row-icon">🎁</div>
+        <div class="bilan-row-label">🎉 Ma Récompense Méritée</div>
+        <div class="card-body" style="font-size:13px;margin-bottom:8px;">Gérer son argent demande du courage. Comment vas-tu te récompenser <em>aujourd'hui</em> pour avoir terminé ce programme ?</div>
+        <textarea class="card-textarea" rows="2" placeholder="Je vais me faire plaisir avec… (gratuitement ou à très petit budget)"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <div class="diploma">
+    <div class="diploma-corner tl">✦</div>
+    <div class="diploma-corner tr">✦</div>
+    <div class="diploma-corner bl">✦</div>
+    <div class="diploma-corner br">✦</div>
+    <div class="diploma-seal">🏅</div>
+    <div class="diploma-badge">Certificat de Complétion</div>
+    <div class="diploma-title">Reset Financier<br><span>7 Jours</span></div>
+    <div class="diploma-name-label">Décerné à</div>
+    <input type="text" class="diploma-name-input" id="diplomaName" placeholder="Ton Prénom &amp; Nom" oninput="updateDiplomaName()">
+    <div class="diploma-desc">
+      Pour avoir affronté ses chiffres, brisé ses plafonds psychologiques,<br>
+      créé son budget, automatisé sa réussite, forgé son bouclier,<br>
+      et <strong>pris en main sa vie financière</strong>.
+    </div>
+    <div class="diploma-days">
+      <div class="diploma-day lit" title="Jour 1">J1</div>
+      <div class="diploma-day lit" title="Jour 2">J2</div>
+      <div class="diploma-day lit" title="Jour 3">J3</div>
+      <div class="diploma-day lit" title="Jour 4">J4</div>
+      <div class="diploma-day lit" title="Jour 5">J5</div>
+      <div class="diploma-day lit" title="Jour 6">J6</div>
+      <div class="diploma-day lit" title="Jour 7">J7</div>
+    </div>
+    <div class="diploma-cta-row">
+      <button class="diploma-btn primary" onclick="celebrateDiploma()">🎉 Je célèbre ma réussite !</button>
+      <button class="diploma-btn secondary" onclick="readMantra()">🔊 Lire le mantra final</button>
+    </div>
+    <div class="diploma-btn celebrate" id="celebrateBtn">✅ Bravo ! Tu l'as mérité(e) 🥂</div>
+  </div>
+
+  <div class="recap-box">
+    <div class="recap-title">🎯 Récap du Jour 7 — et de toute la semaine</div>
+    Tu as programmé ton <strong>Money Date mensuel</strong> (Partie A), appris la check-list des 15 minutes (Partie B), et clôturé ce chapitre avec un vrai bilan et une célébration méritée (Partie C). <strong>Tu n'es plus la même personne qu'au Jour 1.</strong>
+  </div>
+
+  <div class="mantra-card">
+    <div class="mantra-icon">👑</div>
+    <div class="mantra-label">✨ Mantra Final — À Garder pour Toujours</div>
+    <div class="mantra-text">
+      "Je ne gère plus mon argent par peur.<br>
+      Je le gère par <span>amour de moi-même</span><br>
+      et de la vie que je construis.<br>
+      Je suis <span>le/la chef(fe) de mes finances</span>."
+    </div>
+    <button class="mantra-btn" id="mantraBtn" onclick="readMantra()">🔊 Lire à voix haute</button>
+  </div>
+
+  <div class="closing">
+    <div class="closing-icon">🌅</div>
+    <div class="closing-title">Félicitations — Chapitre Fermé.</div>
+    <div class="closing-text">Tu n'es plus la même personne qu'au Jour 1. <strong>La transformation est réelle.</strong> Rendez-vous dans un mois pour ton premier Money Date.</div>
+  </div>
+
+</div>
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => { document.getElementById('progressFill').style.width = '100%'; }, 400);
+  });
+  function pickDay(btn) {
+    document.querySelectorAll('.day-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+  }
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+    const items = document.querySelectorAll('.checklist .check-item');
+    let done = 0;
+    items.forEach(i => { if (i.classList.contains('checked')) done++; });
+    const pct = (done / items.length) * 100;
+    document.getElementById('checklistBar').style.width = pct + '%';
+    document.getElementById('checklistPct').textContent = done + '/' + items.length;
+  }
+  let celebrated = false;
+  function celebrateDiploma() {
+    if (celebrated) return;
+    celebrated = true;
+    document.getElementById('celebrateBtn').classList.add('visible');
+    const emojis = ['🎉','🥂','⭐','🏆','💪','✨','🎊','🌟'];
+    for (let i = 0; i < 18; i++) {
+      const el = document.createElement('div');
+      el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      el.style.cssText = `position:fixed;top:-30px;left:${Math.random()*100}vw;font-size:${20+Math.random()*20}px;z-index:9999;pointer-events:none;animation:fall ${1.5+Math.random()*2}s ease-in forwards;animation-delay:${Math.random()*0.8}s;`;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 4000);
+    }
+  }
+  function readMantra() {
+    const btn = document.getElementById('mantraBtn');
+    btn.classList.add('reading'); btn.innerHTML = '✅ Je l\'ai lu à voix haute !';
+    setTimeout(() => { btn.classList.remove('reading'); btn.innerHTML = '🔊 Relire à voix haute'; }, 3000);
+  }
+</script>
+<style>.pdf-btn{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#2d6a6a,#1a4a4a);color:#fff;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:9999;transition:transform .2s,box-shadow .2s;}.pdf-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,0.4);}@media print{.pdf-btn{display:none!important;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}.card,[class*="card"]{break-inside:avoid;}}</style><button class="pdf-btn" onclick="window.print()">📄 Exporter en PDF</button></body>
+</html>

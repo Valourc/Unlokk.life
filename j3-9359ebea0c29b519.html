@@ -1,0 +1,620 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jour 3 – Le Plan de Match</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #f5f0eb;
+    --card: #ffffff;
+    --accent1: #2d6a6a;
+    --accent2: #e8a838;
+    --accent3: #e05c5c;
+    --accent4: #5b8cdc;
+    --soft: #f0ebe4;
+    --text: #1e1e1e;
+    --muted: #7a7068;
+    --border: #e0d9d0;
+    --green: #3a9e6f;
+    --radius: 16px;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+    --needs: #2d6a6a;
+    --needs-light: #e0f2f2;
+    --wants: #e8a838;
+    --wants-light: #fef3dc;
+    --future: #5b8cdc;
+    --future-light: #e8effe;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; padding: 0; }
+
+  .hero {
+    background: linear-gradient(135deg, #1a3a1a 0%, #2d6a2a 50%, #1a3a1a 100%);
+    color: white; padding: 48px 24px 56px; text-align: center; position: relative; overflow: hidden;
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 70% 30%, rgba(232,168,56,0.25) 0%, transparent 60%),
+                radial-gradient(ellipse at 20% 80%, rgba(91,140,220,0.15) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .hero-badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 50px; padding: 6px 18px; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; backdrop-filter: blur(6px); }
+  .hero-day { font-size: clamp(13px, 2.5vw, 15px); font-weight: 500; letter-spacing: 4px; text-transform: uppercase; opacity: 0.75; margin-bottom: 10px; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(28px, 6vw, 52px); font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
+  .hero-title span { color: var(--accent2); }
+  .hero-subtitle { font-size: clamp(14px, 2.5vw, 17px); opacity: 0.8; max-width: 520px; margin: 0 auto 28px; font-weight: 300; line-height: 1.7; }
+  .hero-emoji { font-size: clamp(40px, 8vw, 72px); display: block; margin-bottom: 18px; filter: drop-shadow(0 4px 12px rgba(0,0,0,0.3)); }
+  .progress-bar-wrap { max-width: 320px; margin: 0 auto; background: rgba(255,255,255,0.15); border-radius: 50px; height: 6px; overflow: hidden; }
+  .progress-bar-fill { width: 0%; height: 100%; background: var(--accent2); border-radius: 50px; transition: width 1s ease; }
+  .progress-label { font-size: 12px; opacity: 0.6; margin-top: 8px; }
+
+  .journey-map {
+    background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px;
+    padding: 16px 20px; margin: 20px auto 0; max-width: 560px;
+    display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px;
+  }
+  .journey-step { font-size: 11px; font-weight: 600; opacity: 0.5; white-space: nowrap; }
+  .journey-step.done { opacity: 0.7; text-decoration: line-through; }
+  .journey-step.active { opacity: 1; background: rgba(232,168,56,0.25); border: 1px solid rgba(232,168,56,0.5); border-radius: 20px; padding: 3px 10px; color: var(--accent2); }
+  .journey-arrow { font-size: 10px; opacity: 0.3; margin: 0 2px; }
+
+  .container { max-width: 820px; margin: 0 auto; padding: 0 16px 60px; }
+
+  .card { background: var(--card); border-radius: var(--radius); padding: 28px 28px; box-shadow: var(--shadow); margin-top: 24px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: var(--radius) var(--radius) 0 0; }
+  .card.green::before  { background: linear-gradient(90deg, var(--green), #6dd5a5); }
+  .card.orange::before { background: linear-gradient(90deg, var(--accent2), #f5c76a); }
+  .card.blue::before   { background: linear-gradient(90deg, var(--accent4), #8fb6f0); }
+  .card.teal::before   { background: linear-gradient(90deg, var(--accent1), #5aadad); }
+  .card.red::before    { background: linear-gradient(90deg, var(--accent3), #f08080); }
+  .card.purple::before { background: linear-gradient(90deg, #7c3aed, #c4b5fd); }
+  .card.gold::before   { background: linear-gradient(90deg, #d4a017, var(--accent2)); }
+  .card.forest::before { background: linear-gradient(90deg, #2d6a2a, #5ab854); }
+
+  .card-label { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; margin-bottom: 16px; }
+  .card-label.forest { background: #e8f5e4; color: #2d6a2a; }
+  .card-label.orange { background: #fef3dc; color: #b87a0a; }
+  .card-label.blue   { background: #e8effe; color: #3060b0; }
+
+  .card-title { font-family: 'Playfair Display', serif; font-size: clamp(18px, 3.5vw, 24px); font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+  .card-body { font-size: 15px; line-height: 1.8; color: #3a3530; }
+
+  .intro-highlight { background: linear-gradient(135deg, #eef8ee, #f8f6ee); border: 1px solid #b8e0b8; border-radius: 12px; padding: 20px 22px; margin: 16px 0; font-size: 15px; line-height: 1.8; color: var(--text); }
+  .golden-rule { background: linear-gradient(135deg, #fef9ee, #fff8e8); border-left: 4px solid var(--accent2); border-radius: 0 12px 12px 0; padding: 16px 20px; margin-top: 16px; font-size: 14px; line-height: 1.7; }
+  .golden-rule strong { color: #9a6e00; }
+
+  .explainer { background: linear-gradient(135deg, #fffbf0, #fef9e7); border: 1.5px solid #f0d080; border-radius: 12px; padding: 16px 20px; margin: 16px 0; font-size: 14px; line-height: 1.8; }
+  .explainer-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #9a6e00; margin-bottom: 8px; }
+  .explainer p { color: #4a3a10; margin-bottom: 6px; }
+  .explainer p:last-child { margin-bottom: 0; }
+
+  .analogy { background: linear-gradient(135deg, #f0f4ff, #e8effe); border: 1.5px solid #b8c8f0; border-radius: 12px; padding: 16px 20px; margin: 12px 0; font-size: 14px; line-height: 1.8; color: #2a3a60; }
+  .analogy-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #3060b0; margin-bottom: 8px; }
+
+  .recap-box { background: linear-gradient(135deg, #e0f2f2, #eef7f7); border: 1.5px solid #90d8c8; border-radius: 12px; padding: 16px 20px; margin: 16px 0; font-size: 14px; line-height: 1.8; }
+  .recap-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--accent1); margin-bottom: 8px; }
+
+  .section-header { display: flex; align-items: center; gap: 12px; margin-top: 36px; margin-bottom: 4px; }
+  .section-divider { flex: 1; height: 1px; background: var(--border); }
+  .section-title { font-size: 11px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+
+  .exercise-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .exercise-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .exercise-num.forest { background: #e8f5e4; color: #2d6a2a; }
+  .exercise-num.orange { background: #fef3dc; color: #b87a0a; }
+  .exercise-num.blue   { background: #e8effe; color: #3060b0; }
+  .exercise-title { font-size: 17px; font-weight: 700; }
+
+  /* RULE CARDS */
+  .rule-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin: 16px 0; }
+  .rule-card { border-radius: 14px; padding: 20px 16px; text-align: center; border: 2px solid transparent; }
+  .rule-card.needs  { background: var(--needs-light); border-color: rgba(45,106,106,0.2); }
+  .rule-card.wants  { background: var(--wants-light); border-color: rgba(232,168,56,0.3); }
+  .rule-card.future { background: var(--future-light); border-color: rgba(91,140,220,0.3); }
+  .rule-icon { font-size: 28px; display: block; margin-bottom: 8px; }
+  .rule-pct { font-size: 32px; font-weight: 800; margin-bottom: 4px; }
+  .rule-card.needs .rule-pct { color: var(--needs); }
+  .rule-card.wants .rule-pct { color: #b87a0a; }
+  .rule-card.future .rule-pct { color: var(--future); }
+  .rule-name { font-size: 13px; font-weight: 700; margin-bottom: 6px; }
+  .rule-desc { font-size: 12px; line-height: 1.5; color: var(--muted); }
+
+  /* INCOME INPUT */
+  .income-box { background: linear-gradient(135deg, #e3f7ee, #d0f0e4); border-radius: 12px; padding: 16px 20px; margin-bottom: 16px; }
+  .income-box-label { font-size: 12px; font-weight: 700; color: #2a7a52; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 10px; }
+  .income-input { width: 100%; border: 2px solid transparent; border-radius: 8px; padding: 12px 16px; font-size: 22px; font-weight: 700; color: var(--green); font-family: 'Inter', sans-serif; background: rgba(255,255,255,0.8); outline: none; text-align: center; transition: all 0.2s; }
+  .income-input:focus { border-color: var(--green); background: white; }
+
+  /* TARGETS */
+  .targets-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  .target-box { border-radius: 12px; padding: 16px 12px; text-align: center; }
+  .target-box.needs { background: var(--needs-light); }
+  .target-box.wants { background: var(--wants-light); }
+  .target-box.future { background: var(--future-light); }
+  .target-label { font-size: 12px; font-weight: 700; margin-bottom: 6px; }
+  .target-box.needs .target-label { color: var(--needs); }
+  .target-box.wants .target-label { color: #b87a0a; }
+  .target-box.future .target-label { color: var(--future); }
+  .target-amount { font-size: 24px; font-weight: 800; margin-bottom: 4px; }
+  .target-box.needs .target-amount { color: var(--needs); }
+  .target-box.wants .target-amount { color: #b87a0a; }
+  .target-box.future .target-amount { color: var(--future); }
+  .target-pct { font-size: 12px; color: var(--muted); }
+
+  /* COMPARE */
+  .compare-rows { display: flex; flex-direction: column; gap: 16px; margin-top: 14px; }
+  .compare-row { border-radius: 12px; padding: 16px; border: 1.5px solid var(--border); }
+  .compare-row.needs { background: rgba(45,106,106,0.04); }
+  .compare-row.wants { background: rgba(232,168,56,0.06); }
+  .compare-row.future { background: rgba(91,140,220,0.06); }
+  .compare-row-top { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+  .compare-row-label { font-size: 14px; font-weight: 700; }
+  .gap-badge { font-size: 12px; font-weight: 700; padding: 3px 10px; border-radius: 20px; }
+  .gap-neutral { background: var(--soft); color: var(--muted); }
+  .gap-good { background: #e3f7ee; color: #2a7a52; }
+  .gap-warn { background: #fdecea; color: #b03030; }
+  .compare-inputs { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+  .compare-input-wrap { flex: 1; }
+  .compare-input-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; color: var(--muted); margin-bottom: 5px; }
+  .compare-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 12px; font-size: 14px; font-weight: 600; font-family: 'Inter', sans-serif; background: white; outline: none; transition: all 0.2s; text-align: center; }
+  .compare-input:focus { border-color: var(--accent4); box-shadow: 0 0 0 3px rgba(91,140,220,0.1); }
+  .compare-vs { font-size: 12px; font-weight: 700; color: var(--muted); padding-top: 18px; flex-shrink: 0; }
+  .bar-wrap { margin-top: 8px; }
+  .bar-labels { display: flex; justify-content: space-between; font-size: 10px; color: var(--muted); margin-bottom: 4px; }
+  .bar-track { height: 8px; background: rgba(0,0,0,0.08); border-radius: 4px; overflow: hidden; }
+  .compare-row.needs .bar-fill { background: var(--needs); height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+  .compare-row.wants .bar-fill { background: var(--wants); height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+  .compare-row.future .bar-fill { background: var(--future); height: 100%; border-radius: 4px; transition: width 0.4s ease; }
+
+  /* PROFILES */
+  .profile-cards { display: flex; flex-direction: column; gap: 12px; margin-top: 14px; }
+  .profile-card { border: 2px solid var(--border); border-radius: 12px; padding: 16px 18px; cursor: pointer; transition: all 0.2s; background: white; }
+  .profile-card:hover { border-color: var(--accent4); transform: translateX(4px); }
+  .profile-card.selected { border-color: var(--accent4); background: #f0f6ff; }
+  .profile-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 0; }
+  .profile-radio { width: 18px; height: 18px; border: 2px solid var(--border); border-radius: 50%; flex-shrink: 0; margin-top: 3px; transition: all 0.2s; }
+  .profile-card.selected .profile-radio { background: var(--accent4); border-color: var(--accent4); }
+  .profile-icon { font-size: 28px; flex-shrink: 0; }
+  .profile-info { flex: 1; }
+  .profile-name { font-size: 15px; font-weight: 700; margin-bottom: 4px; }
+  .profile-desc { font-size: 13px; color: var(--muted); line-height: 1.5; }
+  .profile-action { background: var(--soft); border-radius: 8px; padding: 12px 14px; margin-top: 12px; display: none; }
+  .profile-card.selected .profile-action { display: block; }
+  .profile-action-label { font-size: 11px; font-weight: 700; color: var(--accent4); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 6px; }
+  .profile-action-text { font-size: 13px; line-height: 1.6; color: var(--text); }
+
+  /* MANTRA */
+  .mantra-display { background: linear-gradient(135deg, #1a3a1a 0%, #2d6a2a 100%); border-radius: var(--radius); padding: 36px 28px; color: white; text-align: center; margin-top: 24px; position: relative; overflow: hidden; }
+  .mantra-display::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 80% 20%, rgba(232,168,56,0.2), transparent 60%); pointer-events: none; }
+  .mantra-icon { font-size: 40px; margin-bottom: 16px; }
+  .mantra-label { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.65; margin-bottom: 16px; }
+  .mantra-text { font-family: 'Playfair Display', serif; font-size: clamp(16px, 3vw, 22px); font-style: italic; line-height: 1.7; max-width: 520px; margin: 0 auto 20px; }
+  .mantra-text span { color: var(--accent2); }
+  .mantra-btn { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 50px; padding: 10px 22px; font-size: 13px; font-weight: 600; color: white; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; backdrop-filter: blur(4px); }
+  .mantra-btn:hover { background: rgba(255,255,255,0.25); }
+  .mantra-btn.reading { background: var(--accent2); border-color: var(--accent2); color: #1a1a0a; }
+
+  .next-day { background: linear-gradient(135deg, #fef3dc, #fffbf0); border: 1.5px solid #e8c870; border-radius: var(--radius); padding: 24px 28px; margin-top: 24px; display: flex; gap: 16px; align-items: flex-start; }
+  .next-day-icon { font-size: 36px; flex-shrink: 0; }
+  .next-day-label { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #9a6e00; margin-bottom: 6px; }
+  .next-day-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #4a3000; margin-bottom: 8px; }
+  .next-day-text { font-size: 14px; line-height: 1.7; color: #5a4010; }
+
+  .closing { text-align: center; padding: 40px 20px 20px; }
+  .closing-icon { font-size: 48px; margin-bottom: 12px; }
+  .closing-title { font-family: 'Playfair Display', serif; font-size: clamp(18px, 4vw, 26px); font-weight: 700; color: #2d6a2a; margin-bottom: 8px; }
+  .closing-text { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 400px; margin: 0 auto; }
+
+  @media (max-width: 500px) {
+    .card { padding: 20px 16px; }
+    .hero { padding: 36px 16px 44px; }
+    .rule-cards { grid-template-columns: 1fr; gap: 10px; }
+    .targets-grid { grid-template-columns: 1fr; }
+    .compare-inputs { flex-direction: column; align-items: flex-start; }
+    .next-day { flex-direction: column; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge">💰 Programme Finance Personnelle</div>
+  <div class="hero-day">Jour 3 sur 7</div>
+  <span class="hero-emoji">🎯</span>
+  <h1 class="hero-title">Le Plan<br><span>de Match</span></h1>
+  <p class="hero-subtitle">Apprends à répartir ton argent en 3 catégories simples — et dépense sans culpabilité.</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-label">Progression : Jour 3 / 7</div>
+  <div class="journey-map">
+    <div class="journey-step done">✅ État des lieux</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step done">✅ Croyances</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step active">3️⃣ Budget</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">4️⃣ Épargne</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">5️⃣ Dettes</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">6️⃣ Revenus</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">7️⃣ Plan 90j</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- RECAP -->
+  <div class="recap-box">
+    <div class="recap-title">🔗 La suite des Jours 1 et 2</div>
+    Tu as fait le point sur tes chiffres (Jour 1) et découvert les croyances qui influencent ton comportement (Jour 2). Aujourd'hui, on utilise les chiffres du Jour 1 pour construire ton premier vrai budget. <strong>Tu vas avoir besoin de ton revenu net total noté au Jour 1.</strong>
+  </div>
+
+  <!-- INTRO CARD -->
+  <div class="card forest">
+    <div class="card-label forest">🎙️ Introduction</div>
+    <div class="card-title">"L'art de dépenser sans culpabiliser"</div>
+    <div class="intro-highlight">
+      Le mot <strong>"budget"</strong> fait peur à beaucoup de gens. On l'associe à : privation, restrictions, tableaux Excel compliqués, ennui...<br><br>
+      Mais un budget, c'est exactement le contraire ! Un bon budget, c'est une <strong>permission de dépenser</strong>. Il te dit : "Tu peux dépenser autant sur les loisirs sans culpabilité" plutôt que "Tu ne peux pas dépenser ça".
+    </div>
+
+    <div class="analogy" style="margin-top:16px;">
+      <div class="analogy-title">🍕 Imagine une pizza</div>
+      Si tu coupes une pizza en 3 parts (grande, moyenne, petite), chaque part a une taille précise. Tu sais exactement combien tu peux manger de chaque partie sans te retrouver à court. Ton budget, c'est pareil — tu coupes ton revenu en 3 parts.
+    </div>
+
+    <div class="rule-cards">
+      <div class="rule-card needs">
+        <span class="rule-icon">🏠</span>
+        <div class="rule-pct">50%</div>
+        <div class="rule-name">Besoins</div>
+        <div class="rule-desc">Ce qui fait tourner ta vie : loyer, courses, factures, transport, assurance.</div>
+      </div>
+      <div class="rule-card wants">
+        <span class="rule-icon">🎉</span>
+        <div class="rule-pct">30%</div>
+        <div class="rule-name">Envies</div>
+        <div class="rule-desc">Ce qui rend la vie agréable : restos, shopping, loisirs, Netflix, voyages.</div>
+      </div>
+      <div class="rule-card future">
+        <span class="rule-icon">🚀</span>
+        <div class="rule-pct">20%</div>
+        <div class="rule-name">Futur</div>
+        <div class="rule-desc">Ce qui prépare demain : épargne, remboursement de dettes, investissement.</div>
+      </div>
+    </div>
+
+    <div class="golden-rule">
+      ⚠️ <strong>Note importante :</strong> Ce sont des <em>pourcentages idéaux</em>, une boussole — pas une règle absolue. Si tes besoins prennent 70% aujourd'hui, ne panique pas. On part de là où tu en es, pas d'un idéal impossible.
+    </div>
+  </div>
+
+  <div class="explainer">
+    <div class="explainer-title">🤔 Pourquoi 50/30/20 ? D'où vient cette règle ?</div>
+    <p>Cette règle a été popularisée par Elizabeth Warren (une professeure d'Harvard devenue sénatrice américaine) dans son livre <em>"All Your Worth"</em>. Elle l'a développée après avoir étudié pendant des années les finances de milliers de familles américaines.</p>
+    <p>L'idée centrale : avoir une vie financière équilibrée, ce n'est pas se priver — c'est <strong>allouer consciemment</strong> son argent. 50% pour survivre, 30% pour vivre, 20% pour construire l'avenir.</p>
+    <p>🎯 <em>C'est la règle budgétaire la plus simple et la plus testée au monde. Pas de catégories à n'en plus finir — juste 3 cases.</em></p>
+  </div>
+
+  <!-- SECTION A -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">🧭 Partie A — La Boussole Idéale (Théorie)</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <!-- EXERCICE 1 -->
+  <div class="card green">
+    <div class="exercise-header">
+      <div class="exercise-num forest">01</div>
+      <div class="exercise-title">🧮 Mes Cibles Mathématiques</div>
+    </div>
+    <div class="card-body" style="margin-bottom:10px;">Saisis ton <strong>revenu net total</strong> (le même que celui du Jour 1). Tes cibles s'affichent automatiquement.</div>
+
+    <div class="explainer" style="margin-bottom:14px;">
+      <div class="explainer-title">🔢 Comment lire ces cibles ?</div>
+      <p>Si tu gagnes 2 000 € par mois, tes cibles seront : 1 000 € pour les besoins, 600 € pour les envies, 400 € pour l'épargne. Simple !</p>
+      <p>Ces chiffres sont ta <strong>"boussole idéale"</strong> — ce vers quoi tu veux tendre. Dans l'exercice suivant, on va comparer avec ta réalité.</p>
+    </div>
+
+    <div class="income-box">
+      <div class="income-box-label">💚 Mon Revenu Net Total (du Jour 1)</div>
+      <input type="number" class="income-input" id="incomeInput" placeholder="ex : 2 500" min="0" aria-label="Revenu net total" oninput="calcTargets()">
+    </div>
+
+    <div class="targets-grid">
+      <div class="target-box needs">
+        <div class="target-label">🏠 Besoins</div>
+        <div class="target-amount" id="targetNeeds">— €</div>
+        <div class="target-pct">× 0,50 (50%)</div>
+      </div>
+      <div class="target-box wants">
+        <div class="target-label">🎉 Envies</div>
+        <div class="target-amount" id="targetWants">— €</div>
+        <div class="target-pct">× 0,30 (30%)</div>
+      </div>
+      <div class="target-box future">
+        <div class="target-label">🚀 Futur</div>
+        <div class="target-amount" id="targetFuture">— €</div>
+        <div class="target-pct">× 0,20 (20%)</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION B -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">💥 Partie B — Le Crash Test (Réalité)</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-title">📍 Tu sais où tu veux aller. Maintenant, où es-tu ?</div>
+    Imagine que tu veux aller à Paris. Tu as ton plan de route (les cibles). Maintenant, il faut savoir ton point de départ pour calculer le trajet. C'est exactement ce qu'on fait ici : on compare où tu <em>es</em> avec où tu <em>veux être</em>.
+  </div>
+
+  <!-- EXERCICE 2 -->
+  <div class="card orange">
+    <div class="exercise-header">
+      <div class="exercise-num orange">02</div>
+      <div class="exercise-title">📊 La Comparaison</div>
+    </div>
+    <div class="card-body" style="margin-bottom:10px;">Reprends les dépenses de ton Jour 1. Répartis-les grossièrement dans les 3 cases pour voir où tu en es <strong>réellement</strong>.</div>
+
+    <div class="explainer" style="margin-bottom:16px;">
+      <div class="explainer-title">📋 Comment classer ses dépenses ?</div>
+      <p><strong>🏠 Besoins :</strong> Loyer/crédit immobilier, électricité, eau, gaz, internet, téléphone, assurances, courses alimentaires, transport domicile-travail.</p>
+      <p><strong>🎉 Envies :</strong> Restaurants, vêtements (au-delà du nécessaire), abonnements streaming, sorties, voyages, loisirs, café du matin...</p>
+      <p><strong>🚀 Futur :</strong> Épargne, remboursements de dettes (hors loyer), livret A, PEA, assurance-vie...</p>
+      <p><em>Si tu n'es pas sûr(e) où classer quelque chose, mets-le dans "Besoins" par défaut.</em></p>
+    </div>
+
+    <div class="compare-rows">
+
+      <div class="compare-row needs">
+        <div class="compare-row-top">
+          <div class="compare-row-label">🏠 Besoins</div>
+          <div class="gap-badge gap-neutral" id="gapNeeds">Écart : —</div>
+        </div>
+        <div class="compare-inputs">
+          <div class="compare-input-wrap">
+            <div class="compare-input-label">Réel actuel</div>
+            <input type="number" class="compare-input" id="realNeeds" placeholder="0 €" min="0" oninput="calcGaps()">
+          </div>
+          <div class="compare-vs">vs</div>
+          <div class="compare-input-wrap">
+            <div class="compare-input-label">Cible idéale</div>
+            <input type="number" class="compare-input" id="cibleNeeds" placeholder="—" readonly style="opacity:0.6;cursor:not-allowed;">
+          </div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-labels"><span>0%</span><span>Cible 50%</span><span>100%+</span></div>
+          <div class="bar-track"><div class="bar-fill" id="barNeeds" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="compare-row wants">
+        <div class="compare-row-top">
+          <div class="compare-row-label">🎉 Envies</div>
+          <div class="gap-badge gap-neutral" id="gapWants">Écart : —</div>
+        </div>
+        <div class="compare-inputs">
+          <div class="compare-input-wrap">
+            <div class="compare-input-label">Réel actuel</div>
+            <input type="number" class="compare-input" id="realWants" placeholder="0 €" min="0" oninput="calcGaps()">
+          </div>
+          <div class="compare-vs">vs</div>
+          <div class="compare-input-wrap">
+            <div class="compare-input-label">Cible idéale</div>
+            <input type="number" class="compare-input" id="cibleWants" placeholder="—" readonly style="opacity:0.6;cursor:not-allowed;">
+          </div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-labels"><span>0%</span><span>Cible 30%</span><span>100%+</span></div>
+          <div class="bar-track"><div class="bar-fill" id="barWants" style="width:0%"></div></div>
+        </div>
+      </div>
+
+      <div class="compare-row future">
+        <div class="compare-row-top">
+          <div class="compare-row-label">🚀 Futur</div>
+          <div class="gap-badge gap-neutral" id="gapFuture">Écart : —</div>
+        </div>
+        <div class="compare-inputs">
+          <div class="compare-input-wrap">
+            <div class="compare-input-label">Réel actuel</div>
+            <input type="number" class="compare-input" id="realFuture" placeholder="0 €" min="0" oninput="calcGaps()">
+          </div>
+          <div class="compare-vs">vs</div>
+          <div class="compare-input-wrap">
+            <div class="compare-input-label">Cible idéale</div>
+            <input type="number" class="compare-input" id="cibleFuture" placeholder="—" readonly style="opacity:0.6;cursor:not-allowed;">
+          </div>
+        </div>
+        <div class="bar-wrap">
+          <div class="bar-labels"><span>0%</span><span>Cible 20%</span><span>100%+</span></div>
+          <div class="bar-track"><div class="bar-fill" id="barFuture" style="width:0%"></div></div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SECTION C -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">🔍 Partie C — Le Diagnostic et l'Action</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="explainer">
+    <div class="explainer-title">🩺 Maintenant qu'on a le diagnostic, que faire ?</div>
+    <p>Le but n'est pas d'être parfait dès demain. Le but est d'identifier ton <strong>profil actuel</strong> pour savoir sur quoi travailler en priorité.</p>
+    <p>C'est comme chez un médecin : on ne dit pas "tu es en bonne santé" ou "tu es très malade". On dit "voilà ce qui fonctionne bien, voilà ce qu'on peut améliorer, voilà par où commencer".</p>
+  </div>
+
+  <!-- EXERCICE 3 -->
+  <div class="card blue">
+    <div class="exercise-header">
+      <div class="exercise-num blue">03</div>
+      <div class="exercise-title">🧬 Quel est ton profil actuel ?</div>
+    </div>
+    <div class="card-body" style="margin-bottom:16px;">Coche la case qui correspond le plus à ta réalité — et découvre ton plan d'action personnalisé.</div>
+
+    <div class="profile-cards">
+
+      <div class="profile-card" onclick="selectProfile(this)">
+        <div class="profile-header">
+          <div class="profile-radio"></div>
+          <div class="profile-icon">🦗</div>
+          <div class="profile-info">
+            <div class="profile-name">Le Profil "Cigale"</div>
+            <div class="profile-desc">Mes Envies explosent les 30%, et mon Futur (Épargne) est proche de zéro. Je vis dans l'instant présent — souvent aux dépens de demain.</div>
+          </div>
+        </div>
+        <div class="profile-action">
+          <div class="profile-action-label">⚡ Mon action de la semaine</div>
+          <div class="profile-action-text">Trouver <strong>UNE dépense "Envie"</strong> (un abonnement inutile, un resto en trop) à réduire ce mois-ci pour commencer à remplir la case "Futur". Pas tout changer d'un coup — juste un petit pas.</div>
+        </div>
+      </div>
+
+      <div class="profile-card" onclick="selectProfile(this)">
+        <div class="profile-header">
+          <div class="profile-radio"></div>
+          <div class="profile-icon">🏋️</div>
+          <div class="profile-info">
+            <div class="profile-name">Le Profil "Survivant"</div>
+            <div class="profile-desc">Mes Besoins (charges fixes) dépassent les 60–70%. Je n'ai pratiquement pas de marge, quoi que je fasse. Ce n'est pas un problème de discipline, c'est un problème de revenus ou de charges fixes trop lourdes.</div>
+          </div>
+        </div>
+        <div class="profile-action">
+          <div class="profile-action-label">⚡ Mon action de la semaine</div>
+          <div class="profile-action-text">Je ne me culpabilise pas sur mes petits plaisirs. Mon urgence est de <strong>renégocier une grosse charge fixe</strong> (assurance, internet, mutuelle) ou de réfléchir à <strong>augmenter mes revenus</strong> (Vinted, heures supplémentaires, formation). On en parle au Jour 6 !</div>
+        </div>
+      </div>
+
+      <div class="profile-card" onclick="selectProfile(this)">
+        <div class="profile-header">
+          <div class="profile-radio"></div>
+          <div class="profile-icon">🐿️</div>
+          <div class="profile-info">
+            <div class="profile-name">Le Profil "Écureuil Anxieux"</div>
+            <div class="profile-desc">Mon Futur (Épargne) est énorme, mais mes Envies sont à 5%. J'épargne beaucoup mais je n'arrive pas à profiter — j'ai peur de dépenser même quand j'en ai les moyens.</div>
+          </div>
+        </div>
+        <div class="profile-action">
+          <div class="profile-action-label">⚡ Mon action de la semaine</div>
+          <div class="profile-action-text">Je m'oblige à dépenser <strong>une somme précise pour MOI</strong> ce mois-ci, sans aucune culpabilité. <strong>L'argent est fait pour circuler</strong> — épargner à 100% est aussi un déséquilibre. Profiter fait partie d'une vie financière saine !</div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- MANTRA -->
+  <div class="mantra-display">
+    <div class="mantra-icon">🗣️</div>
+    <div class="mantra-label">✨ Mantra du Jour 3</div>
+    <div class="mantra-text">
+      "Un budget, c'est la <span>permission de dépenser</span>,<br>
+      pas une prison. Je construis mon futur<br>
+      <span>sans sacrifier mon présent</span>."
+    </div>
+    <button class="mantra-btn" id="mantraBtn" onclick="readMantra()">
+      🔊 Lire à voix haute
+    </button>
+  </div>
+
+  <!-- WHAT'S NEXT -->
+  <div class="next-day">
+    <div class="next-day-icon">🐖</div>
+    <div>
+      <div class="next-day-label">👉 Ce qui t'attend demain — Jour 4</div>
+      <div class="next-day-title">Le Premier Pas vers l'Épargne</div>
+      <div class="next-day-text">
+        Maintenant que tu as ton budget en 3 parties (Jour 3), il est temps de s'attaquer à la partie la plus négligée : le <strong>Futur</strong>. Comment commencer à épargner même avec un petit salaire ? Combien épargner ? Sur quel compte ? On répond à toutes ces questions demain.<br><br>
+        🎯 <em>Spoiler : on va découvrir la technique de "l'épargne automatique" — la seule méthode qui fonctionne vraiment.</em>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSING -->
+  <div class="closing">
+    <div class="closing-icon">🌿</div>
+    <div class="closing-title">Fin du Jour 3</div>
+    <div class="closing-text">Tu as ta boussole. <strong>Demain, on passe au concret</strong> — on va construire ton premier vrai budget mensuel et commencer à épargner.</div>
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => { document.getElementById('progressFill').style.width = '42.9%'; }, 400);
+  });
+
+  function calcTargets() {
+    const income = parseFloat(document.getElementById('incomeInput').value) || 0;
+    const needs  = income * 0.50;
+    const wants  = income * 0.30;
+    const future = income * 0.20;
+    const fmt = v => v > 0 ? v.toLocaleString('fr-FR', {maximumFractionDigits: 0}) + ' €' : '— €';
+    document.getElementById('targetNeeds').textContent  = fmt(needs);
+    document.getElementById('targetWants').textContent  = fmt(wants);
+    document.getElementById('targetFuture').textContent = fmt(future);
+    document.getElementById('cibleNeeds').value  = income > 0 ? needs.toFixed(0)  : '';
+    document.getElementById('cibleNeeds').placeholder  = income > 0 ? needs.toLocaleString('fr-FR', {maximumFractionDigits:0}) + ' €' : '—';
+    document.getElementById('cibleWants').value  = income > 0 ? wants.toFixed(0)  : '';
+    document.getElementById('cibleWants').placeholder  = income > 0 ? wants.toLocaleString('fr-FR', {maximumFractionDigits:0}) + ' €' : '—';
+    document.getElementById('cibleFuture').value = income > 0 ? future.toFixed(0) : '';
+    document.getElementById('cibleFuture').placeholder = income > 0 ? future.toLocaleString('fr-FR', {maximumFractionDigits:0}) + ' €' : '—';
+    calcGaps();
+  }
+
+  function calcGaps() {
+    const income = parseFloat(document.getElementById('incomeInput').value) || 0;
+    const rows = [
+      { realId: 'realNeeds',  gapId: 'gapNeeds',  barId: 'barNeeds',  target: income*0.50, targetPct: 50  },
+      { realId: 'realWants',  gapId: 'gapWants',  barId: 'barWants',  target: income*0.30, targetPct: 30  },
+      { realId: 'realFuture', gapId: 'gapFuture', barId: 'barFuture', target: income*0.20, targetPct: 20  },
+    ];
+    rows.forEach(({ realId, gapId, barId, target, targetPct }) => {
+      const real = parseFloat(document.getElementById(realId).value) || 0;
+      const gapEl = document.getElementById(gapId);
+      const barEl = document.getElementById(barId);
+      if (!document.getElementById(realId).value || income === 0) {
+        gapEl.className = 'gap-badge gap-neutral'; gapEl.textContent = 'Écart : —'; barEl.style.width = '0%'; return;
+      }
+      const diff = real - target;
+      const sign = diff >= 0 ? '+' : '';
+      gapEl.textContent = 'Écart : ' + sign + diff.toLocaleString('fr-FR', {maximumFractionDigits: 0}) + ' €';
+      const isGood = realId === 'realFuture' ? diff >= 0 : diff <= 0;
+      gapEl.className = 'gap-badge ' + (isGood ? 'gap-good' : 'gap-warn');
+      const realPct = income > 0 ? (real / income) * 100 : 0;
+      barEl.style.width = Math.min(realPct / targetPct * 100, 100) + '%';
+    });
+  }
+
+  function selectProfile(el) {
+    document.querySelectorAll('.profile-card').forEach(c => c.classList.remove('selected'));
+    el.classList.add('selected');
+    setTimeout(() => el.querySelector('.profile-action').scrollIntoView({ behavior: 'smooth', block: 'nearest' }), 100);
+  }
+
+  function readMantra() {
+    const btn = document.getElementById('mantraBtn');
+    btn.classList.add('reading'); btn.innerHTML = '✅ Je l\'ai lu à voix haute !';
+    setTimeout(() => { btn.classList.remove('reading'); btn.innerHTML = '🔊 Relire à voix haute'; }, 3000);
+  }
+</script>
+<style>.pdf-btn{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#2d6a6a,#1a4a4a);color:#fff;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:9999;transition:transform .2s,box-shadow .2s;}.pdf-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,0.4);}@media print{.pdf-btn{display:none!important;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}.card,[class*="card"]{break-inside:avoid;}}</style><button class="pdf-btn" onclick="window.print()">📄 Exporter en PDF</button></body>
+</html>

@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jour 4 – Le Système Anti-Discipline</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f5f0eb; --card: #ffffff; --accent2: #e8a838;
+    --soft: #f0ebe4; --text: #1e1e1e; --muted: #7a7068;
+    --border: #e0d9d0; --green: #3a9e6f; --teal: #2d6a6a;
+    --radius: 16px; --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+  .hero { background: linear-gradient(135deg, #0a1628 0%, #1a3a5c 45%, #0a1628 100%); color: white; padding: 48px 24px 56px; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; inset: 0; background: radial-gradient(ellipse at 68% 28%, rgba(232,168,56,0.28) 0%, transparent 55%), radial-gradient(ellipse at 18% 78%, rgba(58,158,111,0.18) 0%, transparent 50%); pointer-events: none; }
+  .hero-badge { display: inline-block; background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); border-radius: 50px; padding: 6px 18px; font-size: 12px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 20px; backdrop-filter: blur(6px); }
+  .hero-day { font-size: clamp(13px,2.5vw,15px); font-weight: 500; letter-spacing: 4px; text-transform: uppercase; opacity: 0.75; margin-bottom: 10px; }
+  .hero-title { font-family: 'Playfair Display', serif; font-size: clamp(28px,6vw,52px); font-weight: 800; line-height: 1.15; margin-bottom: 16px; }
+  .hero-title span { color: var(--accent2); }
+  .hero-subtitle { font-size: clamp(14px,2.5vw,17px); opacity: 0.8; max-width: 520px; margin: 0 auto 28px; font-weight: 300; line-height: 1.7; }
+  .hero-emoji { font-size: clamp(40px,8vw,72px); display: block; margin-bottom: 18px; filter: drop-shadow(0 4px 16px rgba(58,158,111,0.5)); }
+  .progress-bar-wrap { max-width: 320px; margin: 0 auto; background: rgba(255,255,255,0.15); border-radius: 50px; height: 6px; overflow: hidden; }
+  .progress-bar-fill { width: 0%; height: 100%; background: var(--accent2); border-radius: 50px; transition: width 1s ease; }
+  .progress-label { font-size: 12px; opacity: 0.6; margin-top: 8px; }
+  .journey-map { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); border-radius: 12px; padding: 16px 20px; margin: 20px auto 0; max-width: 560px; display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px; }
+  .journey-step { font-size: 11px; font-weight: 600; opacity: 0.5; white-space: nowrap; }
+  .journey-step.done { opacity: 0.7; text-decoration: line-through; }
+  .journey-step.active { opacity: 1; background: rgba(232,168,56,0.25); border: 1px solid rgba(232,168,56,0.5); border-radius: 20px; padding: 3px 10px; color: var(--accent2); }
+  .journey-arrow { font-size: 10px; opacity: 0.3; margin: 0 2px; }
+
+  .container { max-width: 820px; margin: 0 auto; padding: 0 16px 60px; }
+
+  .card { background: var(--card); border-radius: var(--radius); padding: 28px; box-shadow: var(--shadow); margin-top: 24px; border: 1px solid var(--border); position: relative; overflow: hidden; }
+  .card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; border-radius: var(--radius) var(--radius) 0 0; }
+  .card.navy::before   { background: linear-gradient(90deg, #1a3a5c, #4a7ab5); }
+  .card.orange::before { background: linear-gradient(90deg, var(--accent2), #f5c76a); }
+  .card.green::before  { background: linear-gradient(90deg, var(--green), #6dd5a5); }
+  .card.teal::before   { background: linear-gradient(90deg, var(--teal), #5aadad); }
+  .card.purple::before { background: linear-gradient(90deg, #7c3aed, #c4b5fd); }
+  .card-label { display: inline-flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; padding: 4px 12px; border-radius: 50px; margin-bottom: 16px; }
+  .card-label.navy   { background: #e0e9f5; color: #1a3a5c; }
+  .card-label.orange { background: #fef3dc; color: #b87a0a; }
+  .card-title { font-family: 'Playfair Display', serif; font-size: clamp(18px,3.5vw,24px); font-weight: 700; margin-bottom: 10px; line-height: 1.3; }
+  .card-body { font-size: 15px; line-height: 1.8; color: #3a3530; }
+  .intro-highlight { background: linear-gradient(135deg, #e0e9f5, #eef3f9); border: 1px solid #a0bcd8; border-radius: 12px; padding: 20px 22px; margin: 16px 0; font-size: 15px; line-height: 1.8; }
+  .golden-rule { background: linear-gradient(135deg, #fef9ee, #fff8e8); border-left: 4px solid var(--accent2); border-radius: 0 12px 12px 0; padding: 16px 20px; margin-top: 16px; font-size: 14px; line-height: 1.7; }
+  .golden-rule strong { color: #9a6e00; }
+  .explainer { background: linear-gradient(135deg, #fffbf0, #fef9e7); border: 1.5px solid #f0d080; border-radius: 12px; padding: 16px 20px; margin: 16px 0; font-size: 14px; line-height: 1.8; }
+  .explainer-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #9a6e00; margin-bottom: 8px; }
+  .explainer p { color: #4a3a10; margin-bottom: 6px; }
+  .explainer p:last-child { margin-bottom: 0; }
+  .analogy { background: linear-gradient(135deg, #f0f4ff, #e8effe); border: 1.5px solid #b8c8f0; border-radius: 12px; padding: 16px 20px; margin: 12px 0; font-size: 14px; line-height: 1.8; color: #2a3a60; }
+  .analogy-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #3060b0; margin-bottom: 8px; }
+  .recap-box { background: linear-gradient(135deg, #e0f2f2, #eef7f7); border: 1.5px solid #90d8c8; border-radius: 12px; padding: 16px 20px; margin: 16px 0; font-size: 14px; line-height: 1.8; }
+  .recap-title { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: var(--teal); margin-bottom: 8px; }
+
+  .section-header { display: flex; align-items: center; gap: 12px; margin-top: 36px; margin-bottom: 4px; }
+  .section-divider { flex: 1; height: 1px; background: var(--border); }
+  .section-title { font-size: 11px; font-weight: 800; letter-spacing: 2.5px; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+  .exercise-header { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; }
+  .exercise-num { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 800; flex-shrink: 0; }
+  .exercise-num.navy   { background: #e0e9f5; color: #1a3a5c; }
+  .exercise-num.green  { background: #e3f7ee; color: #2a7a52; }
+  .exercise-num.teal   { background: #e0f2f2; color: var(--teal); }
+  .exercise-num.purple { background: #f3effe; color: #6b3dc0; }
+  .exercise-title { font-size: 17px; font-weight: 700; }
+
+  .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 16px; }
+  @media(max-width:500px){ .compare-grid { grid-template-columns: 1fr; } }
+  .compare-box { border-radius: 14px; padding: 20px 18px; }
+  .compare-box.wrong { background: #fdecea; border: 2px solid #f5a0a0; }
+  .compare-box.right { background: #e3f7ee; border: 2px solid #9ad8b8; }
+  .compare-box-title { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 14px; }
+  .compare-box.wrong .compare-box-title { color: #b03030; }
+  .compare-box.right .compare-box-title { color: #2a7a52; }
+  .flow-row { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+  .flow-badge { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 50px; white-space: nowrap; }
+  .flow-badge.red   { background: #fbd5d5; color: #b03030; }
+  .flow-badge.green { background: #c8f0de; color: #2a7a52; }
+  .flow-badge.gold  { background: #fef3dc; color: #b87a0a; }
+  .flow-badge.blue  { background: #e8effe; color: #3a5abf; }
+  .flow-down { font-size: 14px; color: var(--muted); padding-left: 4px; margin: 2px 0; display: block; }
+
+  .flux-map { display: flex; flex-direction: column; align-items: center; margin-top: 18px; }
+  .flux-step { width: 100%; max-width: 540px; border-radius: 14px; padding: 18px 22px; border: 2px solid var(--border); background: white; transition: box-shadow 0.2s; }
+  .flux-step:focus-within { box-shadow: 0 0 0 3px rgba(232,168,56,0.15); }
+  .flux-step-header { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
+  .flux-step-icon { font-size: 24px; }
+  .flux-step-num  { font-size: 10px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; }
+  .flux-step-name { font-size: 13px; color: var(--muted); }
+  .flux-step.s1 { border-color: #a0bcd8; background: linear-gradient(135deg,#e0e9f5,#eef3f9); }
+  .flux-step.s1 .flux-step-num { color: #1a3a5c; }
+  .flux-step.s2 { border-color: #9ad8b8; background: linear-gradient(135deg,#e3f7ee,#eef9f4); }
+  .flux-step.s2 .flux-step-num { color: #2a7a52; }
+  .flux-step.s3 { border-color: #d4b87a; background: linear-gradient(135deg,#fdf6e3,#fef9ee); }
+  .flux-step.s3 .flux-step-num { color: #9a6e00; }
+  .flux-step.s4 { border-color: #c4b5fd; background: linear-gradient(135deg,#f3effe,#f8f5ff); }
+  .flux-step.s4 .flux-step-num { color: #6b3dc0; }
+  .flux-connector { width: 2px; height: 32px; background: linear-gradient(180deg,#c0b8b0,#e0d9d0); position: relative; margin: 0 auto; }
+  .flux-connector::after { content:'▼'; position:absolute; bottom:-10px; left:50%; transform:translateX(-50%); color:var(--muted); font-size:12px; }
+  .flux-input-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin-top: 10px; margin-bottom: 3px; display: block; }
+  .flux-input { width: 100%; border: 1.5px solid var(--border); border-radius: 8px; padding: 9px 13px; font-size: 14px; font-family: 'Inter', sans-serif; background: rgba(255,255,255,0.7); color: var(--text); outline: none; transition: all 0.2s; }
+  .flux-input:focus { border-color: var(--accent2); background: white; box-shadow: 0 0 0 3px rgba(232,168,56,0.12); }
+  .flux-input::placeholder { color: #b0a89e; }
+  .flux-input-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+  @media(max-width:440px){ .flux-input-row { grid-template-columns: 1fr; } }
+  .yearly-preview { margin-top: 20px; max-width: 540px; width: 100%; text-align: center; padding: 20px; background: linear-gradient(135deg,#0a1628,#1a3a5c); border-radius: 14px; color: white; }
+  .yearly-preview-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6; margin-bottom: 8px; }
+  .yearly-amount { font-family: 'Playfair Display', serif; font-size: clamp(28px,6vw,44px); font-weight: 800; color: var(--accent2); }
+  .yearly-sub { font-size: 12px; opacity: 0.6; margin-top: 6px; }
+
+  .checklist { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
+  .check-item { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-radius: 10px; border: 2px solid var(--border); cursor: pointer; transition: all 0.2s; background: white; user-select: none; }
+  .check-item:hover { border-color: var(--accent2); background: #fefbf4; }
+  .check-item.checked { border-color: var(--green); background: #eef9f4; }
+  .custom-check { width: 22px; height: 22px; flex-shrink: 0; border: 2px solid var(--border); border-radius: 6px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; margin-top: 1px; }
+  .check-item.checked .custom-check { background: var(--green); border-color: var(--green); }
+  .check-item.checked .custom-check::after { content: '✓'; color: white; font-size: 13px; font-weight: 800; }
+  .check-text { font-size: 14px; line-height: 1.6; flex: 1; }
+  .check-text strong { display: block; font-weight: 700; margin-bottom: 2px; }
+  .opt-badge { display: inline-block; font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; background: #fef3dc; color: #b87a0a; padding: 2px 8px; border-radius: 50px; margin-left: 6px; }
+  .check-progress { display: flex; align-items: center; gap: 12px; margin-top: 16px; padding: 12px 16px; background: var(--soft); border-radius: 10px; }
+  .check-bar-wrap { flex: 1; height: 8px; background: var(--border); border-radius: 50px; overflow: hidden; }
+  .check-bar-fill { height: 100%; background: linear-gradient(90deg, var(--green), #6dd5a5); border-radius: 50px; transition: width 0.4s ease; width: 0%; }
+  .check-pct { font-size: 13px; font-weight: 700; color: var(--green); min-width: 36px; text-align: right; }
+
+  .mindset-big { background: linear-gradient(135deg,#0a1628,#1a3a5c); border-radius: 14px; padding: 24px 22px; color: white; margin-top: 16px; position: relative; overflow: hidden; }
+  .mindset-big::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 75% 20%, rgba(232,168,56,0.22), transparent 55%); pointer-events:none; }
+  .mindset-big-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; opacity: 0.6; margin-bottom: 8px; }
+  .mindset-big-number { font-family: 'Playfair Display', serif; font-size: clamp(32px,7vw,56px); font-weight: 800; color: var(--accent2); line-height: 1; margin: 6px 0; }
+  .mindset-big-caption { font-size: 13px; opacity: 0.7; line-height: 1.6; }
+  .emotion-grid { display: flex; flex-wrap: wrap; gap: 10px; margin: 14px 0; }
+  .emotion-btn { padding: 9px 18px; border-radius: 50px; font-size: 13px; font-weight: 600; border: 2px solid var(--border); background: white; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; color: var(--muted); }
+  .emotion-btn:hover { border-color: var(--accent2); color: #9a6e00; }
+  .emotion-btn.active { background: var(--accent2); border-color: var(--accent2); color: #1a1000; font-weight: 700; }
+  .mindset-textarea { width: 100%; border: 1.5px solid var(--border); border-radius: 10px; padding: 14px 16px; font-size: 14px; line-height: 1.7; font-family: 'Inter', sans-serif; background: var(--soft); color: var(--text); outline: none; resize: vertical; transition: all 0.2s; margin-top: 10px; }
+  .mindset-textarea:focus { border-color: var(--accent2); background: white; box-shadow: 0 0 0 3px rgba(232,168,56,0.12); }
+  .mindset-textarea::placeholder { color: #b0a89e; }
+
+  .mantra-card { background: linear-gradient(135deg,#0a1628 0%,#1a3a5c 50%,#0a1628 100%); border-radius: var(--radius); padding: 36px 28px; color: white; text-align: center; margin-top: 24px; position: relative; overflow: hidden; }
+  .mantra-card::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse at 75% 25%, rgba(232,168,56,0.25), transparent 60%); pointer-events:none; }
+  .mantra-icon { font-size: 40px; margin-bottom: 16px; }
+  .mantra-label { font-size: 11px; font-weight: 700; letter-spacing: 2.5px; text-transform: uppercase; opacity: 0.65; margin-bottom: 16px; }
+  .mantra-text { font-family: 'Playfair Display', serif; font-size: clamp(16px,3vw,22px); font-style: italic; line-height: 1.8; max-width: 520px; margin: 0 auto 20px; }
+  .mantra-text span { color: var(--accent2); }
+  .mantra-btn { display: inline-flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.15); border: 1.5px solid rgba(255,255,255,0.3); border-radius: 50px; padding: 10px 22px; font-size: 13px; font-weight: 600; color: white; cursor: pointer; transition: all 0.2s; font-family: 'Inter', sans-serif; }
+  .mantra-btn:hover { background: rgba(255,255,255,0.25); }
+  .mantra-btn.reading { background: var(--accent2); border-color: var(--accent2); color: #1a1a0a; }
+
+  .next-day { background: linear-gradient(135deg, #f3effe, #ede8ff); border: 1.5px solid #c4b5fd; border-radius: var(--radius); padding: 24px 28px; margin-top: 24px; display: flex; gap: 16px; align-items: flex-start; }
+  .next-day-icon { font-size: 36px; flex-shrink: 0; }
+  .next-day-label { font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: #6b3dc0; margin-bottom: 6px; }
+  .next-day-title { font-family: 'Playfair Display', serif; font-size: 18px; font-weight: 700; color: #3a1a60; margin-bottom: 8px; }
+  .next-day-text { font-size: 14px; line-height: 1.7; color: #5a4070; }
+
+  .closing { text-align: center; padding: 40px 20px 20px; }
+  .closing-icon { font-size: 48px; margin-bottom: 12px; }
+  .closing-title { font-family: 'Playfair Display', serif; font-size: clamp(18px,4vw,26px); font-weight: 700; color: #1a3a5c; margin-bottom: 8px; }
+  .closing-text { font-size: 14px; color: var(--muted); line-height: 1.7; max-width: 400px; margin: 0 auto; }
+  @media(max-width:500px){ .card{padding:20px 16px;} .hero{padding:36px 16px 44px;} .next-day{flex-direction:column;} }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">💰 Programme Finance Personnelle</div>
+  <div class="hero-day">Jour 4 sur 7</div>
+  <span class="hero-emoji">⚙️</span>
+  <h1 class="hero-title">Le Système<br><span>Anti-Discipline</span></h1>
+  <p class="hero-subtitle">Épargner sans effort, sans volonté, sans y penser — en mettant tout en automatique.</p>
+  <div class="progress-bar-wrap">
+    <div class="progress-bar-fill" id="progressFill"></div>
+  </div>
+  <div class="progress-label">Progression : Jour 4 / 7</div>
+  <div class="journey-map">
+    <div class="journey-step done">✅ État des lieux</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step done">✅ Croyances</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step done">✅ Budget</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step active">4️⃣ Automatisation</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">5️⃣ Vision</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">6️⃣ Urgences</div>
+    <div class="journey-arrow">→</div>
+    <div class="journey-step">7️⃣ Bilan</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="recap-box">
+    <div class="recap-title">🔗 La suite des Jours 1, 2 et 3</div>
+    Tu connais tes chiffres (Jour 1), tes croyances (Jour 2) et ton budget idéal en 3 catégories 50/30/20 (Jour 3). Aujourd'hui, on passe à l'action la plus importante du programme : <strong>mettre l'épargne en pilote automatique</strong> pour ne plus jamais avoir à y penser.
+  </div>
+
+  <!-- INTRO -->
+  <div class="card navy">
+    <div class="card-label navy">🎙️ Introduction</div>
+    <div class="card-title">"Pourquoi la volonté ne marche jamais (et comment la contourner)"</div>
+    <div class="intro-highlight">
+      Tu connais ce scénario ? Tu te dis "ce mois-ci, je vais épargner" — et puis arrive la facture inattendue, le dîner de dernière minute, les soldes... À la fin du mois, il ne reste rien.<br><br>
+      Ce n'est <strong>pas de ta faute</strong>. C'est la <strong>Loi de Parkinson</strong> : peu importe ton revenu, tes dépenses ont tendance à remplir tout l'espace disponible. C'est humain, c'est câblé dans notre cerveau.
+    </div>
+    <div class="golden-rule">
+      ⚡ <strong>La solution :</strong> Ne plus avoir <em>besoin</em> de discipline. Aujourd'hui, on inverse les règles du jeu avec un principe fondamental : <strong>"Payez-vous EN PREMIER."</strong>
+    </div>
+  </div>
+
+  <div class="analogy">
+    <div class="analogy-title">🥗 L'analogie du régime alimentaire</div>
+    Si tu prépares tes repas sains à l'avance le dimanche, tu n'as plus besoin de volonté le mercredi soir quand tu es fatigué. L'épargne automatique, c'est exactement la même chose : tu "prépares" ton épargne dès le jour de paie, et tu n'as plus à te battre contre toi-même le reste du mois.
+  </div>
+
+  <!-- COMPARISON -->
+  <div class="card orange">
+    <div class="card-label orange">💡 L'Erreur vs. Le Succès</div>
+    <div class="card-title">Deux circuits, deux destins</div>
+
+    <div class="explainer" style="margin-bottom:16px;">
+      <div class="explainer-title">🧩 Comprends la différence</div>
+      <p><strong>Méthode classique (qui échoue)</strong> : Salaire arrive → tu paies tes factures → tu profites → tu espères qu'il reste quelque chose → il ne reste rien.</p>
+      <p><strong>Méthode "Payez-vous en premier" (qui fonctionne)</strong> : Salaire arrive → tu mets l'épargne de côté immédiatement → tu paies tes factures → tu profites du reste sans culpabilité.</p>
+      <p>La différence ? Juste <strong>l'ordre</strong>. Ça change tout.</p>
+    </div>
+
+    <div class="compare-grid">
+      <div class="compare-box wrong">
+        <div class="compare-box-title">❌ L'Erreur Classique</div>
+        <div class="flow-row">🏦 <span class="flow-badge red">Salaire arrive</span></div>
+        <span class="flow-down">↓</span>
+        <div class="flow-row">📋 <span class="flow-badge red">Factures</span></div>
+        <span class="flow-down">↓</span>
+        <div class="flow-row">🎉 <span class="flow-badge red">Plaisirs / Dépenses</span></div>
+        <span class="flow-down">↓</span>
+        <div class="flow-row">😬 <span class="flow-badge red">Épargne = 0 € (encore)</span></div>
+      </div>
+      <div class="compare-box right">
+        <div class="compare-box-title">✅ Le Succès Garanti</div>
+        <div class="flow-row">🏦 <span class="flow-badge green">Salaire arrive</span></div>
+        <span class="flow-down">↓</span>
+        <div class="flow-row">🛡️ <span class="flow-badge green">Épargne auto (en 1er !)</span></div>
+        <span class="flow-down">↓</span>
+        <div class="flow-row">📋 <span class="flow-badge gold">Factures</span></div>
+        <span class="flow-down">↓</span>
+        <div class="flow-row">🎉 <span class="flow-badge blue">Plaisirs — 100% libre ✓</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION A -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">🗺️ Partie A — Ton Nouveau Circuit de l'Argent</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="explainer">
+    <div class="explainer-title">⚙️ C'est quoi un "virement permanent automatique" ?</div>
+    <p>C'est une instruction que tu donnes à ta banque une seule fois : "Chaque mois, le jour X, transfère Y euros de mon compte courant vers mon compte épargne."</p>
+    <p>Après ça, ça se fait tout seul, tous les mois, sans que tu aies à y penser ou à te souvenir de le faire. Comme un abonnement Netflix, mais pour TOI.</p>
+    <p>🎯 <em>Combien mettre ? Commence petit si besoin : même 20 € par mois, c'est 240 € en un an. L'important, c'est que ça parte automatiquement.</em></p>
+  </div>
+
+  <div class="card green">
+    <div class="exercise-header">
+      <div class="exercise-num green">01</div>
+      <div class="exercise-title">💸 Le Trajet de Mon Argent</div>
+    </div>
+    <div class="card-body" style="margin-bottom:18px;">Remplis les espaces pour <strong>planifier ton nouveau circuit</strong>. C'est ton schéma personnel — garde-le précieusement.</div>
+
+    <div class="flux-map">
+      <div class="flux-step s1">
+        <div class="flux-step-header">
+          <div class="flux-step-icon">🏦</div>
+          <div>
+            <div class="flux-step-num">Étape 1 — La Source</div>
+            <div class="flux-step-name">Mon Compte Courant — là où tout commence</div>
+          </div>
+        </div>
+        <div class="flux-input-row">
+          <div>
+            <span class="flux-input-label">Mon salaire arrive le…</span>
+            <input type="text" class="flux-input" placeholder="ex : le 28 du mois">
+          </div>
+          <div>
+            <span class="flux-input-label">Ma banque principale</span>
+            <input type="text" class="flux-input" placeholder="ex : BNP, Crédit Agricole…">
+          </div>
+        </div>
+      </div>
+
+      <div class="flux-connector"></div>
+
+      <div class="flux-step s2">
+        <div class="flux-step-header">
+          <div class="flux-step-icon">🛡️</div>
+          <div>
+            <div class="flux-step-num">Étape 2 — MOI d'Abord ⭐ (Le plus important !)</div>
+            <div class="flux-step-name">Le Virement Automatique vers Mon Épargne</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:#2a7a52;background:#e3f7ee;border-radius:8px;padding:8px 12px;margin-bottom:12px;line-height:1.6;">
+          💡 <strong>Conseil :</strong> Programme ce virement le lendemain de ta date de paie. Ainsi l'argent "disparaît" avant que tu puisses le dépenser.
+        </div>
+        <div class="flux-input-row">
+          <div>
+            <span class="flux-input-label">Date du virement auto</span>
+            <input type="text" class="flux-input" id="transferDate" placeholder="ex : le 29 du mois" oninput="calcYearly()">
+          </div>
+          <div>
+            <span class="flux-input-label">Montant mensuel (€)</span>
+            <input type="number" class="flux-input" id="transferAmount" placeholder="ex : 150" min="0" oninput="calcYearly()">
+          </div>
+        </div>
+        <span class="flux-input-label">Destination (nom de ton compte épargne)</span>
+        <input type="text" class="flux-input" placeholder="ex : Livret A, compte BoursoBank épargne…">
+      </div>
+
+      <div class="flux-connector"></div>
+
+      <div class="flux-step s3">
+        <div class="flux-step-header">
+          <div class="flux-step-icon">💸</div>
+          <div>
+            <div class="flux-step-num">Étape 3 — Les Factures</div>
+            <div class="flux-step-name">Les Besoins (prélèvements automatiques)</div>
+          </div>
+        </div>
+        <div style="font-size:12px;color:#9a6e00;background:#fef3dc;border-radius:8px;padding:8px 12px;margin-bottom:10px;line-height:1.6;">
+          💡 Ce sont tes charges fixes : loyer, électricité, internet, assurances, téléphone... Elles partent toutes seules chaque mois.
+        </div>
+        <span class="flux-input-label">Mes prélèvements obligatoires</span>
+        <input type="text" class="flux-input" placeholder="ex : Loyer, EDF, assurance, internet, téléphone…">
+      </div>
+
+      <div class="flux-connector"></div>
+
+      <div class="flux-step s4">
+        <div class="flux-step-header">
+          <div class="flux-step-icon">🎉</div>
+          <div>
+            <div class="flux-step-num">Étape 4 — Ma Liberté Totale</div>
+            <div class="flux-step-name">Les Envies — 100% sans culpabilité</div>
+          </div>
+        </div>
+        <div style="font-size:14px;line-height:1.8;color:#3a3530;margin-top:4px;">
+          L'argent qui reste sur ton compte courant t'appartient à <strong>100%</strong>. Tu peux le dépenser pour tes loisirs, tes sorties, tes plaisirs sans <em>aucune</em> culpabilité — car ton Futur est déjà sécurisé automatiquement. ✅
+        </div>
+      </div>
+
+      <div class="yearly-preview">
+        <div class="yearly-preview-label">🚀 Dans 12 mois, sans effort, tu auras épargné</div>
+        <div class="yearly-amount" id="yearlyBadge">— €</div>
+        <div class="yearly-sub">Saisis ton montant de virement à l'étape 2 ci-dessus</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION B -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">✅ Partie B — Passage à l'Action</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="card teal">
+    <div class="exercise-header">
+      <div class="exercise-num teal">02</div>
+      <div class="exercise-title">📱 3 Minutes pour Changer Ta Vie</div>
+    </div>
+    <div class="card-body" style="margin-bottom:10px;">Prends ton téléphone <strong>maintenant</strong>. Cette action ne prend que 3 minutes — et tu n'auras plus jamais à y repenser.</div>
+
+    <div class="explainer" style="margin-bottom:14px;">
+      <div class="explainer-title">📱 Comment créer un virement automatique ?</div>
+      <p>1. Ouvre l'app de ta banque → Rubrique "Virements" ou "Mes opérations"</p>
+      <p>2. Choisis "Virement permanent" ou "Virement programmé"</p>
+      <p>3. Choisis le compte destinataire (ton livret d'épargne)</p>
+      <p>4. Saisis le montant et la date de récurrence (mensuelle)</p>
+      <p>5. Valide ! C'est tout. 🎉</p>
+    </div>
+
+    <div class="checklist">
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>📱 J'ai ouvert l'application de ma banque</strong>
+          L'app est ouverte devant moi, prête à être configurée.
+        </div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>⚙️ J'ai programmé un virement permanent automatique</strong>
+          Vers mon compte d'épargne, pour le montant décidé à l'étape 2.
+        </div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>📅 J'ai défini la date du virement</strong>
+          Le lendemain ou 48h après la réception de mon salaire — avant de pouvoir dépenser !
+        </div>
+      </div>
+      <div class="check-item" onclick="toggleCheck(this)">
+        <div class="custom-check"></div>
+        <div class="check-text">
+          <strong>✏️ J'ai nommé ce virement avec un nom motivant</strong>
+          <span class="opt-badge">Optionnel ✨</span><br>
+          <span style="font-size:13px;color:var(--muted);margin-top:4px;display:block;">Ex : "Pour ma liberté", "Ma maison", "Mon voyage Japon" — plutôt que "Virement Livret A". Un nom qui t'inspire à tenir !</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="check-progress">
+      <span style="font-size:12px;color:var(--muted);font-weight:600;">Progression</span>
+      <div class="check-bar-wrap"><div class="check-bar-fill" id="checkBar"></div></div>
+      <div class="check-pct" id="checkPct">0/4</div>
+    </div>
+  </div>
+
+  <!-- SECTION C -->
+  <div class="section-header">
+    <div class="section-divider"></div>
+    <div class="section-title">🧠 Partie C — Prendre Conscience de l'Impact</div>
+    <div class="section-divider"></div>
+  </div>
+
+  <div class="explainer">
+    <div class="explainer-title">🧮 Comprendre la puissance des petites sommes régulières</div>
+    <p>100 € par mois = <strong>1 200 € en 1 an</strong>. 200 € par mois = <strong>2 400 € en 1 an</strong>. Et si tu épargnes depuis 10 ans ? Ce sont des dizaines de milliers d'euros qui se forment sans effort.</p>
+    <p>C'est ce qu'on appelle l'effet de la <strong>régularité</strong>. Pas besoin de grosses sommes — juste de la constance. Et l'automatisation garantit la constance.</p>
+  </div>
+
+  <div class="card purple">
+    <div class="exercise-header">
+      <div class="exercise-num purple">03</div>
+      <div class="exercise-title">💭 Ressentir l'Impact Émotionnel</div>
+    </div>
+    <div class="card-body" style="margin-bottom:16px;">
+      Prends un grand souffle. <strong>Le plus dur est fait.</strong> Laisse-toi ressentir ce que tu viens d'accomplir.
+    </div>
+
+    <div class="mindset-big">
+      <div class="mindset-big-label">🚀 Dans 12 mois, sans aucun effort, tu auras épargné</div>
+      <div class="mindset-big-number" id="mindsetBig">— €</div>
+      <div class="mindset-big-caption">pendant que tu dors, que tu profites, que tu vis pleinement.</div>
+    </div>
+
+    <div style="margin-top:20px;">
+      <div style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px;">À l'idée que mon épargne va grossir toute seule, je ressens… <em style="font-weight:400;color:var(--muted)">(sélectionne)</em></div>
+      <div class="emotion-grid">
+        <button class="emotion-btn" onclick="pickEmotion(this)">😮‍💨 Soulagement</button>
+        <button class="emotion-btn" onclick="pickEmotion(this)">💪 Fierté</button>
+        <button class="emotion-btn" onclick="pickEmotion(this)">🪶 Légèreté</button>
+        <button class="emotion-btn" onclick="pickEmotion(this)">🤩 Excitation</button>
+        <button class="emotion-btn" onclick="pickEmotion(this)">😌 Sérénité</button>
+        <button class="emotion-btn" onclick="pickEmotion(this)">🌟 Espoir</button>
+        <button class="emotion-btn" onclick="pickEmotion(this)">✏️ Autre…</button>
+      </div>
+      <textarea class="mindset-textarea" rows="3" placeholder="Développe ton ressenti ici… Qu'est-ce que ce virement automatique représente concrètement pour toi ? Qu'est-ce que cela change ?"></textarea>
+    </div>
+  </div>
+
+  <!-- MANTRA -->
+  <div class="mantra-card">
+    <div class="mantra-icon">⚙️</div>
+    <div class="mantra-label">✨ Mantra du Jour 4</div>
+    <div class="mantra-text">
+      "Je n'ai plus besoin de volonté.<br>
+      Mon système <span>travaille pour moi</span><br>
+      pendant que je vis <span>pleinement ma vie</span>."
+    </div>
+    <button class="mantra-btn" id="mantraBtn" onclick="readMantra()">🔊 Lire à voix haute</button>
+  </div>
+
+  <!-- WHAT'S NEXT -->
+  <div class="next-day">
+    <div class="next-day-icon">🌟</div>
+    <div>
+      <div class="next-day-label">👉 Ce qui t'attend demain — Jour 5</div>
+      <div class="next-day-title">La Vision — Ton "Pourquoi Profond"</div>
+      <div class="next-day-text">
+        Ton système tourne automatiquement — c'est fantastique. Mais il y a une chose que même le meilleur système ne peut pas faire : te donner envie de tenir sur la durée.<br><br>
+        Demain, on va travailler sur ton <strong>"Pourquoi profond"</strong> — cette raison émotionnelle qui te fera dépasser les envies d'achats impulsifs et tenir ton budget même quand la motivation baisse. Sans ce "Pourquoi", même le meilleur budget s'effondre.
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSING -->
+  <div class="closing">
+    <div class="closing-icon">🌙</div>
+    <div class="closing-title">Fin du Jour 4</div>
+    <div class="closing-text">Ton pilote automatique financier est en place. <strong>C'est l'action la plus importante de ce programme.</strong> À demain pour lui donner du sens.</div>
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener('load', () => {
+    setTimeout(() => { document.getElementById('progressFill').style.width = '57.1%'; }, 400);
+  });
+  function calcYearly() {
+    const amount = parseFloat(document.getElementById('transferAmount').value) || 0;
+    const yearly = amount * 12;
+    const fmt = v => v.toLocaleString('fr-FR', { maximumFractionDigits: 0 }) + ' €';
+    document.getElementById('yearlyBadge').textContent = amount > 0 ? fmt(yearly) : '— €';
+    document.getElementById('mindsetBig').textContent  = amount > 0 ? fmt(yearly) : '— €';
+  }
+  function toggleCheck(el) {
+    el.classList.toggle('checked');
+    const items = document.querySelectorAll('.checklist .check-item');
+    let done = 0;
+    items.forEach(i => { if (i.classList.contains('checked')) done++; });
+    const pct = (done / items.length) * 100;
+    document.getElementById('checkBar').style.width = pct + '%';
+    document.getElementById('checkPct').textContent = done + '/' + items.length;
+  }
+  function pickEmotion(btn) {
+    document.querySelectorAll('.emotion-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+  function readMantra() {
+    const btn = document.getElementById('mantraBtn');
+    btn.classList.add('reading'); btn.innerHTML = '✅ Je l\'ai lu à voix haute !';
+    setTimeout(() => { btn.classList.remove('reading'); btn.innerHTML = '🔊 Relire à voix haute'; }, 3000);
+  }
+</script>
+<style>.pdf-btn{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#2d6a6a,#1a4a4a);color:#fff;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:9999;transition:transform .2s,box-shadow .2s;}.pdf-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,0.4);}@media print{.pdf-btn{display:none!important;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}.card,[class*="card"]{break-inside:avoid;}}</style><button class="pdf-btn" onclick="window.print()">📄 Exporter en PDF</button></body>
+</html>
