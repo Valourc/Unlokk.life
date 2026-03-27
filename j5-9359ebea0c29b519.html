@@ -3,9 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Jour 5 – La Vision</title>
+<title>Jour 5 – La Vision | Unlokk</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;0,800;1,700&display=swap');
 
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
@@ -217,10 +219,117 @@
     .rename-row { grid-template-columns: 1fr; }
     .rename-arrow { transform: rotate(90deg); }
     .next-day { flex-direction: column; }
+    .course-nav-next-label { display: none; }
   }
+  .course-nav {
+    position: sticky; top: 0; z-index: 50;
+    background: rgba(245,240,235,0.95);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px; display: flex; align-items: center; gap: 12px;
+  }
+  .course-nav-home {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 13px; font-weight: 600; color: var(--muted);
+    text-decoration: none; padding: 7px 10px; border-radius: 8px;
+    transition: all 0.2s; flex-shrink: 0; white-space: nowrap;
+  }
+  .course-nav-home:hover { color: var(--text); background: var(--soft); }
+  .course-nav-sep { width: 1px; height: 20px; background: var(--border); flex-shrink: 0; }
+  .course-nav-mid { flex: 1; display: flex; align-items: center; gap: 10px; min-width: 0; }
+  .course-nav-day { font-size: 12px; font-weight: 700; color: #2d6a6a; flex-shrink: 0; white-space: nowrap; }
+  .course-nav-bar { flex: 1; height: 4px; background: var(--border); border-radius: 2px; overflow: hidden; }
+  .course-nav-fill { height: 100%; background: #2d6a6a; border-radius: 2px; transition: width 1s ease; }
+  .course-nav-next {
+    display: inline-flex; align-items: center; gap: 5px;
+    font-size: 13px; font-weight: 600; color: #2d6a6a;
+    text-decoration: none; padding: 7px 14px; border-radius: 8px;
+    border: 1.5px solid rgba(45,106,106,0.3); background: rgba(45,106,106,0.06);
+    transition: all 0.2s; flex-shrink: 0; white-space: nowrap;
+  }
+  .course-nav-next:hover { background: rgba(45,106,106,0.14); border-color: #2d6a6a; }
+  .next-day-cta {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: #2d6a6a; color: white; text-decoration: none;
+    border-radius: 50px; padding: 14px 28px; font-size: 15px; font-weight: 700;
+    margin-top: 20px; transition: all 0.2s; cursor: pointer; font-family: 'Inter', sans-serif;
+  }
+  .next-day-cta:hover { background: #1a4a4a; transform: translateY(-2px); box-shadow: 0 8px 24px rgba(45,106,106,0.3); }
+  .check-item, .emotion-card, .emotion-btn, .profile-card,
+  .mantra-btn, .mantra-option, .belief-card, .mirror-dot,
+  .day-btn, .detector-btn { cursor: pointer; }
+  @keyframes fadeInUp {
+    from { opacity: 0; transform: translateY(14px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .container > * { animation: fadeInUp 0.45s ease both; }
+  .container > *:nth-child(1) { animation-delay: 0.05s; }
+  .container > *:nth-child(2) { animation-delay: 0.10s; }
+  .container > *:nth-child(3) { animation-delay: 0.15s; }
+  .container > *:nth-child(4) { animation-delay: 0.20s; }
+  .container > *:nth-child(5) { animation-delay: 0.25s; }
+  .container > *:nth-child(6) { animation-delay: 0.30s; }
+  .container > *:nth-child(7) { animation-delay: 0.35s; }
+  .container > *:nth-child(8) { animation-delay: 0.40s; }
+  .container > *:nth-child(9) { animation-delay: 0.45s; }
+  .pdf-btn {
+    position: fixed; bottom: 24px; right: 24px;
+    background: linear-gradient(135deg, #2d6a6a, #1a4a4a); color: #fff;
+    border: none; border-radius: 50px; padding: 12px 20px; font-size: 14px;
+    font-weight: 700; cursor: pointer; box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    z-index: 9999; transition: transform 0.2s, box-shadow 0.2s;
+    display: flex; align-items: center; gap: 6px; font-family: 'Inter', sans-serif;
+  }
+  .pdf-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 24px rgba(0,0,0,0.35); }
+  .scroll-top {
+    position: fixed; bottom: 24px; right: 184px;
+    width: 44px; height: 44px; background: white; border: 1.5px solid var(--border);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    font-size: 16px; cursor: pointer; box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+    z-index: 9998; transition: all 0.2s; opacity: 0; pointer-events: none;
+    font-family: 'Inter', sans-serif; color: var(--muted);
+  }
+  .scroll-top.vis { opacity: 1; pointer-events: auto; }
+  .scroll-top:hover { background: var(--soft); border-color: #2d6a6a; color: #2d6a6a; transform: translateY(-2px); }
+  @media print {
+    .pdf-btn, .course-nav, .scroll-top { display: none !important; }
+    * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+    .card { break-inside: avoid; }
+  }
+  .day-gate { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; text-align: center; }
+  .day-gate.active { display: flex; }
+  .gate-icon { font-size: 52px; margin-bottom: 18px; }
+  .gate-title { font-family: 'Playfair Display', serif; font-size: clamp(20px,5vw,28px); font-weight: 800; color: var(--text); margin-bottom: 10px; line-height: 1.25; }
+  .gate-sub { font-size: 15px; color: var(--muted); line-height: 1.7; max-width: 380px; margin-bottom: 32px; }
+  .gate-countdown { font-family: 'Inter', sans-serif; font-size: clamp(44px,10vw,68px); font-weight: 800; color: #2d6a6a; letter-spacing: 4px; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
+  .gate-countdown-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 36px; }
+  .gate-back { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--muted); text-decoration: none; padding: 12px 24px; border: 1.5px solid var(--border); border-radius: 50px; background: var(--card); transition: all 0.2s; }
+  .gate-back:hover { color: var(--text); border-color: #2d6a6a; }
+  .gate-hint { font-size: 12px; color: var(--muted); margin-top: 20px; opacity: 0.7; }
 </style>
 </head>
 <body>
+
+<div class="day-gate" id="dayGate">
+  <div class="gate-icon">⏳</div>
+  <h2 class="gate-title">Ton prochain rendez-vous<br>approche</h2>
+  <p class="gate-sub">Ce programme est pensé pour s'ancrer un jour à la fois. Laisse les exercices d'hier s'installer avant de passer à la suite.</p>
+  <div class="gate-countdown" id="gateCountdown">--:--:--</div>
+  <div class="gate-countdown-label">avant que le Jour 5 se déverrouille</div>
+  <a href="j4-9359ebea0c29b519.html" class="gate-back">← Revoir le Jour 4</a>
+  <p class="gate-hint">📧 Tu recevras un email dès que ton prochain jour est disponible.</p>
+</div>
+
+<nav class="course-nav">
+  <a href="index.html" class="course-nav-home">← Accueil</a>
+  <div class="course-nav-sep"></div>
+  <div class="course-nav-mid">
+    <span class="course-nav-day">Jour 5/7</span>
+    <div class="course-nav-bar"><div class="course-nav-fill" id="navFill" style="width:0%"></div></div>
+  </div>
+  <div class="course-nav-sep"></div>
+  <a href="j6-9359ebea0c29b519.html" class="course-nav-next"><span class="course-nav-next-label">Jour 6</span> →</a>
+</nav>
 
 <div class="hero">
   <div class="hero-badge">💰 Programme Finance Personnelle</div>
@@ -532,6 +641,7 @@
         Ton système tourne, ta vision est claire. Mais la vie réserve toujours des surprises : une voiture en panne, une facture imprévue, un problème dentaire.<br><br>
         Demain, on forge ton <strong>Bouclier Anti-Culpabilité</strong> — comment anticiper l'imprévisible pour ne plus jamais dire "mon budget est foutu" et <strong>préserver ta sérénité financière</strong> face aux tempêtes.
       </div>
+      <a href="j6-9359ebea0c29b519.html" class="next-day-cta">Commencer le Jour 6 →</a>
     </div>
   </div>
 
@@ -545,10 +655,42 @@
 </div>
 
 <script>
+  (function() {
+    var PREV_KEY = 'rf_d4', CURR_KEY = 'rf_d5', GATE_MS = 24 * 3600 * 1000;
+    var prevTs = localStorage.getItem(PREV_KEY);
+    var elapsed = prevTs ? Date.now() - parseInt(prevTs) : Infinity;
+    if (elapsed < GATE_MS) {
+      var gate = document.getElementById('dayGate');
+      var cd   = document.getElementById('gateCountdown');
+      if (gate) gate.classList.add('active');
+      var unlockAt = parseInt(prevTs) + GATE_MS;
+      (function tick() {
+        var rem = unlockAt - Date.now();
+        if (rem <= 0) {
+          if (gate) gate.classList.remove('active');
+          if (!localStorage.getItem(CURR_KEY)) localStorage.setItem(CURR_KEY, Date.now());
+          return;
+        }
+        var h = Math.floor(rem / 3600000);
+        var m = Math.floor((rem % 3600000) / 60000);
+        var s = Math.floor((rem % 60000) / 1000);
+        if (cd) cd.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
+        setTimeout(tick, 1000);
+      })();
+    } else {
+      if (!localStorage.getItem(CURR_KEY)) localStorage.setItem(CURR_KEY, Date.now());
+    }
+  })();
+
   window.addEventListener('load', () => {
     setTimeout(() => {
       document.getElementById('progressFill').style.width = '71.4%';
+      document.getElementById('navFill').style.width = '71.4%';
     }, 400);
+  });
+  window.addEventListener('scroll', () => {
+    const btn = document.getElementById('scrollTop');
+    if (btn) btn.classList.toggle('vis', window.scrollY > 300);
   });
 
   function updateHeartReveal() {
@@ -575,5 +717,7 @@
     }, 3000);
   }
 </script>
-<style>.pdf-btn{position:fixed;bottom:24px;right:24px;background:linear-gradient(135deg,#2d6a6a,#1a4a4a);color:#fff;border:none;border-radius:50px;padding:14px 24px;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 4px 20px rgba(0,0,0,0.3);z-index:9999;transition:transform .2s,box-shadow .2s;}.pdf-btn:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(0,0,0,0.4);}@media print{.pdf-btn{display:none!important;}*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important;}.card,[class*="card"]{break-inside:avoid;}}</style><button class="pdf-btn" onclick="window.print()">📄 Exporter en PDF</button></body>
+<button class="pdf-btn" onclick="window.print()">📄 PDF</button>
+<button class="scroll-top" id="scrollTop" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Remonter en haut">↑</button>
+</body>
 </html>

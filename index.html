@@ -712,6 +712,19 @@
     footer { flex-direction: column; gap: 24px; text-align: center; }
     .footer-links { flex-wrap: wrap; justify-content: center; }
   }
+  /* ── TOUCH DEVICE CURSOR FIX ── */
+  @media (hover: none) {
+    body { cursor: auto; }
+    .cursor, .cursor-ring { display: none !important; }
+    .nav-cta, .btn-primary, .btn-ghost, .formation-card,
+    a, button, [onclick] { cursor: pointer !important; }
+  }
+  /* ── MOBILE HERO STATS ── */
+  @media (max-width: 600px) {
+    .hero-stats { flex-wrap: wrap; gap: 24px; }
+    .hero-title { letter-spacing: -2px; }
+    .hero-stats { margin-top: 48px; }
+  }
 </style>
 </head>
 <body>
@@ -869,7 +882,7 @@
     <p class="manifesto-sub">
       Unlokk est né d'une conviction : la plupart des formations sont trop longues, trop théoriques, trop loin de votre vraie vie. Nous faisons différemment.
     </p>
-    <a href="#formations" class="btn-primary" style="cursor:none;">Commencer maintenant →</a>
+    <a href="#formations" class="btn-primary">Commencer maintenant →</a>
   </div>
 </section>
 
@@ -899,10 +912,17 @@
 </footer>
 
 <script>
-  // ── CURSOR ──
+  // ── CURSOR (desktop only) ──
+  const isTouch = window.matchMedia('(hover: none)').matches;
   const cursor = document.getElementById('cursor');
   const ring = document.getElementById('cursorRing');
   let mx = 0, my = 0, rx = 0, ry = 0;
+
+  if (isTouch) {
+    if (cursor) cursor.style.display = 'none';
+    if (ring) ring.style.display = 'none';
+    document.body.style.cursor = 'auto';
+  }
 
   document.addEventListener('mousemove', e => {
     mx = e.clientX; my = e.clientY;

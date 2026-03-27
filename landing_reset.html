@@ -55,6 +55,8 @@
     }
   }
   </script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -535,10 +537,14 @@
     nav { padding: 14px 20px; }
     .form-card { padding: 28px 20px; }
     .hero { padding: 100px 16px 60px; }
+    .hero-title { font-size: clamp(36px, 10vw, 72px); }
     .section { padding: 70px 16px; }
     .reviews-summary { flex-direction: column; gap: 24px; padding: 24px 20px; }
     .leave-review-card { padding: 24px 20px; }
+    .days-strip { gap: 6px; }
+    .day-pill { font-size: 11px; padding: 6px 12px; }
   }
+  .day-pill, .prog-card, .review-card, .faq-item { cursor: default; }
 </style>
 </head>
 <body>
@@ -586,9 +592,9 @@
           <span class="price-amount">3,50 €</span>
           <span class="price-label">accès complet · paiement unique</span>
     
-      <nav>
-        <a href="https://unlokk.systeme.io/reset-financier/9dafc4a7" class="cta-btn"> 🚀 Accéder au programme </a>
-      </nav>
+      <div>
+        <a href="https://unlokk.systeme.io/reset-financier/9dafc4a7" class="cta-btn">🚀 Accéder au programme</a>
+      </div>
 </div>
         <p class="form-privacy">🔒 Paiement sécurisé · Accès immédiat · Vos données restent privées</p>
       </div>
