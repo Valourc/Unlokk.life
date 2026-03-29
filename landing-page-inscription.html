@@ -880,8 +880,10 @@
   // ── FAQ ──
   function toggleFaq(item) { item.classList.toggle('open'); }
 
-  // ── REVIEWS ENGINE ──
-  // Stored in memory (resets on page reload — connect to a backend for persistence)
+  // ── REVIEWS ENGINE (Supabase) ──
+  const SUPABASE_URL = 'https://lxfoqhsgfnwwnmkucrts.supabase.co';
+  const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx4Zm9xaHNnZm53d25ta3VjcnRzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3MjAzMjAsImV4cCI6MjA5MDI5NjMyMH0.qIgB_wzZD_K1vFGRk5RWak0kUeYgbqq9VztJKFuwjTM';
+
   let reviews = [];
   let currentRating = 0;
   let verifiedEmail = '';
@@ -891,31 +893,35 @@
     return '★'.repeat(n) + '☆'.repeat(5 - n);
   }
 
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
   function renderReviews() {
     const list = document.getElementById('reviewsList');
     if (reviews.length === 0) {
       list.innerHTML = '<div class="reviews-empty">Aucun avis pour l\'instant — soyez le premier à partager votre expérience !</div>';
     } else {
-      list.innerHTML = reviews.map(r => `
+      list.innerHTML = reviews.map(r => {
+        const date = new Date(r.created_at).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+        return `
         <div class="review-card">
           <div class="review-header">
             <div>
               <div class="review-author">${escHtml(r.prenom)}</div>
-              <div class="review-meta">${r.date}</div>
+              <div class="review-meta">${date}</div>
             </div>
             <div class="review-stars">${starsHTML(r.rating)}</div>
           </div>
           ${r.comment ? `<div class="review-text">"${escHtml(r.comment)}"</div>` : ''}
-        </div>`).join('');
+        </div>`;
+      }).join('');
     }
-
-    // Update summary
     const total = reviews.length;
     const avg = total ? (reviews.reduce((s, r) => s + r.rating, 0) / total) : 0;
     document.getElementById('avgScore').textContent = total ? avg.toFixed(1) : '—';
     document.getElementById('avgStars').textContent = total ? starsHTML(Math.round(avg)) : '☆☆☆☆☆';
     document.getElementById('reviewCount').textContent = total ? `${total} avis vérifié${total > 1 ? 's' : ''}` : 'Aucun avis pour l\'instant';
-
     [1,2,3,4,5].forEach(n => {
       const cnt = reviews.filter(r => r.rating === n).length;
       const pct = total ? (cnt / total * 100) : 0;
@@ -924,28 +930,46 @@
     });
   }
 
-  function escHtml(str) {
-    return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  async function loadReviews() {
+    try {
+      const res = await fetch(`${SUPABASE_URL}/rest/v1/reviews?select=id,prenom,rating,comment,created_at&order=created_at.desc`, {
+        headers: { 'apikey': SUPABASE_ANON_KEY, 'Authorization': `Bearer ${SUPABASE_ANON_KEY}` }
+      });
+      if (res.ok) reviews = await res.json();
+    } catch (_) { /* silent fail */ }
+    renderReviews();
   }
 
-  // Step 1 → send verification code (simulated)
-  function sendVerifCode() {
+  // Step 1 → send verification code via Edge Function
+  async function sendVerifCode() {
     const email = document.getElementById('lrEmail').value.trim();
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('Veuillez entrer un email valide.'); return; }
-    verifiedEmail = email;
-    pendingCode = Math.floor(100000 + Math.random() * 900000).toString();
-    // In production: send this code via your email API
-    // For demo, we show it in an alert
-    alert(`📧 Code envoyé à ${email}\n\n(Démo : votre code est ${pendingCode})\n\nEn production, ce code sera envoyé par email.`);
-    document.getElementById('lrEmailDisplay').textContent = `📧 Code envoyé à ${email}`;
-    document.getElementById('lrStep1').style.display = 'none';
-    document.getElementById('lrStep2').style.display = 'block';
+    const btn = document.querySelector('#lrStep1 .lr-btn');
+    btn.disabled = true; btn.textContent = 'Envoi en cours…';
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/send-code`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erreur lors de l\'envoi');
+      verifiedEmail = email;
+      document.getElementById('lrEmailDisplay').textContent = `📧 Code envoyé à ${email}`;
+      document.getElementById('lrStep1').style.display = 'none';
+      document.getElementById('lrStep2').style.display = 'block';
+    } catch (err) {
+      alert('Erreur : ' + err.message);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Recevoir mon code de vérification →';
+    }
   }
 
-  // Step 2 → verify code
+  // Step 2 → store code and proceed (verified server-side at submit)
   function verifyCode() {
     const entered = document.getElementById('lrCode').value.trim();
-    if (entered !== pendingCode) { alert('Code incorrect. Veuillez réessayer.'); return; }
+    if (!/^\d{6}$/.test(entered)) { alert('Veuillez entrer le code à 6 chiffres reçu par email.'); return; }
+    pendingCode = entered;
     document.getElementById('lrStep2').style.display = 'none';
     document.getElementById('lrStep3').style.display = 'block';
   }
@@ -966,24 +990,35 @@
     });
   }
 
-  // Step 3 → submit review
-  function submitReview() {
+  // Step 3 → submit review via Edge Function (verifies code + saves atomically)
+  async function submitReview() {
     const prenom = document.getElementById('lrPrenom').value.trim();
     if (!prenom) { alert('Merci d\'indiquer votre prénom.'); return; }
     if (!currentRating) { alert('Merci de sélectionner une note.'); return; }
     const comment = document.getElementById('lrComment').value.trim();
-    const now = new Date();
-    const date = now.toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
-    reviews.unshift({ prenom, rating: currentRating, comment, date, email: verifiedEmail });
-    renderReviews();
-    document.getElementById('lrStep3').style.display = 'none';
-    document.getElementById('lrStep4').style.display = 'block';
-    // Scroll to reviews list
-    document.getElementById('reviewsList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    const btn = document.querySelector('#lrStep3 .lr-btn');
+    btn.disabled = true; btn.textContent = 'Publication en cours…';
+    try {
+      const res = await fetch(`${SUPABASE_URL}/functions/v1/submit-review`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email: verifiedEmail, code: pendingCode, prenom, rating: currentRating, comment: comment || null })
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Erreur lors de la publication');
+      document.getElementById('lrStep3').style.display = 'none';
+      document.getElementById('lrStep4').style.display = 'block';
+      await loadReviews();
+      document.getElementById('reviewsList').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    } catch (err) {
+      alert('Erreur : ' + err.message);
+    } finally {
+      btn.disabled = false; btn.textContent = 'Publier mon avis →';
+    }
   }
 
   // Init on load
-  renderReviews();
+  loadReviews();
 </script>
 </body>
 </html>
