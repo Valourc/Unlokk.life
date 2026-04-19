@@ -537,39 +537,19 @@
 
     <!-- FORM -->
     <div class="form-card" id="inscription">
-      <div id="formState">
-        <div class="form-card-title">Accéder au programme</div>
-        <div class="form-card-sub">7 jours de contenu interactif, livré par email</div>
+      <div class="form-card-title">Accéder au programme</div>
+      <div class="form-card-sub">7 jours de contenu interactif, livré par email</div>
 
-        <div class="price-display">
-          <div class="price-prev">Reset Financier : 3,50 €</div>
-          <span class="price-amount">7 €</span>
-          <span class="price-label">accès complet · paiement unique</span>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="prenom">Prénom</label>
-          <input type="text" id="prenom" class="form-input" placeholder="Votre prénom…">
-        </div>
-        <div class="form-group">
-          <label class="form-label" for="email">Adresse e-mail</label>
-          <input type="email" id="email" class="form-input" placeholder="votre@email.com">
-        </div>
-
-        <button class="submit-btn" onclick="handleSubmit()">
-          📈 Accéder au programme — 7 €
-        </button>
-        <p class="form-privacy">🔒 Paiement sécurisé · Accès immédiat · Aucune donnée financière demandée</p>
+      <div class="price-display">
+        <div class="price-prev">Reset Financier : 3,50 €</div>
+        <span class="price-amount">7 €</span>
+        <span class="price-label">accès complet · paiement unique</span>
       </div>
 
-      <div class="success-state" id="successState">
-        <div class="success-icon">🎉</div>
-        <div class="success-title">C'est parti !</div>
-        <div class="success-text">
-          Vérifiez votre boîte mail — le <strong>Jour 1</strong> vous attend.<br>
-          Votre argent est sur le point de commencer à travailler pour vous.
-        </div>
-      </div>
+      <a href="https://unlokk.systeme.io/premier-investissement/payment" class="submit-btn" style="display:block;text-align:center;text-decoration:none;">
+        📈 Accéder au programme — 7 €
+      </a>
+      <p class="form-privacy">🔒 Paiement sécurisé · Accès immédiat · Aucune donnée financière demandée</p>
     </div>
   </div>
 </section>
@@ -896,16 +876,6 @@
 </footer>
 
 <script>
-  // ── FORM ──
-  function handleSubmit() {
-    const prenom = document.getElementById('prenom').value.trim();
-    const email = document.getElementById('email').value.trim();
-    if (!prenom || !email) { alert('Merci de renseigner votre prénom et votre email.'); return; }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) { alert('Veuillez entrer une adresse email valide.'); return; }
-    document.getElementById('formState').style.display = 'none';
-    document.getElementById('successState').style.display = 'block';
-  }
-
   // ── FAQ ──
   function toggleFaq(item) { item.classList.toggle('open'); }
 
