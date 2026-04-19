@@ -297,29 +297,10 @@
     * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     .card { break-inside: avoid; }
   }
-  .day-gate { display: none; position: fixed; inset: 0; background: var(--bg); z-index: 10000; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; text-align: center; }
-  .day-gate.active { display: flex; }
-  .gate-icon { font-size: 52px; margin-bottom: 18px; }
-  .gate-title { font-family: 'Playfair Display', serif; font-size: clamp(20px,5vw,28px); font-weight: 800; color: var(--text); margin-bottom: 10px; line-height: 1.25; }
-  .gate-sub { font-size: 15px; color: var(--muted); line-height: 1.7; max-width: 380px; margin-bottom: 32px; }
-  .gate-countdown { font-family: 'Inter', sans-serif; font-size: clamp(44px,10vw,68px); font-weight: 800; color: var(--accent1); letter-spacing: 4px; margin-bottom: 6px; font-variant-numeric: tabular-nums; }
-  .gate-countdown-label { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-bottom: 36px; }
-  .gate-back { display: inline-flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; color: var(--muted); text-decoration: none; padding: 12px 24px; border: 1.5px solid var(--border); border-radius: 50px; background: var(--card); transition: all 0.2s; }
-  .gate-back:hover { color: var(--text); border-color: var(--accent1); }
-  .gate-hint { font-size: 12px; color: var(--muted); margin-top: 20px; opacity: 0.7; }
 </style>
 </head>
 <body>
 
-<div class="day-gate" id="dayGate">
-  <div class="gate-icon">⏳</div>
-  <h2 class="gate-title">Ton prochain rendez-vous<br>approche</h2>
-  <p class="gate-sub">Ce programme est pensé pour s'ancrer un jour à la fois. Laisse les exercices d'hier s'installer avant de passer à la suite.</p>
-  <div class="gate-countdown" id="gateCountdown">--:--:--</div>
-  <div class="gate-countdown-label">avant que le Jour 3 se déverrouille</div>
-  <a href="j2-9359ebea0c29b519.html" class="gate-back">← Revoir le Jour 2</a>
-  <p class="gate-hint">📧 Tu recevras un email dès que ton prochain jour est disponible.</p>
-</div>
 
 <nav class="course-nav">
   <a href="index.html" class="course-nav-home">← Accueil</a>
@@ -668,33 +649,6 @@
 </div>
 
 <script>
-  (function() {
-    var PREV_KEY = 'rf_d2', CURR_KEY = 'rf_d3', GATE_MS = 24 * 3600 * 1000;
-    var prevTs = localStorage.getItem(PREV_KEY);
-    var elapsed = prevTs ? Date.now() - parseInt(prevTs) : Infinity;
-    if (elapsed < GATE_MS) {
-      var gate = document.getElementById('dayGate');
-      var cd   = document.getElementById('gateCountdown');
-      if (gate) gate.classList.add('active');
-      var unlockAt = parseInt(prevTs) + GATE_MS;
-      (function tick() {
-        var rem = unlockAt - Date.now();
-        if (rem <= 0) {
-          if (gate) gate.classList.remove('active');
-          if (!localStorage.getItem(CURR_KEY)) localStorage.setItem(CURR_KEY, Date.now());
-          return;
-        }
-        var h = Math.floor(rem / 3600000);
-        var m = Math.floor((rem % 3600000) / 60000);
-        var s = Math.floor((rem % 60000) / 1000);
-        if (cd) cd.textContent = String(h).padStart(2,'0') + ':' + String(m).padStart(2,'0') + ':' + String(s).padStart(2,'0');
-        setTimeout(tick, 1000);
-      })();
-    } else {
-      if (!localStorage.getItem(CURR_KEY)) localStorage.setItem(CURR_KEY, Date.now());
-    }
-  })();
-
   window.addEventListener('load', () => {
     setTimeout(() => {
       document.getElementById('progressFill').style.width = '42.9%';

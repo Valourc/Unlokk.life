@@ -1045,9 +1045,6 @@
 </div>
 
 <script>
-  // Record Day 1 first open (used by Day 2 gate)
-  if (!localStorage.getItem('rf_d1')) localStorage.setItem('rf_d1', Date.now());
-
   window.addEventListener('load', () => {
     setTimeout(() => {
       document.getElementById('progressFill').style.width = '14.3%';
