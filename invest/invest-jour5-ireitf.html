@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jour 5 — Investir avec sa Psychologie</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap');
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+  :root{--bg:#f0f5f3;--card:#fff;--accent1:#1a7a5e;--accent2:#e8a838;--accent3:#e05c5c;--accent4:#5b8cdc;--inv:#25b385;--soft:#e8f2ee;--text:#1a2520;--muted:#6a8a7a;--border:#d0e2da;--radius:16px;--shadow:0 4px 24px rgba(0,0,0,0.07);}
+  html{scroll-behavior:smooth;}
+  body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);}
+  .hero{background:linear-gradient(135deg,#0d3d2a 0%,#1a7a5e 50%,#0d3d2a 100%);color:white;padding:48px 24px 56px;text-align:center;position:relative;overflow:hidden;}
+  .hero::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 70% 30%,rgba(37,179,133,0.25) 0%,transparent 60%),radial-gradient(ellipse at 20% 80%,rgba(232,168,56,0.15) 0%,transparent 50%);pointer-events:none;}
+  .hero-badge{display:inline-block;background:rgba(255,255,255,0.15);border:1px solid rgba(255,255,255,0.25);border-radius:50px;padding:6px 18px;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;margin-bottom:20px;backdrop-filter:blur(6px);}
+  .hero-day{font-size:13px;font-weight:500;letter-spacing:4px;text-transform:uppercase;opacity:0.75;margin-bottom:10px;}
+  .hero-title{font-family:'Playfair Display',serif;font-size:clamp(28px,6vw,52px);font-weight:800;line-height:1.15;margin-bottom:16px;}
+  .hero-title span{color:var(--accent2);}
+  .hero-subtitle{font-size:clamp(14px,2.5vw,17px);opacity:0.82;max-width:520px;margin:0 auto 28px;font-weight:300;line-height:1.7;}
+  .hero-emoji{font-size:clamp(40px,8vw,72px);display:block;margin-bottom:18px;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.3));}
+  .progress-bar-wrap{max-width:320px;margin:0 auto;background:rgba(255,255,255,0.15);border-radius:50px;height:6px;overflow:hidden;}
+  .progress-bar-fill{width:0%;height:100%;background:var(--accent2);border-radius:50px;transition:width 1s ease;}
+  .progress-label{font-size:12px;opacity:0.6;margin-top:8px;}
+  .journey-map{background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.2);border-radius:12px;padding:14px 18px;margin:20px auto 0;max-width:620px;display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:4px;}
+  .jstep{font-size:11px;font-weight:600;opacity:0.5;white-space:nowrap;}
+  .jstep.done{opacity:0.7;text-decoration:line-through;}
+  .jstep.active{opacity:1;background:rgba(232,168,56,0.25);border:1px solid rgba(232,168,56,0.5);border-radius:20px;padding:3px 10px;color:var(--accent2);}
+  .jarr{font-size:10px;opacity:0.3;margin:0 2px;}
+  .container{max-width:820px;margin:0 auto;padding:0 16px 60px;}
+  .card{background:var(--card);border-radius:var(--radius);padding:28px;box-shadow:var(--shadow);margin-top:24px;border:1px solid var(--border);position:relative;overflow:hidden;}
+  .card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;border-radius:var(--radius) var(--radius) 0 0;}
+  .card.green::before{background:linear-gradient(90deg,var(--accent1),#5de8b8);}
+  .card.orange::before{background:linear-gradient(90deg,var(--accent2),#f5c76a);}
+  .card.blue::before{background:linear-gradient(90deg,var(--accent4),#8fb6f0);}
+  .card.teal::before{background:linear-gradient(90deg,var(--accent1),#5de8b8);}
+  .card.purple::before{background:linear-gradient(90deg,#8b5cf6,#c4b5fd);}
+  .card.red::before{background:linear-gradient(90deg,var(--accent3),#f08080);}
+  .exh{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+  .exn{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:800;flex-shrink:0;}
+  .exn.green{background:#d0f7e8;color:var(--accent1);}
+  .exn.orange{background:#fef3dc;color:#b87a0a;}
+  .exn.blue{background:#e8effe;color:#3060b0;}
+  .exn.teal{background:#d0f0ec;color:var(--accent1);}
+  .exn.purple{background:#f3effe;color:#6b3dc0;}
+  .exn.red{background:#fdecea;color:#b03030;}
+  .ext{font-size:17px;font-weight:700;}
+  .cbody{font-size:15px;line-height:1.8;color:#2a3530;}
+  .explainer{background:linear-gradient(135deg,#fffbf0,#fef9e7);border:1.5px solid #f0d080;border-radius:12px;padding:16px 20px;margin:14px 0;font-size:14px;line-height:1.8;}
+  .explainer-t{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:#9a6e00;margin-bottom:8px;}
+  .explainer p{color:#4a3a10;margin-bottom:5px;}
+  .explainer p:last-child{margin-bottom:0;}
+  .intro-hl{background:linear-gradient(135deg,#e8f5f0,#f0f8f4);border:1px solid #b0ddd0;border-radius:12px;padding:20px 22px;margin:14px 0;font-size:15px;line-height:1.8;}
+  .green-rule{background:linear-gradient(135deg,#e8f5f0,#f0f9f5);border-left:4px solid var(--inv);border-radius:0 12px 12px 0;padding:14px 18px;margin-top:14px;font-size:14px;line-height:1.7;}
+  .green-rule strong{color:#0d5a40;}
+  .sh{display:flex;align-items:center;gap:12px;margin-top:36px;margin-bottom:6px;}
+  .sd{flex:1;height:1px;background:var(--border);}
+  .sl{font-size:11px;font-weight:800;letter-spacing:2.5px;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+
+  /* BIAIS CARDS */
+  .biais-grid{display:flex;flex-direction:column;gap:12px;margin-top:14px;}
+  .biais-card{border-radius:12px;border:2px solid var(--border);background:white;overflow:hidden;cursor:pointer;transition:all 0.25s;}
+  .biais-card:hover,.biais-card.open{border-color:var(--accent3);}
+  .biais-header{display:flex;align-items:center;gap:12px;padding:16px 18px;user-select:none;}
+  .biais-emoji{font-size:24px;flex-shrink:0;}
+  .biais-name{font-size:15px;font-weight:700;margin-bottom:2px;}
+  .biais-sub{font-size:12px;color:var(--muted);}
+  .biais-chevron{font-size:16px;color:var(--accent3);transition:transform 0.3s;margin-left:auto;}
+  .biais-card.open .biais-chevron{transform:rotate(180deg);}
+  .biais-body{max-height:0;overflow:hidden;transition:max-height 0.4s ease;}
+  .biais-card.open .biais-body{max-height:400px;}
+  .biais-content{padding:0 18px 18px;border-top:1px solid var(--border);}
+  .biais-desc{font-size:14px;line-height:1.8;color:#2a3530;margin:12px 0;}
+  .biais-example{background:linear-gradient(135deg,#fdecea,#fbd5d5);border-left:3px solid var(--accent3);border-radius:0 8px 8px 0;padding:9px 13px;font-size:13px;line-height:1.6;color:#7a2020;margin-bottom:10px;}
+  .biais-antidote{background:linear-gradient(135deg,#e8f5f0,#f0f9f5);border-left:3px solid var(--inv);border-radius:0 8px 8px 0;padding:9px 13px;font-size:13px;line-height:1.6;color:#0d5a40;}
+
+  /* PROFIL RISQUE */
+  .risk-questions{display:flex;flex-direction:column;gap:12px;margin-top:14px;}
+  .risk-q{background:var(--soft);border:1.5px solid var(--border);border-radius:12px;padding:16px 18px;}
+  .risk-q-text{font-size:14px;font-weight:600;margin-bottom:10px;line-height:1.5;}
+  .risk-opts{display:flex;gap:8px;flex-wrap:wrap;}
+  .risk-opt{flex:1;min-width:70px;padding:9px 10px;border:2px solid var(--border);border-radius:10px;background:white;cursor:pointer;text-align:center;font-size:12px;font-weight:600;color:var(--muted);transition:all 0.2s;user-select:none;}
+  .risk-opt:hover{border-color:var(--accent1);color:var(--accent1);}
+  .risk-opt.sel{border-color:var(--accent1);background:linear-gradient(135deg,#e8f5f0,#d0f0e8);color:var(--accent1);}
+  .risk-result{margin-top:16px;border-radius:14px;padding:20px 22px;display:none;}
+  .risk-result.show{display:block;}
+  .risk-result.faible{background:linear-gradient(135deg,#e3f7ee,#d0f0e8);border:2px solid #90d8b8;}
+  .risk-result.modere{background:linear-gradient(135deg,#fef9ee,#fff8e0);border:2px solid #f5c76a;}
+  .risk-result.eleve{background:linear-gradient(135deg,#fdecea,#fbd5d5);border:2px solid #f5a0a0;}
+  .risk-result-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:8px;}
+  .risk-result.faible .risk-result-title{color:#0d5a40;}
+  .risk-result.modere .risk-result-title{color:#9a6e00;}
+  .risk-result.eleve .risk-result-title{color:#b03030;}
+  .risk-result-desc{font-size:14px;line-height:1.8;margin-bottom:10px;}
+  .risk-reco{font-size:13px;font-weight:600;padding:10px 14px;border-radius:8px;background:rgba(255,255,255,0.6);line-height:1.6;}
+
+  /* SLEEP TEST */
+  .sleep-visual{display:flex;gap:10px;flex-wrap:wrap;margin-top:14px;}
+  .sleep-card{flex:1;min-width:130px;border-radius:12px;padding:16px 14px;text-align:center;cursor:pointer;border:2px solid var(--border);background:white;transition:all 0.2s;user-select:none;}
+  .sleep-card:hover{border-color:var(--accent1);}
+  .sleep-card.active{border-color:var(--accent1);background:linear-gradient(135deg,#e8f5f0,#d0f0e8);}
+  .sleep-icon{font-size:32px;margin-bottom:8px;}
+  .sleep-pct{font-family:'Playfair Display',serif;font-size:22px;font-weight:800;color:var(--accent1);margin-bottom:4px;}
+  .sleep-label{font-size:12px;color:var(--muted);line-height:1.4;}
+  .sleep-result{margin-top:14px;border-radius:12px;padding:16px 18px;background:linear-gradient(135deg,#0d3d2a,#1a7a5e);color:white;display:none;}
+  .sleep-result.show{display:block;}
+
+  /* CONTRAT */
+  .ctextarea{width:100%;margin-top:10px;border:1.5px solid var(--border);border-radius:10px;padding:12px 14px;font-size:14px;font-family:'Inter',sans-serif;color:var(--text);background:white;outline:none;resize:vertical;line-height:1.6;transition:border-color 0.2s;}
+  .ctextarea:focus{border-color:var(--accent1);box-shadow:0 0 0 3px rgba(26,122,94,0.1);}
+  .flabel{font-size:12px;color:var(--muted);margin-top:12px;margin-bottom:2px;font-weight:600;}
+  .btn-green{background:linear-gradient(135deg,var(--accent1),var(--inv));color:white;border:none;border-radius:10px;padding:12px 24px;font-size:14px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all 0.2s;margin-top:12px;}
+  .btn-green:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(26,122,94,0.3);}
+
+  /* MANTRA / NEXT / CLOSING */
+  .mantra-card{background:linear-gradient(135deg,#0d3d2a,#1a7a5e);border-radius:var(--radius);padding:36px 28px;color:white;text-align:center;margin-top:24px;position:relative;overflow:hidden;}
+  .mantra-card::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 80% 20%,rgba(93,232,184,0.2),transparent 60%);pointer-events:none;}
+  .mantra-icon{font-size:40px;margin-bottom:16px;}
+  .mantra-label{font-size:11px;font-weight:700;letter-spacing:2.5px;text-transform:uppercase;opacity:0.65;margin-bottom:16px;}
+  .mantra-text{font-family:'Playfair Display',serif;font-size:clamp(16px,3vw,22px);font-style:italic;line-height:1.7;max-width:520px;margin:0 auto 20px;}
+  .mantra-text span{color:#5de8b8;}
+  .mantra-btn{display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,0.15);border:1.5px solid rgba(255,255,255,0.3);border-radius:50px;padding:10px 22px;font-size:13px;font-weight:600;color:white;cursor:pointer;transition:all 0.2s;font-family:'Inter',sans-serif;}
+  .mantra-btn:hover{background:rgba(255,255,255,0.25);}
+  .mantra-btn.reading{background:var(--accent2);border-color:var(--accent2);color:#1a1a0a;}
+  .next-day{background:linear-gradient(135deg,#f0fbf7,#e4f7ef);border:1.5px solid #a0d8c0;border-radius:var(--radius);padding:22px 26px;margin-top:24px;display:flex;gap:16px;align-items:flex-start;}
+  .nd-icon{font-size:34px;flex-shrink:0;}
+  .nd-label{font-size:11px;font-weight:800;letter-spacing:2px;text-transform:uppercase;color:var(--accent1);margin-bottom:5px;}
+  .nd-title{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;margin-bottom:7px;}
+  .nd-text{font-size:14px;color:var(--muted);line-height:1.7;}
+  .closing{background:linear-gradient(135deg,#1a7a5e,#0d3d2a);border-radius:var(--radius);padding:32px 28px;margin-top:24px;text-align:center;color:white;}
+  .closing-icon{font-size:40px;margin-bottom:12px;}
+  .closing-title{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;margin-bottom:10px;}
+  .closing-text{font-size:15px;opacity:0.85;line-height:1.7;max-width:520px;margin:0 auto;}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">📈 Premier Investissement — 7 Jours</div>
+  <div class="hero-day">Jour 5 sur 7</div>
+  <span class="hero-emoji">🧠</span>
+  <h1 class="hero-title">Investir avec sa <span>Psychologie</span></h1>
+  <p class="hero-subtitle">Identifier vos biais cognitifs, calculer votre vrai profil de risque, et apprendre à ne pas saboter votre propre stratégie.</p>
+  <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressFill"></div></div>
+  <div class="progress-label">Jour 5 · 71 % du programme</div>
+  <div class="journey-map">
+    <div class="jstep done">💡 J1</div><div class="jarr">→</div>
+    <div class="jstep done">🗺️ J2</div><div class="jarr">→</div>
+    <div class="jstep done">⚡ J3</div><div class="jarr">→</div>
+    <div class="jstep done">🧩 J4</div><div class="jarr">→</div>
+    <div class="jstep active">🧠 J5 · Psychologie</div><div class="jarr">→</div>
+    <div class="jstep">🚀 J6 · Action</div><div class="jarr">→</div>
+    <div class="jstep">🏆 J7 · Long Terme</div>
+  </div>
+</div>
+
+<div class="container">
+
+  <div class="card teal" style="margin-top:32px;">
+    <div class="exh"><div class="exn teal">🧠</div><div class="ext">Vous avez les outils — maintenant maîtrisez-vous</div></div>
+    <div class="intro-hl">
+      En 4 jours, vous avez construit une stratégie solide. Mais les études montrent que <strong>80 % des investisseurs particuliers sous-performent le marché</strong> — non pas à cause de mauvais outils, mais à cause de leurs propres décisions émotionnelles.<br><br>
+      Aujourd'hui, on apprend à reconnaître ces pièges psychologiques pour ne jamais les subir.
+    </div>
+    <div class="green-rule">🎯 <strong>La vérité dérangeante :</strong> Votre pire ennemi en investissement, ce n'est pas la crise, ni l'inflation — c'est <strong>vous-même</strong> au mauvais moment. Ce chapitre vous donnera un avantage que la majorité des investisseurs n'ont jamais.</div>
+  </div>
+
+  <div class="sh"><div class="sd"></div><div class="sl">🧠 Partie A — Les 5 Biais qui Coûtent Cher</div><div class="sd"></div></div>
+
+  <!-- EX 1 — BIAIS -->
+  <div class="card red">
+    <div class="exh"><div class="exn red">01</div><div class="ext">⚠️ Les 5 Biais Cognitifs de l'Investisseur</div></div>
+    <div class="cbody" style="margin-bottom:14px;">Cliquez sur chaque biais pour comprendre comment il se manifeste — et son antidote.</div>
+
+    <div class="biais-grid">
+      <div class="biais-card" id="b1">
+        <div class="biais-header" onclick="toggleBiais('b1')">
+          <div class="biais-emoji">😱</div>
+          <div><div class="biais-name">FOMO — Fear Of Missing Out</div><div class="biais-sub">La peur de rater le train</div></div>
+          <div class="biais-chevron">▾</div>
+        </div>
+        <div class="biais-body"><div class="biais-content">
+          <div class="biais-desc">Quand un actif monte fortement, vous avez l'impression de "rater" quelque chose. Vous achetez au plus haut, juste avant la correction. C'est le biais le plus coûteux pour les débutants.</div>
+          <div class="biais-example">🔴 Exemple : Acheter du Bitcoin après +300% "parce que ça monte encore".</div>
+          <div class="biais-antidote">✅ Antidote : Versements automatiques fixes chaque mois. Vous achetez sans regarder les prix — la discipline remplace l'émotion.</div>
+        </div></div>
+      </div>
+
+      <div class="biais-card" id="b2">
+        <div class="biais-header" onclick="toggleBiais('b2')">
+          <div class="biais-emoji">🤕</div>
+          <div><div class="biais-name">Aversion à la Perte</div><div class="biais-sub">La perte fait 2× plus mal que le gain fait du bien</div></div>
+          <div class="biais-chevron">▾</div>
+        </div>
+        <div class="biais-body"><div class="biais-content">
+          <div class="biais-desc">Psychologiquement, perdre 100 € fait ressentir une douleur 2× plus forte que la joie de gagner 100 €. Cela pousse à vendre en panique lors des baisses — exactement le contraire de ce qu'il faudrait faire.</div>
+          <div class="biais-example">🔴 Exemple : Vendre tout quand le portefeuille est à -20% en pensant "limiter les dégâts".</div>
+          <div class="biais-antidote">✅ Antidote : Ne pas regarder son portefeuille chaque jour. Mettre une alerte seulement si la baisse dépasse un seuil défini à l'avance.</div>
+        </div></div>
+      </div>
+
+      <div class="biais-card" id="b3">
+        <div class="biais-header" onclick="toggleBiais('b3')">
+          <div class="biais-emoji">🔮</div>
+          <div><div class="biais-name">Market Timing</div><div class="biais-sub">Croire qu'on peut prédire les hausses et baisses</div></div>
+          <div class="biais-chevron">▾</div>
+        </div>
+        <div class="biais-body"><div class="biais-content">
+          <div class="biais-desc">Beaucoup d'investisseurs attendent "le bon moment" pour investir. Résultat : ils restent en cash pendant des années. Les études montrent que même les professionnels échouent à prédire le marché de manière consistante.</div>
+          <div class="biais-example">🔴 Exemple : "J'attends la prochaine crise pour investir moins cher."</div>
+          <div class="biais-antidote">✅ Antidote : Time in the market beats timing the market. Investir régulièrement, quelle que soit la conjoncture (DCA — Dollar Cost Averaging).</div>
+        </div></div>
+      </div>
+
+      <div class="biais-card" id="b4">
+        <div class="biais-header" onclick="toggleBiais('b4')">
+          <div class="biais-emoji">📰</div>
+          <div><div class="biais-name">Biais de Confirmation</div><div class="biais-sub">Ne chercher que les infos qui confirment ses croyances</div></div>
+          <div class="biais-chevron">▾</div>
+        </div>
+        <div class="biais-body"><div class="biais-content">
+          <div class="biais-desc">Vous regardez les actualités financières qui confirment ce que vous pensez déjà. Si vous croyez en Tesla, vous ne lisez que les bonnes nouvelles sur Tesla. Cela crée des angles morts dangereux.</div>
+          <div class="biais-example">🔴 Exemple : Ignorer systématiquement les analyses négatives sur son action préférée.</div>
+          <div class="biais-antidote">✅ Antidote : Diversification automatique via ETF — vous ne pouvez pas "tomber amoureux" d'un panier de 1 500 entreprises.</div>
+        </div></div>
+      </div>
+
+      <div class="biais-card" id="b5">
+        <div class="biais-header" onclick="toggleBiais('b5')">
+          <div class="biais-emoji">🐑</div>
+          <div><div class="biais-name">Comportement Grégaire</div><div class="biais-sub">Faire comme tout le monde au pire moment</div></div>
+          <div class="biais-chevron">▾</div>
+        </div>
+        <div class="biais-body"><div class="biais-content">
+          <div class="biais-desc">Quand les médias annoncent une crise, tout le monde vend. Quand tout monte, tout le monde achète. Ce comportement collectif est exactement l'inverse de ce que font les investisseurs qui s'enrichissent.</div>
+          <div class="biais-example">🔴 Exemple : Vendre en mars 2020 (COVID) — le pire moment, juste avant la hausse de +50%.</div>
+          <div class="biais-antidote">✅ Antidote : Avoir une Investment Policy Statement écrite (Jour 7) et s'y tenir. Les émotions collectives ne doivent pas piloter votre stratégie personnelle.</div>
+        </div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="sh"><div class="sd"></div><div class="sl">🎯 Partie B — Mon Profil de Risque Réel</div><div class="sd"></div></div>
+
+  <!-- EX 2 — PROFIL RISQUE RÉEL -->
+  <div class="card orange">
+    <div class="exh"><div class="exn orange">02</div><div class="ext">😰 Mon Vrai Profil de Risque</div></div>
+    <div class="cbody" style="margin-bottom:14px;">Ce questionnaire va au-delà du profil théorique. Il teste votre réaction <em>émotionnelle</em> face à des scénarios concrets.</div>
+
+    <div class="risk-questions">
+      <div class="risk-q" id="rq1">
+        <div class="risk-q-text">1. Vous investissez 5 000 €. En 3 mois, votre portefeuille vaut 3 500 €. Que ressentez-vous ?</div>
+        <div class="risk-opts">
+          <div class="risk-opt" onclick="selRisk('rq1','a',this)">😰 Panique — je vends</div>
+          <div class="risk-opt" onclick="selRisk('rq1','b',this)">😬 Inquiet mais j'attends</div>
+          <div class="risk-opt" onclick="selRisk('rq1','c',this)">😎 Opportunité — j'achète plus</div>
+        </div>
+      </div>
+      <div class="risk-q" id="rq2">
+        <div class="risk-q-text">2. Une crise boursière éclate. Votre portefeuille perd 35% en 2 mois. Votre réaction ?</div>
+        <div class="risk-opts">
+          <div class="risk-opt" onclick="selRisk('rq2','a',this)">Je sors tout immédiatement</div>
+          <div class="risk-opt" onclick="selRisk('rq2','b',this)">J'arrête les versements temporairement</div>
+          <div class="risk-opt" onclick="selRisk('rq2','c',this)">Je continue voire j'augmente</div>
+        </div>
+      </div>
+      <div class="risk-q" id="rq3">
+        <div class="risk-q-text">3. Un ami vous parle d'une action qui a fait +200% en 6 mois. Vous…</div>
+        <div class="risk-opts">
+          <div class="risk-opt" onclick="selRisk('rq3','a',this)">J'ignore — trop risqué</div>
+          <div class="risk-opt" onclick="selRisk('rq3','b',this)">Je regarde un peu mais reste prudent</div>
+          <div class="risk-opt" onclick="selRisk('rq3','c',this)">J'investis une petite partie</div>
+        </div>
+      </div>
+      <div class="risk-q" id="rq4">
+        <div class="risk-q-text">4. Combien de fois par semaine regardez-vous (ou regarderiez-vous) votre portefeuille ?</div>
+        <div class="risk-opts">
+          <div class="risk-opt" onclick="selRisk('rq4','a',this)">Plusieurs fois par jour</div>
+          <div class="risk-opt" onclick="selRisk('rq4','b',this)">1-2 fois par semaine</div>
+          <div class="risk-opt" onclick="selRisk('rq4','c',this)">1 fois par mois maximum</div>
+        </div>
+      </div>
+    </div>
+
+    <button class="btn-green" onclick="calcRisk()">🧠 Révéler mon profil de risque réel →</button>
+
+    <div class="risk-result" id="riskResult">
+      <div class="risk-result-title" id="riskTitle"></div>
+      <div class="risk-result-desc" id="riskDesc"></div>
+      <div class="risk-reco" id="riskReco"></div>
+    </div>
+  </div>
+
+  <!-- EX 3 — LE SLEEP TEST -->
+  <div class="card blue">
+    <div class="exh"><div class="exn blue">03</div><div class="ext">😴 Le Sleep Test — Trouver Son Seuil de Confort</div></div>
+    <div class="cbody" style="margin-bottom:14px;">Le Sleep Test pose une seule question : <strong>À partir de quelle perte dormiriez-vous mal la nuit ?</strong> C'est votre vrai seuil de tolérance au risque.</div>
+
+    <div class="explainer">
+      <div class="explainer-t">💡 Comment utiliser le Sleep Test</div>
+      <p>Imaginez que votre portefeuille perd la valeur indiquée en quelques semaines. C'est temporaire — mais réel. Quel niveau vous empêcherait de dormir ?</p>
+      <p>Votre allocation idéale est celle <strong>juste en dessous de ce seuil</strong>. Si vous dormez bien avec -20%, votre portefeuille peut contenir 80%+ d'actions.</p>
+    </div>
+
+    <div class="sleep-visual">
+      <div class="sleep-card" onclick="selectSleep('-5%','Très prudent','Livret A + Fonds euros uniquement. Pas encore prêt pour la bourse.',this)">
+        <div class="sleep-icon">😴</div>
+        <div class="sleep-pct">-5 %</div>
+        <div class="sleep-label">Je dors mal dès -5%</div>
+      </div>
+      <div class="sleep-card" onclick="selectSleep('-10%','Prudent','30% actions (ETF Monde) + 70% fonds euros / obligations.',this)">
+        <div class="sleep-icon">😐</div>
+        <div class="sleep-pct">-10 %</div>
+        <div class="sleep-label">Supportable jusqu'à -10%</div>
+      </div>
+      <div class="sleep-card" onclick="selectSleep('-20%','Équilibré','60% ETF Monde + 40% obligations / fonds €. Le portefeuille équilibré.',this)">
+        <div class="sleep-icon">😌</div>
+        <div class="sleep-pct">-20 %</div>
+        <div class="sleep-label">OK jusqu'à -20%</div>
+      </div>
+      <div class="sleep-card" onclick="selectSleep('-35%','Dynamique','80-100% actions ETF. Horizon long. Vous traversez les crises sereinement.',this)">
+        <div class="sleep-icon">😎</div>
+        <div class="sleep-pct">-35 %</div>
+        <div class="sleep-label">Je gère jusqu'à -35%</div>
+      </div>
+    </div>
+
+    <div class="sleep-result" id="sleepResult">
+      <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;opacity:0.7;margin-bottom:8px;">Votre profil Sleep Test</div>
+      <div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:#5de8b8;margin-bottom:8px;" id="sleepTitle">—</div>
+      <div style="font-size:14px;opacity:0.85;line-height:1.7;" id="sleepDesc">—</div>
+    </div>
+  </div>
+
+  <!-- EX 4 — MON CONTRAT ANTI-PANIQUE -->
+  <div class="card purple">
+    <div class="exh"><div class="exn purple">04</div><div class="ext">📋 Mon Contrat Anti-Panique</div></div>
+    <div class="cbody" style="margin-bottom:10px;">Rédiger ses règles <em>avant</em> la crise, c'est la seule façon de ne pas les violer <em>pendant</em> la crise. Complétez ce contrat avec vous-même.</div>
+
+    <div class="flabel">Si mon portefeuille perd plus de __ %, je m'engage à…</div>
+    <textarea class="ctextarea" rows="2" placeholder="Ex : Ne rien faire pendant 48h. Relire ce contrat. Rappeler mon objectif à 15 ans. Ne pas vendre."></textarea>
+
+    <div class="flabel">Les 3 situations où je peux légitimement vendre :</div>
+    <textarea class="ctextarea" rows="3" placeholder="Ex : 1/ Mon horizon a changé (besoin de l'argent dans moins d'1 an) 2/ Mon allocation a trop dérivé de ma cible 3/ Je rééquilibre annuellement"></textarea>
+
+    <div class="flabel">Ce que je ferai pour éviter de regarder mon portefeuille trop souvent :</div>
+    <textarea class="ctextarea" rows="2" placeholder="Ex : Supprimer l'application de trading de mon téléphone. Ne consulter que le 1er du mois."></textarea>
+
+    <div class="flabel">Ma phrase à relire en cas de panique boursière :</div>
+    <textarea class="ctextarea" rows="2" placeholder="Ex : Les crises sont temporaires. Les marchés ont toujours rebondi. Mon horizon est 2035."></textarea>
+  </div>
+
+  <div class="mantra-card">
+    <div class="mantra-icon">🧠</div>
+    <div class="mantra-label">✨ Mantra du Jour 5</div>
+    <div class="mantra-text">
+      "La bourse est un mécanisme<br>
+      de transfert de richesse<br>
+      des <span>impatients</span> vers les <span>patients.</span>"
+    </div>
+    <div style="font-size:13px;opacity:0.75;margin-bottom:16px;line-height:1.6;">Warren Buffett. Vous venez de rejoindre le camp des patients.</div>
+    <button class="mantra-btn" id="mantraBtn" onclick="readMantra()">🔊 Lire à voix haute</button>
+  </div>
+
+  <div class="next-day">
+    <div class="nd-icon">🚀</div>
+    <div>
+      <div class="nd-label">👉 Ce qui vous attend demain — Jour 6</div>
+      <div class="nd-title">Passer à l'Action</div>
+      <div class="nd-text">
+        Vous avez tout ce qu'il faut. Demain, on passe à l'exécution concrète.<br><br>
+        On choisit ensemble votre plateforme (PEA, AV), on parcourt la checklist d'ouverture de compte, et on configure votre premier virement automatique. À la fin du Jour 6, vous serez prêt à cliquer sur "valider".
+      </div>
+    </div>
+  </div>
+
+  <div class="closing">
+    <div class="closing-icon">🧠</div>
+    <div class="closing-title">Fin du Jour 5</div>
+    <div class="closing-text">Vous venez d'acquérir un avantage que la majorité des investisseurs n'ont jamais : vous connaissez vos biais. Et un biais qu'on reconnaît perd la moitié de sa puissance. À demain pour passer à l'action !</div>
+  </div>
+
+</div>
+
+<script>
+  window.addEventListener('load',()=>{
+    setTimeout(()=>{ document.getElementById('progressFill').style.width='71.4%'; },400);
+  });
+
+  function toggleBiais(id){
+    const c=document.getElementById(id),open=c.classList.contains('open');
+    document.querySelectorAll('.biais-card').forEach(x=>x.classList.remove('open'));
+    if(!open) c.classList.add('open');
+  }
+
+  const riskAns={};
+  function selRisk(qId,val,el){
+    document.getElementById(qId).querySelectorAll('.risk-opt').forEach(o=>o.classList.remove('sel'));
+    el.classList.add('sel'); riskAns[qId]=val;
+  }
+
+  function calcRisk(){
+    const vals=Object.values(riskAns);
+    if(vals.length<4){alert('Merci de répondre aux 4 questions.');return;}
+    const aCount=vals.filter(v=>v==='a').length, cCount=vals.filter(v=>v==='c').length;
+    let type,title,desc,reco;
+    if(aCount>=3){
+      type='faible'; title='🛡️ Profil de risque réel : Prudent';
+      desc='Votre réaction émotionnelle aux pertes est forte. Ce n\'est pas un défaut — c\'est votre réalité. Investir avec un portefeuille trop risqué vous ferait paniquer et vendre au pire moment.';
+      reco='💡 Recommandation : Portefeuille maximum 40% actions + 60% fonds euros / obligations. Augmentez progressivement au fil du temps quand vous aurez traversé votre première baisse sereinement.';
+    } else if(cCount>=3){
+      type='eleve'; title='📈 Profil de risque réel : Dynamique';
+      desc='Vous avez une excellente tolérance émotionnelle à la volatilité. Vous pouvez tirer profit d\'un portefeuille fortement orienté actions sur le long terme. Attention : assurez-vous de ne pas confondre confiance et arrogance.';
+      reco='💡 Recommandation : 80-100% actions (ETF Monde + Émergents). Horizon long. Revoyez votre stratégie seulement lors du rééquilibrage annuel.';
+    } else {
+      type='modere'; title='⚖️ Profil de risque réel : Équilibré';
+      desc='Vous pouvez gérer une volatilité modérée sans paniquer, à condition que les baisses restent dans un cadre attendu. Le portefeuille équilibré est parfait pour vous.';
+      reco='💡 Recommandation : 60% ETF Monde + 20% Émergents + 20% Obligations. Rebalancez une fois par an. Ne consultez pas votre portefeuille plus d\'une fois par mois.';
+    }
+    const r=document.getElementById('riskResult');
+    r.className='risk-result show '+type;
+    document.getElementById('riskTitle').textContent=title;
+    document.getElementById('riskDesc').textContent=desc;
+    document.getElementById('riskReco').textContent=reco;
+    r.scrollIntoView({behavior:'smooth',block:'nearest'});
+  }
+
+  function selectSleep(pct,title,desc,el){
+    document.querySelectorAll('.sleep-card').forEach(c=>c.classList.remove('active'));
+    el.classList.add('active');
+    const r=document.getElementById('sleepResult');
+    r.classList.add('show');
+    document.getElementById('sleepTitle').textContent='Seuil '+pct+' → Profil '+title;
+    document.getElementById('sleepDesc').textContent=desc;
+  }
+
+  function readMantra(){
+    const btn=document.getElementById('mantraBtn');
+    btn.classList.add('reading'); btn.innerHTML="✅ Je l'ai lu à voix haute !";
+    setTimeout(()=>{btn.classList.remove('reading');btn.innerHTML='🔊 Relire à voix haute';},3000);
+  }
+</script>
+</body>
+</html>
