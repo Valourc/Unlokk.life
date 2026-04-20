@@ -1,3 +1,43 @@
+[[redirects]]
+  from = "/landing-page-inscription.html"
+  to   = "/reset/landing-page-inscription.html"
+  status = 301
+
+[[redirects]]
+  from = "/j1-9359ebea0c29b519.html"
+  to   = "/reset/j1-9359ebea0c29b519.html"
+  status = 301
+
+[[redirects]]
+  from = "/j2-9359ebea0c29b519.html"
+  to   = "/reset/j2-9359ebea0c29b519.html"
+  status = 301
+
+[[redirects]]
+  from = "/j3-9359ebea0c29b519.html"
+  to   = "/reset/j3-9359ebea0c29b519.html"
+  status = 301
+
+[[redirects]]
+  from = "/j4-9359ebea0c29b519.html"
+  to   = "/reset/j4-9359ebea0c29b519.html"
+  status = 301
+
+[[redirects]]
+  from = "/j5-9359ebea0c29b519.html"
+  to   = "/reset/j5-9359ebea0c29b519.html"
+  status = 301
+
+[[redirects]]
+  from = "/j6-9359ebea0c29b519.html"
+  to   = "/reset/j6-9359ebea0c29b519.html"
+  status = 301
+
+[[redirects]]
+  from = "/j7-9359ebea0c29b519.html"
+  to   = "/reset/j7-9359ebea0c29b519.html"
+  status = 301
+
 [[headers]]
   for = "/*"
   [headers.values]
